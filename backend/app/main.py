@@ -1,70 +1,79 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from app.core.memory import MemoryBank
-from fastapi.middleware.cors import CORSMiddleware
+from app.core.ingester import FileIngester
+from app.core.llm import LocalLLM
 import uvicorn
 
-# 1. Initialize App & Memory
-app = FastAPI(title="Synapse Core", version="1.0.0")
+app = FastAPI(title="Synapse Backend", version="2.0")
 
-# Allow the Frontend (Next.js) to talk to us
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, change this to specific domains
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-print("🔌 Connecting to Memory Bank...")
+# Initialize Systems
+print("🔌 Booting Systems...")
 memory = MemoryBank()
-
-# --- DATA MODELS (The Shape of Data) ---
-class Note(BaseModel):
-    text: str
-    source: str = "web_ui"
+llm = LocalLLM(model="llama3") # Make sure you have this model in Ollama
 
 class Query(BaseModel):
     text: str
 
-# --- ROUTES ( The Endpoints) ---
-
 @app.get("/")
 def health_check():
-    """Checks if the NPU/CPU logic is active."""
     return {
-        "status": "Synapse Online", 
-        "hardware_mode": memory.brain.hardware_mode
+        "status": "Online",
+        "memory_engine": memory.brain.hardware_mode, # CPU or NPU
+        "generation_engine": "Ollama (Simulated GPU)"
     }
 
-@app.post("/ingest")
-def add_memory(note: Note):
-    """Save a thought/file content to the vector database."""
+# --- 1. THE EYES (File Ingestion) ---
+@app.post("/upload")
+async def upload_document(file: UploadFile = File(...)):
+    """Reads a PDF/Text file and saves it to Vector Memory."""
     try:
-        doc_id = memory.memorize(note.text, {"source": note.source})
+        # A. Parse Text
+        raw_text = await FileIngester.parse_file(file)
+        
+        # B. Chunk Text (Don't save whole book as one row)
+        chunks = FileIngester.chunk_text(raw_text)
+        
+        # C. Memorize Each Chunk
+        saved_ids = []
+        for chunk in chunks:
+            # We add metadata so we know which file this came from
+            doc_id = memory.memorize(chunk, metadata={"source": file.filename})
+            saved_ids.append(doc_id)
+            
         return {
             "status": "success", 
-            "id": doc_id, 
-            "mode": memory.brain.hardware_mode
+            "filename": file.filename, 
+            "chunks_processed": len(saved_ids),
+            "hardware": memory.brain.hardware_mode
         }
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/search")
-def search_memory(query: Query):
-    """Retrieve relevant thoughts based on meaning."""
-    results = memory.recall(query.text)
+# --- 2. THE VOICE (RAG Search) ---
+@app.post("/ask")
+def ask_synapse(query: Query):
+    """
+    1. Search Memory (NPU Task)
+    2. Generate Answer (GPU Task)
+    """
+    # Step A: Recall (Search ChromaDB)
+    results = memory.recall(query.text, n_results=3)
+    retrieved_docs = results['documents'][0]
     
-    # Check if we found anything
-    if not results['documents'][0]:
-        return {"results": [], "message": "No memories found."}
-        
-    # Return the list of found texts
+    if not retrieved_docs:
+        return {"answer": "I don't have any memory of that.", "context": []}
+    
+    # Step B: Reason (Send to LLM)
+    context_block = "\n".join(retrieved_docs)
+    generated_answer = llm.generate_answer(context_block, query.text)
+    
     return {
-        "results": results['documents'][0], 
-        "hardware_used": memory.brain.hardware_mode
+        "answer": generated_answer,
+        "context_used": retrieved_docs,
+        "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim"
     }
 
-# Start Server command (for debugging)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
