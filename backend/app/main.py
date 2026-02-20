@@ -1,15 +1,18 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
-from app.core.memory import MemoryBank
-from app.core.ingester import FileIngester
-from app.core.llm import LocalLLM
-from app.core.orchestrator import system_orchestrator # <--- NEW IMPORT
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-app = FastAPI(title="Synapse Backend", version="2.0")
+# --- INTERNAL MODULES ---
+from app.core.memory import MemoryBank
+from app.core.ingester import FileIngester
+from app.core.llm import LocalLLM
+from app.core.orchestrator import system_orchestrator
+from app.agents.agent_manager import AgentManager  # <--- NEW: The Tool Router
 
-# --- CORS POLICY (Allowed for Frontend) ---
+app = FastAPI(title="Synapse Backend", version="2.1")
+
+# --- CORS POLICY ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,14 +23,15 @@ app.add_middleware(
 
 # --- INITIALIZATION ---
 print("🔌 Booting Synapse Core...")
-memory = MemoryBank()           # The Database (Hippocampus)
-llm = LocalLLM(model="llama3")  # The Bridge to Ollama (Prefrontal Cortex)
+memory = MemoryBank()           # The Hippocampus (Database)
+llm = LocalLLM(model="llama3")  # The Prefrontal Cortex (Ollama)
+agent_manager = AgentManager()  # The Hands (Toolbelt)
 
 # --- DATA MODELS ---
 class Query(BaseModel):
     text: str
 
-class ModeRequest(BaseModel):   # <--- NEW MODEL
+class ModeRequest(BaseModel):
     mode: str
 
 # --- ROUTES ---
@@ -36,9 +40,10 @@ class ModeRequest(BaseModel):   # <--- NEW MODEL
 def health_check():
     return {
         "status": "Online",
-        "memory_engine": memory.brain.hardware_mode, # CPU or NPU
+        "memory_engine": memory.brain.hardware_mode,
         "generation_engine": "Ollama (Simulated GPU)",
-        "orchestrator": system_orchestrator.active_mode
+        "orchestrator": system_orchestrator.active_mode,
+        "agents_active": ["GitHub"] 
     }
 
 # --- 1. THE EYES (File Ingestion) ---
@@ -67,25 +72,43 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- 2. THE VOICE (RAG Search) ---
+# --- 2. THE VOICE & HANDS (Agentic Search) ---
 @app.post("/ask")
 def ask_synapse(query: Query):
     """
-    Search Memory -> Send to Llama 3 -> Return Answer
+    Logic Flow:
+    1. Check Agent Manager (Does user want GitHub/Jira?) -> NPU Task
+    2. If Yes -> Run Tool -> Return Result
+    3. If No -> Search Memory -> Generate Answer (RAG) -> GPU Task
     """
     print(f"User asked: {query.text}")
+
+    # --- STEP 1: AGENTIC ROUTING (The Switchboard) ---
+    # We ask the Agent Manager if this looks like a tool request
+    agent_response = agent_manager.route_request(query.text)
     
-    # Step A: Search local memory
+    if agent_response:
+        print("🤖 Agent handled the request.")
+        return {
+            "answer": agent_response,
+            "sources": ["External API (GitHub/Tool)"],
+            "hardware_flow": "NPU_Router -> External_Tool"
+        }
+
+    # --- STEP 2: STANDARD RAG (The Memory) ---
+    print("🧠 No agent needed. Searching Memory...")
+    
+    # A. Search local memory
     results = memory.recall(query.text, n_results=3)
     retrieved_docs = results['documents'][0]
     
-    # Step B: Check if we found anything
+    # B. Check if we found anything
     if not retrieved_docs:
         context_block = "No relevant memory found."
     else:
         context_block = "\n".join(retrieved_docs)
 
-    # Step C: Send to Llama 3 (Ollama)
+    # C. Send to Llama 3 (Ollama)
     ai_response = llm.generate_answer(context_block, query.text)
     
     return {
@@ -94,12 +117,11 @@ def ask_synapse(query: Query):
         "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim"
     }
 
-# --- 3. THE HANDS (Orchestrator) --- <--- NEW SECTION
+# --- 3. THE AUTONOMIC SYSTEM (Orchestrator) ---
 @app.post("/set_mode")
 def change_workflow(request: ModeRequest):
     """
     Triggers the OS to rearrange windows/apps.
-    Options: 'MEETING', 'RESEARCH', 'FOCUS'
     """
     try:
         result = system_orchestrator.set_mode(request.mode)
