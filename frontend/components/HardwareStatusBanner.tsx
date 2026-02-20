@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Cpu, Zap, Brain, Wifi, WifiOff, ArrowLeft } from "lucide-react";
+import { Activity, Cpu, Zap, Brain, Wifi, WifiOff, ArrowLeft, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { checkHealth, type HealthResponse } from "@/lib/api";
 import Link from "next/link";
@@ -133,6 +133,16 @@ export default function HardwareStatusBanner() {
                 </div>
 
                 <Activity className="ml-1 h-3.5 w-3.5 animate-pulse text-emerald-600" />
+
+                <div className="h-4 w-px bg-zinc-200" />
+
+                <Link
+                    href="/settings/integrations"
+                    className="flex items-center gap-1.5 text-zinc-500 transition hover:text-foreground"
+                    title="Integrations"
+                >
+                    <Settings className="h-3.5 w-3.5" />
+                </Link>
             </div>
         </motion.header>
     );

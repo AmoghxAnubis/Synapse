@@ -18,6 +18,10 @@ import {
   Github,
   Terminal,
   Sparkles,
+  GitPullRequest,
+  BookOpen,
+  LayoutGrid,
+  Plug,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -96,6 +100,9 @@ export default function LandingPage() {
           </a>
           <a href="#architecture" className="transition hover:text-foreground">
             Architecture
+          </a>
+          <a href="#integrations" className="transition hover:text-foreground">
+            Integrations
           </a>
           <a href="#stack" className="transition hover:text-foreground">
             Stack
@@ -393,6 +400,151 @@ export default function LandingPage() {
               </div>
             </FadeIn>
           ))}
+        </div>
+      </section>
+
+      {/* ─── Integrations ─── */}
+      <section
+        id="integrations"
+        className="relative overflow-hidden py-36"
+      >
+        {/* Background gradient wash */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-purple-50/40 to-white" />
+        <div className="pointer-events-none absolute -left-40 top-1/2 h-[600px] w-[600px] -translate-y-1/2 rounded-full bg-purple-100/50 blur-3xl" />
+        <div className="pointer-events-none absolute -right-40 top-1/3 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
+
+        <div className="relative mx-auto max-w-6xl px-6 md:px-12">
+          {/* Header — centered, big */}
+          <FadeIn className="flex flex-col items-center text-center">
+            <Badge
+              variant="secondary"
+              className="mb-5 gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-4 py-1.5 text-xs font-semibold text-purple-700"
+            >
+              <Plug className="h-3 w-3" />
+              External Integrations
+            </Badge>
+            <h2 className="max-w-xl text-4xl font-bold tracking-tight sm:text-5xl">
+              Pull your entire
+              <br />
+              <span className="text-gradient">world into Synapse</span>
+            </h2>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-zinc-500">
+              Connect your favorite platforms. Synapse ingests PRs, messages,
+              docs, and tickets into your local ChromaDB — processed by your
+              NPU, never leaving your machine.
+            </p>
+          </FadeIn>
+
+          {/* Integration Cards — 2×2 grid, much larger */}
+          <div className="mt-16 grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                icon: GitPullRequest,
+                name: "GitHub",
+                desc: "Sync repositories, pull requests, issues, and code reviews into local memory.",
+                tag: "Code & Reviews",
+                gradient: "from-purple-500 to-violet-600",
+                lightBg: "bg-purple-50",
+                lightText: "text-purple-700",
+                borderHover: "hover:border-purple-300",
+                glowColor: "hover:shadow-purple-100",
+              },
+              {
+                icon: MessageSquare,
+                name: "Slack",
+                desc: "Pull saved messages, channel threads, and team conversations for contextual answers.",
+                tag: "Messages & Threads",
+                gradient: "from-orange-500 to-pink-500",
+                lightBg: "bg-orange-50",
+                lightText: "text-orange-700",
+                borderHover: "hover:border-orange-300",
+                glowColor: "hover:shadow-orange-100",
+              },
+              {
+                icon: BookOpen,
+                name: "Notion",
+                desc: "Ingest workspace docs, databases, meeting notes, and wikis for deep RAG queries.",
+                tag: "Docs & Databases",
+                gradient: "from-zinc-700 to-zinc-900",
+                lightBg: "bg-zinc-100",
+                lightText: "text-zinc-700",
+                borderHover: "hover:border-zinc-400",
+                glowColor: "hover:shadow-zinc-200",
+              },
+              {
+                icon: LayoutGrid,
+                name: "Jira",
+                desc: "Sync active sprint tickets, epics, stories, and bug reports into your knowledge base.",
+                tag: "Sprints & Tickets",
+                gradient: "from-blue-500 to-cyan-500",
+                lightBg: "bg-blue-50",
+                lightText: "text-blue-700",
+                borderHover: "hover:border-blue-300",
+                glowColor: "hover:shadow-blue-100",
+              },
+            ].map((int, i) => (
+              <FadeIn key={int.name} delay={i * 0.1}>
+                <motion.div
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className={`group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-7 shadow-sm transition-all duration-300 ${int.borderHover} ${int.glowColor} hover:shadow-xl cursor-pointer`}
+                >
+                  {/* Gradient accent bar at top */}
+                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${int.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+
+                  <div className="flex items-start gap-5">
+                    {/* Icon */}
+                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${int.gradient} text-white shadow-lg`}>
+                      <int.icon className="h-6 w-6" />
+                    </div>
+
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-lg font-bold text-zinc-900">{int.name}</h3>
+                        <Badge variant="secondary" className={`${int.lightBg} ${int.lightText} border-0 text-[10px] font-semibold`}>
+                          {int.tag}
+                        </Badge>
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+                        {int.desc}
+                      </p>
+
+                      {/* Fake status row */}
+                      <div className="mt-4 flex items-center gap-4">
+                        <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+                          <span className="h-1.5 w-1.5 rounded-full bg-zinc-300 group-hover:bg-emerald-500 group-hover:animate-pulse transition-colors" />
+                          Ready to connect
+                        </span>
+                        <span className="text-xs font-medium text-zinc-400 transition-colors group-hover:text-foreground">
+                          Configure →
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <FadeIn delay={0.45} className="mt-14 flex flex-col items-center text-center">
+            <Link href="/settings/integrations">
+              <Button
+                size="lg"
+                className="rounded-full bg-foreground px-10 py-6 text-base font-semibold text-white shadow-xl shadow-black/10 transition-all hover:bg-foreground/90 hover:shadow-2xl hover:scale-105"
+              >
+                <Plug className="mr-2.5 h-5 w-5" />
+                Connect Your Tools
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <div className="mt-6 flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 shadow-sm">
+              <Shield className="h-4 w-4 text-emerald-600" />
+              <span className="text-xs font-medium text-zinc-600">
+                100% local-first — API keys stay on your machine, data is pulled, never pushed
+              </span>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
