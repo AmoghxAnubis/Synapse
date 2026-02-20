@@ -46,7 +46,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* Synapse custom colors */
+  /* Synapse accent colors */
   --color-synapse-npu: #10b981;
   --color-synapse-gpu: #a855f7;
   --color-synapse-cpu: #3b82f6;
@@ -55,11 +55,45 @@
 }
 
 /* ===============================
-   EVALIS DARK THEME (DEFAULT)
+   WHITE-BASE LIGHT THEME (DEFAULT)
    =============================== */
 :root {
   --radius: 0.625rem;
-  /* Dark-first: these ARE the dark values */
+  --background: #ffffff;
+  --foreground: #09090B;
+  --card: #ffffff;
+  --card-foreground: #09090B;
+  --popover: #ffffff;
+  --popover-foreground: #09090B;
+  --primary: #09090B;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #09090B;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #09090B;
+  --destructive: #dc2626;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #a1a1aa;
+  --chart-1: #09090B;
+  --chart-2: #3b82f6;
+  --chart-3: #10b981;
+  --chart-4: #a855f7;
+  --chart-5: #ef4444;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #09090B;
+  --sidebar-primary: #09090B;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #09090B;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #a1a1aa;
+}
+
+/* Dark variant for the dashboard */
+.dark {
   --background: #09090B;
   --foreground: #fafafa;
   --card: #111113;
@@ -100,9 +134,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    color-scheme: dark;
-  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -113,18 +145,30 @@
    SYNAPSE UTILITY CLASSES
    =============================== */
 @layer utilities {
-  /* Glassmorphism surface */
+
+  /* Glassmorphism — light variant */
   .glass {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  /* Dark glass for dashboard */
+  .dark .glass {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .glass-strong {
+    background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
@@ -132,9 +176,11 @@
   .gradient-npu {
     background: linear-gradient(135deg, #10b981, #059669);
   }
+
   .gradient-gpu {
     background: linear-gradient(135deg, #a855f7, #7c3aed);
   }
+
   .gradient-cpu {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
   }
@@ -143,16 +189,18 @@
   .glow-npu {
     box-shadow: 0 0 12px rgba(16, 185, 129, 0.4), 0 0 24px rgba(16, 185, 129, 0.15);
   }
+
   .glow-gpu {
     box-shadow: 0 0 12px rgba(168, 85, 247, 0.4), 0 0 24px rgba(168, 85, 247, 0.15);
   }
+
   .glow-cpu {
     box-shadow: 0 0 12px rgba(59, 130, 246, 0.4), 0 0 24px rgba(59, 130, 246, 0.15);
   }
 
   /* Subtle text gradient */
   .text-gradient {
-    background: linear-gradient(135deg, #e4e4e7, #a1a1aa);
+    background: linear-gradient(135deg, #09090B, #52525b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -162,14 +210,17 @@
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
   }
+
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
   }
+
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
   }
 }
