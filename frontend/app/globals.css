@@ -70,13 +70,13 @@
   --secondary: #f4f4f5;
   --secondary-foreground: #09090B;
   --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+  --muted-foreground: #52525b;
   --accent: #f4f4f5;
   --accent-foreground: #09090B;
   --destructive: #dc2626;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #a1a1aa;
+  --border: #d4d4d8;
+  --input: #d4d4d8;
+  --ring: #71717a;
   --chart-1: #09090B;
   --chart-2: #3b82f6;
   --chart-3: #10b981;
@@ -200,10 +200,11 @@
 
   /* Subtle text gradient */
   .text-gradient {
-    background: linear-gradient(135deg, #09090B, #52525b);
+    background: linear-gradient(135deg, #09090B 0%, #3f3f46 50%, #09090B 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
   }
 
   /* Scrollbar styling */
