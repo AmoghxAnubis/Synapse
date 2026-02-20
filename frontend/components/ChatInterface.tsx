@@ -82,29 +82,34 @@ export default function ChatInterface() {
         <div className="flex h-full flex-col">
             {/* Header */}
             <div className="flex items-center gap-2 px-1 pb-3">
-                <div className="h-2 w-2 rounded-full gradient-gpu" />
-                <h2 className="text-sm font-semibold tracking-wide text-foreground/80 uppercase">
+                <div className="h-2 w-2 rounded-full bg-purple-500" />
+                <h2 className="text-sm font-semibold tracking-wide text-zinc-800 uppercase">
                     Synapse Chat
                 </h2>
                 {messages.length > 0 && (
-                    <Badge variant="secondary" className="ml-auto text-[10px]">
+                    <Badge
+                        variant="secondary"
+                        className="ml-auto border border-zinc-200 bg-zinc-50 text-[10px] text-zinc-600"
+                    >
                         {messages.length} messages
                     </Badge>
                 )}
             </div>
 
             {/* Messages */}
-            <div className="glass relative flex-1 overflow-hidden rounded-xl">
+            <div className="relative flex-1 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50/50">
                 <ScrollArea className="h-full">
-                    <div ref={scrollRef} className="flex flex-col gap-3 p-4 scrollbar-thin">
+                    <div ref={scrollRef} className="flex flex-col gap-3 p-5">
                         {messages.length === 0 && (
                             <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
-                                <Bot className="h-10 w-10 text-muted-foreground/40" />
+                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100">
+                                    <Bot className="h-7 w-7 text-zinc-400" />
+                                </div>
                                 <div>
-                                    <p className="text-sm font-medium text-foreground/50">
+                                    <p className="text-sm font-medium text-zinc-600">
                                         Ask Synapse anything
                                     </p>
-                                    <p className="mt-1 text-xs text-muted-foreground">
+                                    <p className="mt-1 text-xs text-zinc-500">
                                         Queries are answered using your ingested memory + local LLM
                                     </p>
                                 </div>
@@ -127,15 +132,15 @@ export default function ChatInterface() {
                                     >
                                         {/* Avatar */}
                                         <div
-                                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${msg.role === "user"
-                                                    ? "gradient-gpu"
-                                                    : "bg-white/5 border border-white/10"
+                                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === "user"
+                                                    ? "bg-foreground"
+                                                    : "border border-zinc-200 bg-white"
                                                 }`}
                                         >
                                             {msg.role === "user" ? (
                                                 <User className="h-3.5 w-3.5 text-white" />
                                             ) : (
-                                                <Bot className="h-3.5 w-3.5 text-synapse-npu" />
+                                                <Bot className="h-3.5 w-3.5 text-purple-600" />
                                             )}
                                         </div>
 
@@ -143,8 +148,8 @@ export default function ChatInterface() {
                                         <div className="flex flex-col gap-1.5">
                                             <div
                                                 className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${msg.role === "user"
-                                                        ? "gradient-gpu text-white"
-                                                        : "glass text-foreground/90"
+                                                        ? "bg-foreground text-white"
+                                                        : "border border-zinc-200 bg-white text-zinc-800 shadow-sm"
                                                     }`}
                                             >
                                                 {msg.content}
@@ -152,12 +157,16 @@ export default function ChatInterface() {
 
                                             {/* Sources accordion */}
                                             {msg.sources && msg.sources.length > 0 && (
-                                                <Accordion type="single" collapsible className="w-full">
+                                                <Accordion
+                                                    type="single"
+                                                    collapsible
+                                                    className="w-full"
+                                                >
                                                     <AccordionItem
                                                         value="sources"
                                                         className="border-0"
                                                     >
-                                                        <AccordionTrigger className="py-1.5 px-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
+                                                        <AccordionTrigger className="py-1.5 px-2 text-[10px] font-medium uppercase tracking-wider text-zinc-500 hover:no-underline">
                                                             <span className="flex items-center gap-1.5">
                                                                 <FileText className="h-3 w-3" />
                                                                 {msg.sources.length} source
@@ -170,7 +179,7 @@ export default function ChatInterface() {
                                                                     <Badge
                                                                         key={i}
                                                                         variant="secondary"
-                                                                        className="text-[10px] font-normal"
+                                                                        className="border border-zinc-200 bg-white text-[10px] font-normal text-zinc-600"
                                                                     >
                                                                         {src.length > 80
                                                                             ? src.slice(0, 80) + "…"
@@ -185,7 +194,7 @@ export default function ChatInterface() {
 
                                             {/* Hardware flow */}
                                             {msg.hardwareFlow && (
-                                                <span className="px-2 text-[10px] text-muted-foreground/60">
+                                                <span className="px-2 text-[10px] text-zinc-400">
                                                     ⚡ {msg.hardwareFlow}
                                                 </span>
                                             )}
@@ -202,15 +211,13 @@ export default function ChatInterface() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="flex items-center gap-2"
                             >
-                                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/5 border border-white/10">
-                                    <Bot className="h-3.5 w-3.5 text-synapse-npu" />
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white">
+                                    <Bot className="h-3.5 w-3.5 text-purple-600" />
                                 </div>
-                                <div className="glass rounded-2xl px-4 py-2.5">
+                                <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-2.5 shadow-sm">
                                     <div className="flex items-center gap-1.5">
-                                        <Loader2 className="h-3.5 w-3.5 animate-spin text-synapse-npu" />
-                                        <span className="text-xs text-muted-foreground">
-                                            Thinking...
-                                        </span>
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-600" />
+                                        <span className="text-xs text-zinc-500">Thinking...</span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -233,14 +240,14 @@ export default function ChatInterface() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask Synapse..."
-                        className="glass flex-1 border-0 bg-white/[0.03] text-sm placeholder:text-muted-foreground/50 focus-visible:ring-1 focus-visible:ring-synapse-gpu/50"
+                        className="h-11 flex-1 rounded-xl border-zinc-200 bg-white text-sm shadow-sm placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-400"
                         disabled={isLoading}
                     />
                     <Button
                         type="submit"
                         size="icon"
                         disabled={isLoading || !input.trim()}
-                        className="gradient-gpu h-9 w-9 shrink-0 border-0 text-white transition-transform hover:scale-105 active:scale-95"
+                        className="h-11 w-11 shrink-0 rounded-xl bg-foreground text-white shadow-sm transition-transform hover:bg-foreground/90 hover:scale-105 active:scale-95"
                     >
                         <Send className="h-4 w-4" />
                     </Button>

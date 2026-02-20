@@ -112,9 +112,17 @@ export default function LandingPage() {
               Backend Online
             </Badge>
           )}
-          <Link href="/dashboard">
+          <Link href="/auth">
+            <Button
+              variant="ghost"
+              className="hidden rounded-full px-4 text-sm font-medium text-zinc-600 hover:text-foreground sm:inline-flex"
+            >
+              Log In
+            </Button>
+          </Link>
+          <Link href="/auth">
             <Button className="rounded-full bg-foreground px-5 text-sm font-medium text-white hover:bg-foreground/90">
-              Open Dashboard
+              Get Started
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           </Link>

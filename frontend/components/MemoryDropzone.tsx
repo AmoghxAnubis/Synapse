@@ -66,8 +66,8 @@ export default function MemoryDropzone() {
         <div className="flex h-full flex-col gap-4">
             {/* Title */}
             <div className="flex items-center gap-2 px-1">
-                <div className="h-2 w-2 rounded-full gradient-npu" />
-                <h2 className="text-sm font-semibold tracking-wide text-foreground/80 uppercase">
+                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                <h2 className="text-sm font-semibold tracking-wide text-zinc-800 uppercase">
                     Memory Bank
                 </h2>
             </div>
@@ -82,9 +82,9 @@ export default function MemoryDropzone() {
                 onDrop={onDrop}
                 onClick={() => inputRef.current?.click()}
                 whileHover={{ scale: 1.01 }}
-                className={`relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 transition-all duration-300 ${isDragging
-                        ? "border-synapse-npu bg-synapse-npu/5 glow-npu"
-                        : "border-white/10 hover:border-white/20 hover:bg-white/[0.02]"
+                className={`relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-8 transition-all duration-300 ${isDragging
+                        ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100"
+                        : "border-zinc-300 bg-zinc-50/50 hover:border-zinc-400 hover:bg-zinc-50"
                     }`}
             >
                 <input
@@ -103,7 +103,7 @@ export default function MemoryDropzone() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <Loader2 className="h-8 w-8 animate-spin text-synapse-npu" />
+                            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
                         </motion.div>
                     ) : isDragging ? (
                         <motion.div
@@ -112,7 +112,7 @@ export default function MemoryDropzone() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <CheckCircle className="h-8 w-8 text-synapse-npu" />
+                            <CheckCircle className="h-8 w-8 text-emerald-600" />
                         </motion.div>
                     ) : (
                         <motion.div
@@ -121,25 +121,23 @@ export default function MemoryDropzone() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <Upload className="h-8 w-8 text-muted-foreground" />
+                            <Upload className="h-8 w-8 text-zinc-400" />
                         </motion.div>
                     )}
                 </AnimatePresence>
 
                 <div className="text-center">
-                    <p className="text-sm font-medium text-foreground/70">
+                    <p className="text-sm font-medium text-zinc-700">
                         {isDragging ? "Drop to ingest" : "Drag files here"}
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                        PDF, TXT, MD, DOC
-                    </p>
+                    <p className="mt-1 text-xs text-zinc-500">PDF, TXT, MD, DOC</p>
                 </div>
             </motion.div>
 
             {/* Recent uploads */}
             {uploadedFiles.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <span className="px-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <span className="px-1 text-xs font-medium uppercase tracking-wider text-zinc-500">
                         Recent Ingestions
                     </span>
                     <ScrollArea className="max-h-48">
@@ -152,13 +150,13 @@ export default function MemoryDropzone() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.05 }}
                                     >
-                                        <Card className="glass flex items-center gap-2.5 p-2.5">
-                                            <FileText className="h-4 w-4 shrink-0 text-synapse-npu" />
+                                        <Card className="flex items-center gap-2.5 rounded-xl border border-zinc-200 bg-white p-2.5 shadow-sm">
+                                            <FileText className="h-4 w-4 shrink-0 text-emerald-600" />
                                             <div className="min-w-0 flex-1">
-                                                <p className="truncate text-xs font-medium text-foreground/80">
+                                                <p className="truncate text-xs font-medium text-zinc-800">
                                                     {f.filename}
                                                 </p>
-                                                <p className="text-[10px] text-muted-foreground">
+                                                <p className="text-[10px] text-zinc-500">
                                                     {f.chunks} chunks · {f.hardware}
                                                 </p>
                                             </div>
