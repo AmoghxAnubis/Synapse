@@ -27,6 +27,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { checkHealth } from "@/lib/api";
+import dynamic from "next/dynamic";
+
+const InteractiveFooter = dynamic(
+  () => import("@/components/Footer/InteractiveFooter"),
+  { ssr: false }
+);
 
 /* ──────────────────── Fade-in wrapper ──────────────────── */
 function FadeIn({
@@ -514,37 +520,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
-      <section className="border-t border-zinc-200 bg-zinc-50/60 py-24">
-        <FadeIn className="flex flex-col items-center text-center px-6">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground shadow-lg">
-            <Terminal className="h-6 w-6 text-white" />
-          </div>
-          <h2 className="mt-6 text-2xl font-bold tracking-tight sm:text-3xl">
-            Ready to launch?
-          </h2>
-          <p className="mt-3 max-w-md text-muted-foreground">
-            Start the backend, open the dashboard, and let Synapse take the
-            wheel.
-          </p>
-          <div className="mt-8 flex gap-3">
-            <Link href="/dashboard">
-              <Button
-                size="lg"
-                className="rounded-full bg-foreground px-8 text-base font-medium text-white hover:bg-foreground/90"
-              >
-                Open Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="mt-8 rounded-xl border border-zinc-200 bg-white px-5 py-3 font-mono text-sm text-zinc-600 shadow-sm">
-            <span className="text-foreground">$</span> cd backend && python -m
-            uvicorn app.main:app --reload
-          </div>
-        </FadeIn>
-      </section>
+      {/* ─── Interactive Footer ─── */}
+      <InteractiveFooter />
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-zinc-200 px-6 py-8 md:px-12">
