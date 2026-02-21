@@ -400,16 +400,12 @@ export default function LandingPage() {
           </h2>
         </FadeIn>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { name: "Next.js", desc: "React Framework", icon: "▲" },
-            { name: "FastAPI", desc: "Python Backend", icon: "⚡" },
-            { name: "ChromaDB", desc: "Vector Database", icon: "🧠" },
-            { name: "Ollama", desc: "Local LLM", icon: "🦙" },
-            { name: "Tailwind CSS", desc: "Styling", icon: "🎨" },
-            { name: "Framer Motion", desc: "Animations", icon: "✨" },
-            { name: "AMD Ryzen AI", desc: "NPU Acceleration", icon: "🔴" },
-            { name: "shadcn/ui", desc: "Components", icon: "🧩" },
+            { name: "High-Speed API Engine", desc: "Async Python Backend", icon: "⚡" },
+            { name: "Vector Memory Store", desc: "Semantic Search Database", icon: "🧠" },
+            { name: "Local Language Model", desc: "On-Device Inference", icon: "🦙" },
+            { name: "Neural Processing Unit", desc: "Hardware Acceleration", icon: "🔴" },
           ].map((tech, i) => (
             <FadeIn key={tech.name} delay={i * 0.05}>
               <div

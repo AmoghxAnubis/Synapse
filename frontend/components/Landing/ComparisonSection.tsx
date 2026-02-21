@@ -1,54 +1,49 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, BrainCircuit, Cpu, Layers } from "lucide-react";
-import ComparisonFeatureRow from "./ComparisonFeatureRow";
+import {
+    Shield,
+    BrainCircuit,
+    Cpu,
+    Layers,
+    XCircle,
+    CheckCircle2,
+    type LucideIcon,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 /* ──────────────────── Comparison data ──────────────────── */
-const comparisonData = [
-    {
-        title: "Data Privacy",
-        categoryIcon: Shield,
-        competitorDescription:
-            "Sends private context to public cloud servers. Traditional OS search is local, but shallow.",
-        synapseDescription:
-            "Zero-Knowledge Local RAG. Data never leaves the device.",
-    },
-    {
-        title: "Context Depth",
-        categoryIcon: BrainCircuit,
-        competitorDescription:
-            "Cloud AI has great reasoning but can't see your files. OS search finds filenames, not meaning.",
-        synapseDescription:
-            "Full Semantic Memory. Understands local PDFs, code, and docs at a deep level.",
-    },
-    {
-        title: "Latency & Speed",
-        categoryIcon: Cpu,
-        competitorDescription:
-            "Dependent on internet connection and server load. Simple queries are fast, complex ones stall.",
-        synapseDescription:
-            "Hardware Accelerated. Instant response via local NPU/GPU — no network round-trip.",
-    },
-    {
-        title: "OS Action",
-        categoryIcon: Layers,
-        competitorDescription:
-            "Cloud AI is a passive chatbot. OS search can open apps, but can't execute complex workflows.",
-        synapseDescription:
-            "Active Orchestrator. Switches modes, manages windows & tools on your behalf.",
-    },
-];
-
-/* ──────────────────── Animation variants ──────────────────── */
-const panelVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (delay: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.7, delay, ease: "easeOut" as const },
-    }),
-};
+const comparisonData: {
+    title: string;
+    icon: LucideIcon;
+    bad: string;
+    good: string;
+}[] = [
+        {
+            title: "Data Privacy",
+            icon: Shield,
+            bad: "Sends private context to public cloud servers. Local OS search is shallow and disconnected.",
+            good: "Zero-Knowledge Local RAG. Your data never leaves the device — ever.",
+        },
+        {
+            title: "Context Depth",
+            icon: BrainCircuit,
+            bad: "Great reasoning, but blind to local files. OS search matches filenames, not meaning.",
+            good: "Full Semantic Memory. Understands your PDFs, code, and docs at a deep level.",
+        },
+        {
+            title: "Latency & Speed",
+            icon: Cpu,
+            bad: "Dependent on internet and server load. Complex queries stall behind queues.",
+            good: "Hardware Accelerated. Instant response via local NPU/GPU — zero network round-trip.",
+        },
+        {
+            title: "OS Action",
+            icon: Layers,
+            bad: "A passive chatbot that can't touch your system. OS search opens apps, nothing more.",
+            good: "Active Orchestrator. Switches modes, manages windows & launches tools on your behalf.",
+        },
+    ];
 
 /* ══════════════════════════════════════════════════════════
    COMPARISON SECTION
@@ -57,21 +52,11 @@ export default function ComparisonSection() {
     return (
         <section
             id="comparison"
-            className="relative overflow-hidden bg-zinc-950 py-24"
+            className="relative overflow-hidden border-y border-zinc-200 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 py-28"
         >
-            {/* Background texture — faint grid */}
-            <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
-                    backgroundSize: "64px 64px",
-                }}
-            />
-
-            {/* Gradient orbs for depth */}
-            <div className="pointer-events-none absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-emerald-500/[0.06] blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-40 -right-40 h-[400px] w-[400px] rounded-full bg-purple-500/[0.06] blur-3xl" />
+            {/* Decorative gradient orbs */}
+            <div className="pointer-events-none absolute -top-32 left-1/4 h-[400px] w-[400px] rounded-full bg-emerald-100/30 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-32 right-1/4 h-[350px] w-[350px] rounded-full bg-purple-100/25 blur-3xl" />
 
             <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-12">
                 {/* ─── Header ─── */}
@@ -79,106 +64,107 @@ export default function ComparisonSection() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16 flex flex-col items-center text-center"
+                    transition={{ duration: 0.6, ease: "easeOut" as const }}
+                    className="mb-14 flex flex-col items-center text-center"
                 >
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         Why Synapse
                     </p>
-                    <h2 className="mt-3 max-w-lg text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                        The Cost of Fragmented Context.
+                    <h2 className="mt-3 max-w-lg text-3xl font-bold tracking-tight sm:text-4xl">
+                        The Cost of Fragmented Context
                     </h2>
-                    <p className="mt-4 max-w-lg text-zinc-400">
-                        Stop pasting private data into cloud chat windows. Start owning
-                        your intelligence.
+                    <p className="mt-4 max-w-md text-zinc-500">
+                        Stop pasting private data into cloud chat windows.
+                        <br className="hidden sm:block" />
+                        Start owning your intelligence.
                     </p>
                 </motion.div>
 
-                {/* ─── Two-Column Grid ─── */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {/* Left Panel — Existing Solutions (dimmer) */}
-                    <motion.div
-                        custom={0.1}
-                        variants={panelVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-40px" }}
-                        className="glass-dark-dim rounded-2xl p-6 md:p-8"
-                    >
-                        {/* Panel header */}
-                        <div className="mb-6 flex items-center gap-3 border-b border-white/[0.06] pb-4">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-800">
-                                <span className="text-sm">⚠️</span>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-zinc-300">
-                                    Existing Solutions
-                                </h3>
-                                <p className="text-xs text-zinc-500">
-                                    Cloud AI & Traditional OS Search
-                                </p>
-                            </div>
-                        </div>
+                {/* ─── Column Headers ─── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.5, ease: "easeOut" as const }}
+                    className="mb-4 hidden grid-cols-[1fr_1fr_1fr] items-end gap-4 px-2 md:grid"
+                >
+                    <div />
+                    <div className="flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-zinc-100/80 px-4 py-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                            Existing Solutions
+                        </span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                            Synapse Core
+                        </span>
+                    </div>
+                </motion.div>
 
-                        {/* Feature rows — competitor side */}
-                        <div className="space-y-4">
-                            {comparisonData.map((item) => (
-                                <div
-                                    key={item.title}
-                                    className="border-b border-white/[0.04] pb-4 last:border-b-0 last:pb-0"
-                                >
-                                    <div className="mb-2 flex items-center gap-2">
-                                        <item.categoryIcon className="h-3.5 w-3.5 text-zinc-600" />
-                                        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-600">
-                                            {item.title}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm leading-relaxed text-zinc-500">
-                                        {item.competitorDescription}
-                                    </p>
+                {/* ─── Comparison Rows ─── */}
+                <div className="space-y-3">
+                    {comparisonData.map((item, i) => (
+                        <motion.div
+                            key={item.title}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-30px" }}
+                            transition={{
+                                duration: 0.5,
+                                delay: i * 0.08,
+                                ease: "easeOut" as const,
+                            }}
+                            className="group grid grid-cols-1 gap-3 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-md md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5"
+                        >
+                            {/* Label column */}
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 ring-1 ring-black/[0.04] transition-colors group-hover:bg-zinc-200/60">
+                                    <item.icon className="h-4 w-4" />
                                 </div>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {/* Right Panel — Synapse (glowing, premium) */}
-                    <motion.div
-                        custom={0.25}
-                        variants={panelVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-40px" }}
-                        className="glass-dark glow-synapse rounded-2xl p-6 md:p-8"
-                    >
-                        {/* Panel header */}
-                        <div className="mb-6 flex items-center gap-3 border-b border-emerald-500/10 pb-4">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/20 to-purple-500/20">
-                                <span className="text-sm">⚡</span>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-foreground">
+                                        {item.title}
+                                    </h4>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-white">
-                                    Synapse Core
-                                </h3>
-                                <p className="text-xs text-emerald-400/70">
-                                    Local Unified Intelligence
+
+                            {/* "Bad" — Existing solutions */}
+                            <div className="flex items-start gap-2.5 rounded-xl bg-zinc-50/80 p-3 md:p-3.5">
+                                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60" />
+                                <p className="text-[13px] leading-relaxed text-zinc-400">
+                                    {item.bad}
                                 </p>
                             </div>
-                        </div>
 
-                        {/* Feature rows — Synapse side */}
-                        <div className="space-y-4">
-                            {comparisonData.map((item) => (
-                                <ComparisonFeatureRow
-                                    key={item.title}
-                                    title={item.title}
-                                    competitorDescription={item.competitorDescription}
-                                    synapseDescription={item.synapseDescription}
-                                    categoryIcon={item.categoryIcon}
-                                />
-                            ))}
-                        </div>
-                    </motion.div>
+                            {/* "Good" — Synapse */}
+                            <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50/60 p-3 ring-1 ring-emerald-100 md:p-3.5">
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                                <p className="text-[13px] font-medium leading-relaxed text-zinc-700">
+                                    {item.good}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
+
+                {/* ─── Bottom accent ─── */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" as const }}
+                    className="mt-8 flex justify-center"
+                >
+                    <Badge
+                        variant="secondary"
+                        className="gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 text-xs font-medium text-zinc-500 shadow-sm"
+                    >
+                        <Shield className="h-3.5 w-3.5 text-emerald-500" />
+                        100% local inference · zero cloud leakage · your hardware, your data
+                    </Badge>
+                </motion.div>
             </div>
         </section>
     );
