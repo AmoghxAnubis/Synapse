@@ -389,36 +389,112 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── Tech Stack ─── */}
-      <section id="stack" className="mx-auto max-w-5xl px-6 py-32 md:px-12">
-        <FadeIn>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Built With
-          </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            The tech stack
-          </h2>
-        </FadeIn>
+      {/* ─── Tech Stack — Editorial Layout ─── */}
+      <section id="stack" className="relative overflow-hidden bg-white py-32">
+        <div className="mx-auto max-w-6xl px-6 md:px-12">
+          {/* ─ Top bar ─ */}
+          <FadeIn>
+            <div className="flex items-end justify-between border-b border-zinc-900 pb-6">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
+                  Infrastructure
+                </p>
+                <h2 className="mt-1 text-5xl font-black tracking-tight text-zinc-950 sm:text-7xl">
+                  stack.
+                </h2>
+              </div>
+              <p className="hidden max-w-[220px] text-right text-xs leading-relaxed text-zinc-400 md:block">
+                Every layer engineered<br />for local-first intelligence
+              </p>
+            </div>
+          </FadeIn>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {[
-            { name: "High-Speed API Engine", desc: "Async Python Backend", icon: "⚡" },
-            { name: "Vector Memory Store", desc: "Semantic Search Database", icon: "🧠" },
-            { name: "Local Language Model", desc: "On-Device Inference", icon: "🦙" },
-            { name: "Neural Processing Unit", desc: "Hardware Acceleration", icon: "🔴" },
-          ].map((tech, i) => (
-            <FadeIn key={tech.name} delay={i * 0.05}>
-              <div
-                className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:bg-zinc-50 shadow-sm"
-              >
-                <span className="text-xl">{tech.icon}</span>
+          {/* ─ Bento Grid ─ */}
+          <div className="mt-8 grid auto-rows-[minmax(160px,auto)] grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+            {/* 01 — Large black hero card */}
+            <FadeIn delay={0.05}>
+              <div className="group relative col-span-2 flex flex-col justify-between overflow-hidden rounded-2xl bg-zinc-950 p-6 text-white transition-transform duration-300 hover:scale-[1.01] md:row-span-2 md:p-8">
                 <div>
-                  <p className="text-sm font-semibold">{tech.name}</p>
-                  <p className="text-xs text-muted-foreground">{tech.desc}</p>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                    01
+                  </span>
+                  <h3 className="mt-3 text-2xl font-bold leading-tight sm:text-3xl">
+                    High-Speed<br />API Engine
+                  </h3>
+                </div>
+                <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-zinc-400">
+                  Async Python backend handling concurrent requests at blazing speed with zero blocking.
+                </p>
+                {/* Accent block */}
+                <div className="absolute -bottom-4 -right-4 h-20 w-20 rounded-xl bg-red-500 transition-transform duration-300 group-hover:translate-x-[-8px] group-hover:translate-y-[-8px]" />
+              </div>
+            </FadeIn>
+
+            {/* 02 — White card */}
+            <FadeIn delay={0.1}>
+              <div className="group flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-5 transition-all duration-300 hover:border-zinc-300 hover:shadow-lg md:p-6">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
+                  02
+                </span>
+                <div className="mt-auto">
+                  <h3 className="text-lg font-bold leading-snug text-zinc-900">
+                    Vector Memory Store
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">
+                    Semantic search database for deep contextual retrieval.
+                  </p>
                 </div>
               </div>
             </FadeIn>
-          ))}
+
+            {/* 03 — Red accent card */}
+            <FadeIn delay={0.15}>
+              <div className="group flex flex-col justify-between rounded-2xl bg-red-500 p-5 text-white transition-all duration-300 hover:bg-red-600 hover:shadow-lg md:p-6">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-red-200">
+                  03
+                </span>
+                <div className="mt-auto">
+                  <h3 className="text-lg font-bold leading-snug">
+                    Local Language Model
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-red-100">
+                    On-device inference — your prompts never leave the machine.
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* 04 — Wide bottom card */}
+            <FadeIn delay={0.2}>
+              <div className="group col-span-2 flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 p-5 transition-all duration-300 hover:border-zinc-300 hover:bg-white hover:shadow-lg md:p-6">
+                <div>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
+                    04
+                  </span>
+                  <h3 className="mt-2 text-lg font-bold leading-snug text-zinc-900">
+                    Neural Processing Unit
+                  </h3>
+                  <p className="mt-1.5 max-w-xs text-xs leading-relaxed text-zinc-400">
+                    Hardware-accelerated AI inference via dedicated NPU silicon — zero GPU dependency.
+                  </p>
+                </div>
+                <span className="hidden text-6xl font-black text-zinc-200 transition-colors group-hover:text-zinc-300 md:block">
+                  NPU
+                </span>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* ─ Bottom tagline ─ */}
+          <FadeIn delay={0.3}>
+            <div className="mt-6 flex items-center gap-3">
+              <div className="h-px flex-1 bg-zinc-200" />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
+                Fully local · Zero cloud · Your hardware
+              </p>
+              <div className="h-px flex-1 bg-zinc-200" />
+            </div>
+          </FadeIn>
         </div>
       </section>
 
