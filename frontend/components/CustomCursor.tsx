@@ -8,6 +8,12 @@ const CROSSHAIR_THICKNESS = 1;
 
 export default function CustomCursor() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const dotRef = useRef<HTMLDivElement>(null);
+    const leftLineRef = useRef<HTMLDivElement>(null);
+    const rightLineRef = useRef<HTMLDivElement>(null);
+    const topLineRef = useRef<HTMLDivElement>(null);
+    const bottomLineRef = useRef<HTMLDivElement>(null);
+
     const mouseX = useRef(-100);
     const mouseY = useRef(-100);
     const prevX = useRef(-100);
@@ -28,28 +34,22 @@ export default function CustomCursor() {
             CROSSHAIR_LENGTH + speed * 1.2,
             CROSSHAIR_LENGTH * 2.2
         );
+        const scale = dynamicLength / CROSSHAIR_LENGTH;
 
         if (containerRef.current) {
-            const el = containerRef.current;
             // Direct position — zero lag
-            el.style.transform = `translate(${mouseX.current}px, ${mouseY.current}px)`;
+            containerRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
+        }
 
-            // Stretch crosshairs based on speed
-            const lines = el.querySelectorAll<HTMLDivElement>("[data-line]");
-            lines.forEach((line) => {
-                const dir = line.dataset.line;
-                if (dir === "h") {
-                    line.style.width = `${dynamicLength}px`;
-                } else {
-                    line.style.height = `${dynamicLength}px`;
-                }
-            });
+        // Stretch crosshairs using scale transform to avoid layout thrashing
+        if (leftLineRef.current) leftLineRef.current.style.transform = `scaleX(${scale})`;
+        if (rightLineRef.current) rightLineRef.current.style.transform = `scaleX(${scale})`;
+        if (topLineRef.current) topLineRef.current.style.transform = `scaleY(${scale})`;
+        if (bottomLineRef.current) bottomLineRef.current.style.transform = `scaleY(${scale})`;
 
-            // Scale dot on hover
-            const dot = el.querySelector<HTMLDivElement>("[data-dot]");
-            if (dot) {
-                dot.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
-            }
+        // Scale dot on hover
+        if (dotRef.current) {
+            dotRef.current.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
         }
 
         raf.current = requestAnimationFrame(animate);
@@ -99,7 +99,7 @@ export default function CustomCursor() {
         >
             {/* Center dot */}
             <div
-                data-dot
+                ref={dotRef}
                 className="absolute rounded-full bg-zinc-600 shadow-[0_0_6px_rgba(113,113,122,0.4)]"
                 style={{
                     width: DOT_SIZE,
@@ -113,7 +113,7 @@ export default function CustomCursor() {
 
             {/* Left line */}
             <div
-                data-line="h"
+                ref={leftLineRef}
                 className="absolute bg-zinc-300"
                 style={{
                     width: CROSSHAIR_LENGTH,
@@ -121,13 +121,15 @@ export default function CustomCursor() {
                     top: -CROSSHAIR_THICKNESS / 2,
                     right: DOT_SIZE / 2 + 4,
                     opacity: 0.6,
-                    transition: "width 0.08s ease-out",
+                    transformOrigin: "right center",
+                    transition: "transform 0.08s ease-out",
+                    willChange: "transform",
                 }}
             />
 
             {/* Right line */}
             <div
-                data-line="h"
+                ref={rightLineRef}
                 className="absolute bg-zinc-300"
                 style={{
                     width: CROSSHAIR_LENGTH,
@@ -135,13 +137,15 @@ export default function CustomCursor() {
                     top: -CROSSHAIR_THICKNESS / 2,
                     left: DOT_SIZE / 2 + 4,
                     opacity: 0.6,
-                    transition: "width 0.08s ease-out",
+                    transformOrigin: "left center",
+                    transition: "transform 0.08s ease-out",
+                    willChange: "transform",
                 }}
             />
 
             {/* Top line */}
             <div
-                data-line="v"
+                ref={topLineRef}
                 className="absolute bg-zinc-300"
                 style={{
                     width: CROSSHAIR_THICKNESS,
@@ -149,13 +153,15 @@ export default function CustomCursor() {
                     left: -CROSSHAIR_THICKNESS / 2,
                     bottom: DOT_SIZE / 2 + 4,
                     opacity: 0.6,
-                    transition: "height 0.08s ease-out",
+                    transformOrigin: "bottom center",
+                    transition: "transform 0.08s ease-out",
+                    willChange: "transform",
                 }}
             />
 
             {/* Bottom line */}
             <div
-                data-line="v"
+                ref={bottomLineRef}
                 className="absolute bg-zinc-300"
                 style={{
                     width: CROSSHAIR_THICKNESS,
@@ -163,7 +169,9 @@ export default function CustomCursor() {
                     left: -CROSSHAIR_THICKNESS / 2,
                     top: DOT_SIZE / 2 + 4,
                     opacity: 0.6,
-                    transition: "height 0.08s ease-out",
+                    transformOrigin: "top center",
+                    transition: "transform 0.08s ease-out",
+                    willChange: "transform",
                 }}
             />
         </div>
