@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 
 /* ─────────────────────────────────────────────
-   FlipCard — 3D card that flips on scroll
-   Front: bold number + title
-   Back:  description + accent detail
+   FlipCard — scroll-driven 3D card flip
+   The card's rotateY is mapped to scroll progress:
+   scroll into view → 0° to 180° (front → back)
+   scroll back up   → 180° to 0° (back → front)
    ───────────────────────────────────────────── */
 function FlipCard({
     num,
@@ -17,7 +18,6 @@ function FlipCard({
     backBg,
     backText,
     accentClass,
-    delay = 0,
 }: {
     num: string;
     title: string;
@@ -27,48 +27,55 @@ function FlipCard({
     backBg: string;
     backText: string;
     accentClass?: string;
-    delay?: number;
 }) {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    // Track scroll progress relative to this card's position
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        // start flipping when the card's top enters the bottom of viewport,
+        // finish when the card's top reaches the center of viewport
+        offset: ["start end", "start center"],
+    });
+
+    // Map scroll progress [0, 1] → rotateY [0°, 180°]
+    const rotateY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+
+    // Front face fades out as it passes 90°, back face fades in
+    const frontOpacity = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [1, 1, 0, 0]);
+    const backOpacity = useTransform(scrollYProgress, [0, 0.45, 0.55, 1], [0, 0, 1, 1]);
 
     return (
-        <motion.div
+        <div
             ref={ref}
-            className="group h-[200px] md:h-[220px]"
+            className="h-[200px] md:h-[220px]"
             style={{ perspective: 900 }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay, ease: "easeOut" as const }}
         >
             <motion.div
                 className="relative h-full w-full rounded-2xl"
-                style={{ transformStyle: "preserve-3d" }}
-                initial={{ rotateY: 0 }}
-                animate={isInView ? { rotateY: 180 } : { rotateY: 0 }}
-                transition={{
-                    duration: 0.8,
-                    delay: delay + 0.3,
-                    ease: [0.25, 0.46, 0.45, 0.94],
+                style={{
+                    transformStyle: "preserve-3d",
+                    rotateY,
                 }}
             >
                 {/* ── FRONT FACE ── */}
-                <div
+                <motion.div
                     className={`absolute inset-0 flex flex-col justify-between rounded-2xl p-5 md:p-6 ${frontBg} ${frontText}`}
-                    style={{ backfaceVisibility: "hidden" }}
+                    style={{ backfaceVisibility: "hidden", opacity: frontOpacity }}
                 >
                     <span className="text-[80px] font-black leading-none opacity-15 md:text-[100px]">
                         {num}
                     </span>
                     <h3 className="text-lg font-bold leading-snug md:text-xl">{title}</h3>
-                </div>
+                </motion.div>
 
                 {/* ── BACK FACE ── */}
-                <div
+                <motion.div
                     className={`absolute inset-0 flex flex-col justify-between rounded-2xl p-5 md:p-6 ${backBg} ${backText} ${accentClass ?? ""}`}
                     style={{
                         backfaceVisibility: "hidden",
                         transform: "rotateY(180deg)",
+                        opacity: backOpacity,
                     }}
                 >
                     <div className="flex items-center gap-2">
@@ -85,9 +92,9 @@ function FlipCard({
                             {desc}
                         </p>
                     </div>
-                </div>
+                </motion.div>
             </motion.div>
-        </motion.div>
+        </div>
     );
 }
 
@@ -162,7 +169,6 @@ export default function TechStackSection() {
                         frontText="text-zinc-900"
                         backBg="bg-zinc-900"
                         backText="text-white"
-                        delay={0.1}
                     />
 
                     {/* 03 — Flip card: red ↔ zinc-950 */}
@@ -175,7 +181,6 @@ export default function TechStackSection() {
                         backBg="bg-zinc-950"
                         backText="text-white"
                         accentClass="ring-1 ring-red-500/30"
-                        delay={0.18}
                     />
 
                     {/* 04 — Wide flip card spanning 2 cols */}
@@ -188,7 +193,6 @@ export default function TechStackSection() {
                             frontText="text-zinc-900"
                             backBg="bg-white border border-zinc-200"
                             backText="text-zinc-900"
-                            delay={0.25}
                         />
                     </div>
                 </div>
