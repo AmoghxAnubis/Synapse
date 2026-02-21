@@ -155,8 +155,8 @@ export default function LandingPage() {
         />
 
         {/* Gradient orbs */}
-        <div className="pointer-events-none absolute top-20 -left-32 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-20 -right-32 h-[400px] w-[400px] rounded-full bg-purple-100/30 blur-3xl" />
+        <div className="pointer-events-none absolute top-20 -left-32 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl transform-gpu will-change-transform" />
+        <div className="pointer-events-none absolute bottom-20 -right-32 h-[400px] w-[400px] rounded-full bg-purple-100/30 blur-3xl transform-gpu will-change-transform" />
 
         <FadeIn className="relative z-10 flex flex-col items-center text-center">
           <Badge
