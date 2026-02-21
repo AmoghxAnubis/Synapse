@@ -224,4 +224,28 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.2);
   }
+
+  /* Dark glassmorphism for comparison panels */
+  .glass-dark {
+    background: rgba(24, 24, 27, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-dark-dim {
+    background: rgba(24, 24, 27, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Synapse accent glow (Emerald ↔ Purple) */
+  .glow-synapse {
+    box-shadow:
+      0 0 20px rgba(16, 185, 129, 0.15),
+      0 0 40px rgba(168, 85, 247, 0.1),
+      inset 0 0 20px rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
 }
