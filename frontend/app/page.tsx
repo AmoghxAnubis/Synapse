@@ -46,6 +46,10 @@ const SmoothScroll = dynamic(
   () => import("@/components/SmoothScroll"),
   { ssr: false }
 );
+const HeroIllustration = dynamic(
+  () => import("@/components/Landing/HeroIllustration"),
+  { ssr: false }
+);
 
 /* ──────────────────── Section divider ──────────────────── */
 function SectionDivider({ flip = false }: { flip?: boolean }) {
@@ -176,19 +180,14 @@ export default function LandingPage() {
 
       {/* ─── Hero ─── */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-20">
-        {/* Subtle grid background */}
+        {/* Noise / grain texture overlay */}
         <div
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 opacity-[0.035]"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundSize: "200px 200px",
           }}
         />
-
-        {/* Lightweight gradient accents (no blur — perf optimised) */}
-        <div className="pointer-events-none absolute top-20 -left-32 h-[500px] w-[500px] rounded-full bg-blue-50/50" />
-        <div className="pointer-events-none absolute bottom-20 -right-32 h-[400px] w-[400px] rounded-full bg-purple-50/40" />
 
         <FadeIn className="relative z-10 flex flex-col items-center text-center">
           <Badge
@@ -235,6 +234,38 @@ export default function LandingPage() {
                 View Source
               </Button>
             </a>
+          </div>
+        </FadeIn>
+
+        {/* Neural network illustration */}
+        <div className="relative z-0 mt-8 w-full max-w-5xl">
+          <HeroIllustration />
+        </div>
+
+        {/* ─── "Built On" tech logo bar ─── */}
+        <FadeIn delay={0.3} className="relative z-10 w-full pb-8">
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
+              Built on
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {[
+                "AMD Ryzen AI",
+                "Ollama",
+                "ChromaDB",
+                "FastAPI",
+                "Next.js",
+              ].map((name, i, arr) => (
+                <span key={name} className="flex items-center gap-8">
+                  <span className="text-sm font-medium tracking-wide text-zinc-400">
+                    {name}
+                  </span>
+                  {i < arr.length - 1 && (
+                    <span className="hidden h-1 w-1 rounded-full bg-zinc-300 sm:block" />
+                  )}
+                </span>
+              ))}
+            </div>
           </div>
         </FadeIn>
 
