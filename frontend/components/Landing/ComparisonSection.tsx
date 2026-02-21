@@ -54,9 +54,9 @@ export default function ComparisonSection() {
             id="comparison"
             className="relative overflow-hidden border-y border-zinc-200 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 py-28"
         >
-            {/* Decorative gradient orbs */}
-            <div className="pointer-events-none absolute -top-32 left-1/4 h-[400px] w-[400px] rounded-full bg-emerald-100/30 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-32 right-1/4 h-[350px] w-[350px] rounded-full bg-purple-100/25 blur-3xl" />
+            {/* Lightweight decorative accents (no blur — perf optimized) */}
+            <div className="pointer-events-none absolute -top-32 left-1/4 h-[400px] w-[400px] rounded-full bg-emerald-50/40" />
+            <div className="pointer-events-none absolute -bottom-32 right-1/4 h-[350px] w-[350px] rounded-full bg-purple-50/30" />
 
             <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-12">
                 {/* ─── Header ─── */}

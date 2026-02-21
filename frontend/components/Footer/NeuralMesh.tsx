@@ -4,9 +4,9 @@ import { useRef, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const PARTICLE_COUNT = 300;
-const CONNECTION_DISTANCE = 2.0;
-const MOUSE_RADIUS = 3.5;
+const PARTICLE_COUNT = 150;
+const CONNECTION_DISTANCE = 1.6;
+const MOUSE_RADIUS = 3.0;
 const LERP_SPEED = 0.025;
 
 export default function NeuralMesh() {

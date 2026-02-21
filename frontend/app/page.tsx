@@ -34,8 +34,14 @@ const InteractiveFooter = dynamic(
   { ssr: false }
 );
 
-import ComparisonSection from "@/components/Landing/ComparisonSection";
-import TechStackSection from "@/components/Landing/TechStackSection";
+const ComparisonSection = dynamic(
+  () => import("@/components/Landing/ComparisonSection"),
+  { ssr: false }
+);
+const TechStackSection = dynamic(
+  () => import("@/components/Landing/TechStackSection"),
+  { ssr: false }
+);
 
 /* ──────────────────── Fade-in wrapper ──────────────────── */
 function FadeIn({
