@@ -34,6 +34,8 @@ const InteractiveFooter = dynamic(
   { ssr: false }
 );
 
+import ComparisonSection from "@/components/Landing/ComparisonSection";
+
 /* ──────────────────── Fade-in wrapper ──────────────────── */
 function FadeIn({
   children,
@@ -103,6 +105,9 @@ export default function LandingPage() {
         <div className="hidden items-center gap-8 text-sm font-medium text-zinc-600 md:flex">
           <a href="#features" className="transition hover:text-foreground">
             Features
+          </a>
+          <a href="#comparison" className="transition hover:text-foreground">
+            Comparison
           </a>
           <a href="#architecture" className="transition hover:text-foreground">
             Architecture
@@ -290,6 +295,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* ─── Problem vs. Solution Comparison ─── */}
+      <ComparisonSection />
 
       {/* ─── Architecture ─── */}
       <section

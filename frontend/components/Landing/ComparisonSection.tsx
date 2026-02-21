@@ -46,7 +46,7 @@ const panelVariants = {
     visible: (delay: number) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.7, delay, ease: "easeOut" },
+        transition: { duration: 0.7, delay, ease: "easeOut" as const },
     }),
 };
 
