@@ -42,6 +42,24 @@ const TechStackSection = dynamic(
   () => import("@/components/Landing/TechStackSection"),
   { ssr: false }
 );
+const SmoothScroll = dynamic(
+  () => import("@/components/SmoothScroll"),
+  { ssr: false }
+);
+
+/* ──────────────────── Section divider ──────────────────── */
+function SectionDivider({ flip = false }: { flip?: boolean }) {
+  return (
+    <div
+      className={`pointer-events-none relative h-24 w-full ${flip ? "rotate-180" : ""
+        }`}
+      aria-hidden
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-100/80" />
+      <div className="absolute bottom-0 h-px w-full bg-gradient-to-r from-transparent via-zinc-300/50 to-transparent" />
+    </div>
+  );
+}
 
 /* ──────────────────── Fade-in wrapper ──────────────────── */
 function FadeIn({
@@ -91,6 +109,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-foreground">
+      <SmoothScroll />
+
       {/* ─── Navbar ─── */}
       <motion.nav
         style={{
@@ -166,9 +186,9 @@ export default function LandingPage() {
           }}
         />
 
-        {/* Gradient orbs */}
-        <div className="pointer-events-none absolute top-20 -left-32 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-3xl transform-gpu will-change-transform" />
-        <div className="pointer-events-none absolute bottom-20 -right-32 h-[400px] w-[400px] rounded-full bg-purple-100/30 blur-3xl transform-gpu will-change-transform" />
+        {/* Lightweight gradient accents (no blur — perf optimised) */}
+        <div className="pointer-events-none absolute top-20 -left-32 h-[500px] w-[500px] rounded-full bg-blue-50/50" />
+        <div className="pointer-events-none absolute bottom-20 -right-32 h-[400px] w-[400px] rounded-full bg-purple-50/40" />
 
         <FadeIn className="relative z-10 flex flex-col items-center text-center">
           <Badge
@@ -227,6 +247,9 @@ export default function LandingPage() {
           <ChevronDown className="h-5 w-5 text-muted-foreground/40" />
         </motion.div>
       </section>
+
+      {/* ─── Transition: Hero → Features ─── */}
+      <SectionDivider />
 
       {/* ─── The Three Pillars ─── */}
       <section
@@ -303,13 +326,19 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Transition: Features → Comparison ─── */}
+      <SectionDivider />
+
       {/* ─── Problem vs. Solution Comparison ─── */}
       <ComparisonSection />
+
+      {/* ─── Transition: Comparison → Architecture ─── */}
+      <SectionDivider />
 
       {/* ─── Architecture ─── */}
       <section
         id="architecture"
-        className="border-y border-zinc-200 bg-zinc-50 py-32"
+        className="bg-zinc-50 py-32"
       >
         <div className="mx-auto max-w-5xl px-6 md:px-12">
           <FadeIn className="flex flex-col items-center text-center">
@@ -396,13 +425,19 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Transition: Architecture → Stack ─── */}
+      <SectionDivider />
+
       {/* ─── Tech Stack — Editorial Layout ─── */}
       <TechStackSection />
+
+      {/* ─── Transition: Stack → Integrations ─── */}
+      <SectionDivider />
 
       {/* ─── Integrations ─── */}
       <section
         id="integrations"
-        className="border-y border-zinc-200 bg-zinc-50/50 py-32"
+        className="bg-zinc-50/50 py-32"
       >
         <div className="mx-auto max-w-5xl px-6 md:px-12">
           {/* Header */}
@@ -500,6 +535,9 @@ export default function LandingPage() {
           </FadeIn>
         </div>
       </section>
+
+      {/* ─── Transition: Integrations → Footer ─── */}
+      <SectionDivider />
 
       {/* ─── Interactive Footer ─── */}
       <InteractiveFooter />
