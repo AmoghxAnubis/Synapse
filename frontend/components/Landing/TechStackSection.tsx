@@ -1,208 +1,137 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 
-/* ─────────────────────────────────────────────────────
-   Card data — all four stack layers
-   ───────────────────────────────────────────────────── */
 const stackCards = [
     {
         num: "01",
         title: "High-Speed API Engine",
+        subtitle: "Backend",
         desc: "Async Python backend handling concurrent requests at blazing speed — zero blocking, maximum throughput.",
-        accent: "red",
     },
     {
         num: "02",
         title: "Vector Memory Store",
+        subtitle: "Database",
         desc: "Semantic search database for deep contextual retrieval across all your local files and documents.",
-        accent: "zinc",
     },
     {
         num: "03",
         title: "Local Language Model",
+        subtitle: "Inference",
         desc: "On-device inference — your prompts never leave the machine. Complete privacy by default.",
-        accent: "red",
     },
     {
         num: "04",
         title: "Neural Processing Unit",
+        subtitle: "Hardware",
         desc: "Hardware-accelerated AI inference via dedicated NPU silicon — zero GPU dependency, instant response.",
-        accent: "zinc",
     },
 ] as const;
 
-/* ─────────────────────────────────────────────────────
-   Accent color map for alternating card styles
-   ───────────────────────────────────────────────────── */
-const accentStyles = {
-    red: {
-        frontBg: "bg-zinc-950",
-        frontText: "text-white",
-        frontNumColor: "text-red-500/20",
-        backBg: "bg-red-500",
-        backText: "text-white",
-        backDescOpacity: "text-red-100",
-        backNumColor: "text-red-200/40",
-        ring: "",
-    },
-    zinc: {
-        frontBg: "bg-white border border-zinc-200",
-        frontText: "text-zinc-900",
-        frontNumColor: "text-zinc-200",
-        backBg: "bg-zinc-900",
-        backText: "text-white",
-        backDescOpacity: "text-zinc-400",
-        backNumColor: "text-zinc-700",
-        ring: "",
-    },
-} as const;
-
-/* ─────────────────────────────────────────────────────
-   FlipCard — scroll-position-driven 3D flip
-   Scroll down → flips front to back (0° → 180°)
-   Scroll back → reverses the flip   (180° → 0°)
-   ───────────────────────────────────────────────────── */
-function FlipCard({
-    num,
-    title,
-    desc,
-    accent,
+/* Component for individual cards to handle their own local scroll-based parallax */
+function StackCard({
+    card,
+    index,
+    progress
 }: {
-    num: string;
-    title: string;
-    desc: string;
-    accent: "red" | "zinc";
+    card: typeof stackCards[number];
+    index: number;
+    progress: MotionValue<number>
 }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const s = accentStyles[accent];
+    // Each card's entrance stagger based on scroll progress
+    const cardStart = index * 0.15;
+    const cardEnd = cardStart + 0.5;
 
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "start center"],
-    });
-
-    const rotateY = useTransform(scrollYProgress, [0, 1], [0, 180]);
-    const frontOpacity = useTransform(
-        scrollYProgress,
-        [0, 0.42, 0.58, 1],
-        [1, 1, 0, 0]
-    );
-    const backOpacity = useTransform(
-        scrollYProgress,
-        [0, 0.42, 0.58, 1],
-        [0, 0, 1, 1]
-    );
+    // Scale down slightly as it moves left
+    const scale = useTransform(progress, [cardStart, cardEnd], [0.8, 1]);
+    const opacity = useTransform(progress, [cardStart - 0.1, cardStart + 0.1], [0, 1]);
 
     return (
-        <div
-            ref={ref}
-            className="h-[240px] sm:h-[260px]"
-            style={{ perspective: 1000 }}
+        <motion.div
+            style={{
+                scale,
+                opacity
+            }}
+            className="group relative flex h-[420px] w-[300px] shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/60 bg-white p-8 shadow-xl shadow-zinc-200/40 transition-shadow duration-500 hover:shadow-2xl hover:shadow-zinc-200/60 sm:h-[480px] sm:w-[360px]"
         >
-            <motion.div
-                className="relative h-full w-full"
-                style={{ transformStyle: "preserve-3d", rotateY }}
-            >
-                {/* ── FRONT ── */}
-                <motion.div
-                    className={`absolute inset-0 flex flex-col justify-between rounded-2xl p-6 ${s.frontBg} ${s.frontText}`}
-                    style={{ backfaceVisibility: "hidden", opacity: frontOpacity }}
-                >
-                    <span
-                        className={`text-[90px] font-black leading-none sm:text-[110px] ${s.frontNumColor}`}
-                    >
-                        {num}
-                    </span>
-                    <h3 className="text-xl font-bold leading-snug sm:text-2xl">
-                        {title}
-                    </h3>
-                </motion.div>
+            {/* Background Pattern */}
+            <div className="pointer-events-none absolute inset-0 -z-10 opacity-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] transition-opacity duration-500 group-hover:opacity-100" />
 
-                {/* ── BACK ── */}
-                <motion.div
-                    className={`absolute inset-0 flex flex-col justify-between rounded-2xl p-6 ${s.backBg} ${s.backText} ${s.ring}`}
-                    style={{
-                        backfaceVisibility: "hidden",
-                        transform: "rotateY(180deg)",
-                        opacity: backOpacity,
-                    }}
-                >
-                    <div className="flex items-center gap-3">
-                        <span
-                            className={`text-[48px] font-black leading-none sm:text-[56px] ${s.backNumColor}`}
-                        >
-                            {num}
-                        </span>
-                        <div className="h-px flex-1 bg-current opacity-10" />
-                    </div>
-                    <div className="mt-auto">
-                        <h3 className="text-lg font-bold leading-snug">{title}</h3>
-                        <p className={`mt-2 text-sm leading-relaxed ${s.backDescOpacity}`}>
-                            {desc}
-                        </p>
-                    </div>
-                </motion.div>
+            <div className="flex items-center justify-between">
+                <span className="text-6xl font-black text-zinc-100 transition-colors duration-500 group-hover:text-zinc-900">
+                    {card.num}
+                </span>
+                <span className="rounded-full border border-zinc-200/80 bg-zinc-50/50 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-600 transition-all duration-300 group-hover:border-zinc-300 group-hover:bg-white">
+                    {card.subtitle}
+                </span>
+            </div>
+
+            <motion.div>
+                <div className="mb-6 h-px w-full bg-zinc-100 transition-all duration-500 group-hover:bg-zinc-300" />
+                <h3 className="text-2xl font-bold leading-snug text-zinc-900">
+                    {card.title}
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-zinc-500">
+                    {card.desc}
+                </p>
             </motion.div>
-        </div>
+        </motion.div>
     );
 }
 
-/* ═════════════════════════════════════════════════════
-   TECH STACK SECTION
-   ═════════════════════════════════════════════════════ */
 export default function TechStackSection() {
-    const headerRef = useRef<HTMLDivElement>(null);
-    const headerInView = useInView(headerRef, { once: true, margin: "-60px" });
+    const targetRef = useRef<HTMLDivElement>(null);
+
+    // Track scroll directly without offset so calculation area is smaller
+    const { scrollYProgress } = useScroll({
+        target: targetRef,
+    });
+
+    // Move the entire track left as we scroll down
+    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
     return (
-        <section id="stack" className="relative overflow-hidden bg-white py-32">
-            <div className="mx-auto max-w-6xl px-6 md:px-12">
-                {/* ─ Header ─ */}
-                <motion.div
-                    ref={headerRef}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={headerInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6, ease: "easeOut" as const }}
-                    className="flex items-end justify-between border-b border-zinc-900 pb-6"
-                >
-                    <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
-                            Infrastructure
-                        </p>
-                        <h2 className="mt-1 text-5xl font-black tracking-tight text-zinc-950 sm:text-7xl">
-                            stack.
-                        </h2>
-                    </div>
-                    <p className="hidden max-w-[220px] text-right text-xs leading-relaxed text-zinc-400 md:block">
-                        Every layer engineered
-                        <br />
-                        for local-first intelligence
-                    </p>
-                </motion.div>
+        <section ref={targetRef} id="stack" className="relative h-[250vh] bg-zinc-50">
+            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
 
-                {/* ─ Uniform 2×2 Grid ─ */}
-                <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {stackCards.map((card) => (
-                        <FlipCard key={card.num} {...card} />
-                    ))}
+                {/* Header Area */}
+                <div className="absolute left-6 top-32 z-20 md:left-12 lg:top-40">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
+                        Infrastructure
+                    </p>
+                    <h2 className="mt-1 text-5xl font-black tracking-tight text-zinc-950 sm:text-7xl">
+                        stack.
+                    </h2>
                 </div>
 
-                {/* ─ Bottom divider ─ */}
+                {/* Track of cards - will-change added for extreme performance optimization */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="mt-6 flex items-center gap-3"
+                    style={{ x }}
+                    className="flex items-center gap-12 px-6 pl-[40vw] md:px-12 md:pl-[50vw] will-change-transform"
                 >
-                    <div className="h-px flex-1 bg-zinc-200" />
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
-                        Fully local · Zero cloud · Your hardware
-                    </p>
-                    <div className="h-px flex-1 bg-zinc-200" />
+                    {stackCards.map((card, index) => (
+                        <StackCard
+                            key={card.num}
+                            card={card}
+                            index={index}
+                            progress={scrollYProgress}
+                        />
+                    ))}
                 </motion.div>
+
+                {/* Bottom line */}
+                <div className="absolute bottom-12 left-6 right-6 md:left-12 md:right-12">
+                    <div className="flex items-center gap-3">
+                        <div className="h-px flex-1 bg-zinc-200" />
+                        <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
+                            Fully local · Zero cloud · Your hardware
+                        </p>
+                        <div className="h-px flex-1 bg-zinc-200" />
+                    </div>
+                </div>
+
             </div>
         </section>
     );

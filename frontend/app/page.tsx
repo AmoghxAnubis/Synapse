@@ -608,7 +608,7 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ─── Interactive Footer ─── */}
-      <LazySection height="400px">
+      <LazySection height="400px" rootMargin="800px">
         <InteractiveFooter />
       </LazySection>
 
