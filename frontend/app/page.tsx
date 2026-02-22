@@ -43,6 +43,10 @@ const TechStackSection = dynamic(
   () => import("@/components/Landing/TechStackSection"),
   { ssr: false }
 );
+const IntegrationsSection = dynamic(
+  () => import("@/components/Landing/IntegrationsSection"),
+  { ssr: false }
+);
 const SmoothScroll = dynamic(
   () => import("@/components/SmoothScroll"),
   { ssr: false }
@@ -502,106 +506,7 @@ export default function LandingPage() {
 
       {/* ─── Integrations ─── */}
       <LazySection>
-        <section
-          id="integrations"
-          className="bg-zinc-50/50 py-32"
-        >
-          <div className="mx-auto max-w-5xl px-6 md:px-12">
-            {/* Header */}
-            <FadeIn className="flex flex-col items-center text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Integrations
-              </p>
-              <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight sm:text-4xl">
-                Pull your world into Synapse
-              </h2>
-              <p className="mt-4 max-w-lg text-zinc-600">
-                Connect your platforms and let Synapse ingest PRs, messages,
-                docs, and tickets into local ChromaDB — zero cloud leakage.
-              </p>
-            </FadeIn>
-
-            {/* Cards — 2×2 */}
-            <div className="mt-14 grid gap-5 sm:grid-cols-2">
-              {[
-                {
-                  icon: GitPullRequest,
-                  name: "GitHub",
-                  desc: "Sync repositories, pull requests, issues, and code reviews into local memory.",
-                  tag: "Code & Reviews",
-                },
-                {
-                  icon: MessageSquare,
-                  name: "Slack",
-                  desc: "Pull saved messages, channel threads, and team conversations for contextual answers.",
-                  tag: "Messages & Threads",
-                },
-                {
-                  icon: BookOpen,
-                  name: "Notion",
-                  desc: "Ingest workspace docs, databases, meeting notes, and wikis for deep RAG queries.",
-                  tag: "Docs & Databases",
-                },
-                {
-                  icon: LayoutGrid,
-                  name: "Jira",
-                  desc: "Sync active sprint tickets, epics, stories, and bug reports into your knowledge base.",
-                  tag: "Sprints & Tickets",
-                },
-              ].map((int, i) => (
-                <FadeIn key={int.name} delay={i * 0.08}>
-                  <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
-                    <div className="flex items-start gap-4">
-                      {/* Icon */}
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
-                        <int.icon className="h-5 w-5" />
-                      </div>
-
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold">{int.name}</h3>
-                          <Badge
-                            variant="secondary"
-                            className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
-                          >
-                            {int.tag}
-                          </Badge>
-                        </div>
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                          {int.desc}
-                        </p>
-                        <div className="mt-3 flex items-center gap-3">
-                          <span className="flex items-center gap-1.5 text-xs text-zinc-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
-                            Ready to connect
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                </FadeIn>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <FadeIn delay={0.35} className="mt-12 flex flex-col items-center text-center">
-              <Link href="/settings/integrations">
-                <Button
-                  size="lg"
-                  className="rounded-full bg-foreground px-8 text-base font-medium text-white hover:bg-foreground/90"
-                >
-                  <Plug className="mr-2 h-4 w-4" />
-                  Connect Your Tools
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <p className="mt-4 flex items-center gap-1.5 text-xs text-zinc-400">
-                <Shield className="h-3.5 w-3.5" />
-                API keys stay on your machine. Data is pulled, never pushed.
-              </p>
-            </FadeIn>
-          </div>
-        </section>
+        <IntegrationsSection />
       </LazySection>
 
       {/* ─── Transition: Integrations → Footer ─── */}
