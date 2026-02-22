@@ -118,9 +118,8 @@ export default function ComparisonSection() {
                             }}
                             className="group relative overflow-hidden grid grid-cols-1 gap-3 rounded-[1.5rem] border border-zinc-200/60 bg-white p-4 transition-all duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-2xl hover:shadow-zinc-200/50 md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5"
                         >
-                            {/* Glow & Pattern Background */}
-                            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-400/20 opacity-0 blur-[40px] transition-all duration-700 group-hover:scale-150 group-hover:opacity-100" />
-                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            {/* Background Pattern */}
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-multiply" />
 
                             {/* Label column */}
                             <div className="relative z-10 flex items-center gap-4">

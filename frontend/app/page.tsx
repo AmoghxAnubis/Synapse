@@ -331,11 +331,10 @@ export default function LandingPage() {
                     0{i + 1}
                   </div>
 
-                  {/* Glow & Pattern Background */}
-                  <div className={`pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br ${pillar.glowColor} opacity-0 blur-[40px] transition-all duration-700 group-hover:scale-150 group-hover:opacity-100`} />
-                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
                   <div className="relative z-10 flex h-full flex-col">
+                    {/* Background Pattern */}
+                    <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-multiply" />
+
                     {/* Icon */}
                     <div className={`mb-6 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 shadow-sm transition-transform duration-500 group-hover:scale-110 ${pillar.iconColor}`}>
                       <pillar.icon className="h-5 w-5" />
@@ -405,50 +404,65 @@ export default function LandingPage() {
             </FadeIn>
 
             {/* Pipeline cards — 2 column */}
-            <div className="mt-14 grid gap-5 sm:grid-cols-2">
+            <div className="mt-16 grid gap-6 sm:grid-cols-2">
               {[
                 {
                   icon: Upload,
                   name: "Document Ingestion",
                   desc: "Upload PDFs, text files, and code. Documents are chunked, cleaned, and queued for embedding.",
                   tag: "Input Layer",
+                  glowColor: "from-blue-500/20 to-sky-400/20",
+                  iconColor: "text-blue-500",
                 },
                 {
                   icon: Cpu,
                   name: "NPU Embedding",
                   desc: "Ryzen AI NPU accelerates vector embedding generation — faster and more power-efficient than CPU fallback.",
                   tag: "AMD Ryzen AI",
+                  glowColor: "from-emerald-500/20 to-teal-400/20",
+                  iconColor: "text-emerald-500",
                 },
                 {
                   icon: Brain,
                   name: "Vector Storage",
                   desc: "Embeddings are indexed in a local ChromaDB instance. Semantic search runs entirely on your machine.",
                   tag: "ChromaDB",
+                  glowColor: "from-purple-500/20 to-violet-400/20",
+                  iconColor: "text-purple-500",
                 },
                 {
                   icon: MessageSquare,
                   name: "LLM Inference",
                   desc: "Queries are answered by a local Llama 3 model via Ollama, grounded with retrieved context chunks.",
                   tag: "Ollama",
+                  glowColor: "from-indigo-500/20 to-blue-500/20",
+                  iconColor: "text-indigo-500",
                 },
               ].map((step, i) => (
-                <FadeIn key={step.name} delay={i * 0.08}>
-                  <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
-                        <step.icon className="h-5 w-5" />
+                <FadeIn key={step.name} delay={i * 0.1}>
+                  <Card className="group relative overflow-hidden rounded-[2rem] border border-zinc-200/60 bg-white/60 p-8 shadow-sm backdrop-blur-xl transition-all duration-500 hover:-translate-y-1.5 hover:border-zinc-300 hover:bg-white/90 hover:shadow-xl hover:shadow-zinc-200/50">
+
+                    <div className="relative z-10 flex flex-col items-start gap-5 md:flex-row md:items-start md:gap-6">
+                      {/* Background Pattern */}
+                      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-multiply" />
+
+                      {/* Icon */}
+                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 shadow-sm transition-transform duration-500 group-hover:scale-110 ${step.iconColor}`}>
+                        <step.icon className="h-6 w-6" />
                       </div>
+
+                      {/* Content */}
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold">{step.name}</h3>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="text-lg font-bold tracking-tight text-zinc-900">{step.name}</h3>
                           <Badge
                             variant="secondary"
-                            className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
+                            className="rounded-full border border-zinc-200/80 bg-zinc-50/80 px-3 py-1 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm transition-colors duration-300 group-hover:bg-white"
                           >
                             {step.tag}
                           </Badge>
                         </div>
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        <p className="mt-3 text-sm leading-relaxed text-zinc-500 transition-colors duration-300 group-hover:text-zinc-600">
                           {step.desc}
                         </p>
                       </div>
