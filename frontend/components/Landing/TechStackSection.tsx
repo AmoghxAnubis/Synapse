@@ -102,7 +102,7 @@ function FlipCard({
             style={{ perspective: 1000 }}
         >
             <motion.div
-                className="relative h-full w-full"
+                className="relative h-full w-full will-change-transform"
                 style={{ transformStyle: "preserve-3d", rotateY }}
             >
                 {/* ── FRONT ── */}

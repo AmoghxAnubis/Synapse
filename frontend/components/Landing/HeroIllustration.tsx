@@ -5,6 +5,7 @@ import { useRef, useEffect } from "react";
 export default function HeroIllustration() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(0);
+    const isVisibleRef = useRef<boolean>(false);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -53,6 +54,8 @@ export default function HeroIllustration() {
         const MAX_DIST = 170; // connection threshold (px)
 
         const draw = () => {
+            if (!isVisibleRef.current) return;
+
             const cw = CW();
             const ch = CH();
             const d = dpr();
@@ -126,9 +129,25 @@ export default function HeroIllustration() {
             rafRef.current = requestAnimationFrame(draw);
         };
 
-        rafRef.current = requestAnimationFrame(draw);
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                isVisibleRef.current = true;
+                if (!rafRef.current) {
+                    rafRef.current = requestAnimationFrame(draw);
+                }
+            } else {
+                isVisibleRef.current = false;
+                if (rafRef.current) {
+                    cancelAnimationFrame(rafRef.current);
+                    rafRef.current = 0;
+                }
+            }
+        }, { threshold: 0 });
+
+        observer.observe(canvas);
 
         return () => {
+            observer.disconnect();
             cancelAnimationFrame(rafRef.current);
             window.removeEventListener("resize", setSize);
             window.removeEventListener("resize", initPts);

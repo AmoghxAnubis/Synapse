@@ -1,179 +1,96 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-
-const DOT_SIZE = 10;
-const CROSSHAIR_LENGTH = 28;
-const CROSSHAIR_THICKNESS = 1;
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CustomCursor() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const dotRef = useRef<HTMLDivElement>(null);
-    const leftLineRef = useRef<HTMLDivElement>(null);
-    const rightLineRef = useRef<HTMLDivElement>(null);
-    const topLineRef = useRef<HTMLDivElement>(null);
-    const bottomLineRef = useRef<HTMLDivElement>(null);
-
-    const mouseX = useRef(-100);
-    const mouseY = useRef(-100);
-    const prevX = useRef(-100);
-    const prevY = useRef(-100);
-    const isHovering = useRef(false);
+    const cursorRef = useRef<HTMLDivElement>(null);
+    const [isHovering, setIsHovering] = useState(false);
+    const mouseX = useRef(0);
+    const mouseY = useRef(0);
+    const prevX = useRef(0);
+    const prevY = useRef(0);
     const raf = useRef<number>(0);
 
+    // To handle recursive requestAnimationFrame without circular dependency in useCallback
     const animate = useCallback(() => {
         // Speed from frame delta (for crosshair stretch only)
-        const dx = mouseX.current - prevX.current;
-        const dy = mouseY.current - prevY.current;
-        const speed = Math.sqrt(dx * dx + dy * dy);
-
+        // const dx = mouseX.current - prevX.current;
+        // const dy = mouseY.current - prevY.current;
         prevX.current = mouseX.current;
         prevY.current = mouseY.current;
 
-        const dynamicLength = Math.min(
-            CROSSHAIR_LENGTH + speed * 1.2,
-            CROSSHAIR_LENGTH * 2.2
-        );
-        const scale = dynamicLength / CROSSHAIR_LENGTH;
-
-        if (containerRef.current) {
-            // Direct position — zero lag
-            containerRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
+        if (cursorRef.current) {
+            cursorRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
         }
 
-        // Stretch crosshairs using scale transform to avoid layout thrashing
-        if (leftLineRef.current) leftLineRef.current.style.transform = `scaleX(${scale})`;
-        if (rightLineRef.current) rightLineRef.current.style.transform = `scaleX(${scale})`;
-        if (topLineRef.current) topLineRef.current.style.transform = `scaleY(${scale})`;
-        if (bottomLineRef.current) bottomLineRef.current.style.transform = `scaleY(${scale})`;
-
-        // Scale dot on hover
-        if (dotRef.current) {
-            dotRef.current.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
-        }
-
-        raf.current = requestAnimationFrame(animate);
+        // We use a separate function reference or just rely on the fact that animate is stable
+        // But ESLint complains about accessing 'animate' before declaration.
+        // We can solve this by using a ref for the animate function itself if needed,
+        // OR simply defining the function inside useEffect to avoid the circularity with useCallback entirely.
     }, []);
 
     useEffect(() => {
+        // Define loop inside useEffect to avoid "access before declaration" issues
+        const loop = () => {
+            animate();
+            raf.current = requestAnimationFrame(loop);
+        };
+
         const onMove = (e: MouseEvent) => {
             mouseX.current = e.clientX;
             mouseY.current = e.clientY;
         };
 
-        const onEnter = (e: MouseEvent) => {
+        const onMouseEnter = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
             if (
-                target.tagName === "A" ||
                 target.tagName === "BUTTON" ||
-                target.closest("a") ||
+                target.tagName === "A" ||
                 target.closest("button") ||
-                target.closest("[role='button']")
+                target.closest("a")
             ) {
-                isHovering.current = true;
+                setIsHovering(true);
+            } else {
+                setIsHovering(false);
             }
         };
 
-        const onLeave = () => {
-            isHovering.current = false;
-        };
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseover", onMouseEnter);
 
-        document.addEventListener("mousemove", onMove);
-        document.addEventListener("mouseover", onEnter);
-        document.addEventListener("mouseout", onLeave);
-        raf.current = requestAnimationFrame(animate);
+        // Start animation loop
+        raf.current = requestAnimationFrame(loop);
 
         return () => {
-            document.removeEventListener("mousemove", onMove);
-            document.removeEventListener("mouseover", onEnter);
-            document.removeEventListener("mouseout", onLeave);
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseover", onMouseEnter);
             cancelAnimationFrame(raf.current);
         };
     }, [animate]);
 
     return (
         <div
-            ref={containerRef}
-            className="pointer-events-none fixed left-0 top-0 z-[9999]"
-            style={{ willChange: "transform" }}
+            ref={cursorRef}
+            className="pointer-events-none fixed left-0 top-0 z-[9999] flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center mix-blend-difference"
         >
-            {/* Center dot */}
-            <div
-                ref={dotRef}
-                className="absolute rounded-full bg-zinc-600 shadow-[0_0_6px_rgba(113,113,122,0.4)]"
-                style={{
-                    width: DOT_SIZE,
-                    height: DOT_SIZE,
-                    top: -DOT_SIZE / 2,
-                    left: -DOT_SIZE / 2,
-                    transition: "transform 0.15s ease",
-                    willChange: "transform",
-                }}
-            />
-
-            {/* Left line */}
-            <div
-                ref={leftLineRef}
-                className="absolute bg-zinc-300"
-                style={{
-                    width: CROSSHAIR_LENGTH,
-                    height: CROSSHAIR_THICKNESS,
-                    top: -CROSSHAIR_THICKNESS / 2,
-                    right: DOT_SIZE / 2 + 4,
-                    opacity: 0.6,
-                    transformOrigin: "right center",
-                    transition: "transform 0.08s ease-out",
-                    willChange: "transform",
-                }}
-            />
-
-            {/* Right line */}
-            <div
-                ref={rightLineRef}
-                className="absolute bg-zinc-300"
-                style={{
-                    width: CROSSHAIR_LENGTH,
-                    height: CROSSHAIR_THICKNESS,
-                    top: -CROSSHAIR_THICKNESS / 2,
-                    left: DOT_SIZE / 2 + 4,
-                    opacity: 0.6,
-                    transformOrigin: "left center",
-                    transition: "transform 0.08s ease-out",
-                    willChange: "transform",
-                }}
-            />
-
-            {/* Top line */}
-            <div
-                ref={topLineRef}
-                className="absolute bg-zinc-300"
-                style={{
-                    width: CROSSHAIR_THICKNESS,
-                    height: CROSSHAIR_LENGTH,
-                    left: -CROSSHAIR_THICKNESS / 2,
-                    bottom: DOT_SIZE / 2 + 4,
-                    opacity: 0.6,
-                    transformOrigin: "bottom center",
-                    transition: "transform 0.08s ease-out",
-                    willChange: "transform",
-                }}
-            />
-
-            {/* Bottom line */}
-            <div
-                ref={bottomLineRef}
-                className="absolute bg-zinc-300"
-                style={{
-                    width: CROSSHAIR_THICKNESS,
-                    height: CROSSHAIR_LENGTH,
-                    left: -CROSSHAIR_THICKNESS / 2,
-                    top: DOT_SIZE / 2 + 4,
-                    opacity: 0.6,
-                    transformOrigin: "top center",
-                    transition: "transform 0.08s ease-out",
-                    willChange: "transform",
-                }}
-            />
+            <AnimatePresence>
+                {isHovering ? (
+                    <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 2.5, opacity: 1 }}
+                        exit={{ scale: 0.5, opacity: 0 }}
+                        className="absolute h-full w-full rounded-full bg-white opacity-20 blur-sm"
+                    />
+                ) : (
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="h-2 w-2 rounded-full bg-white"
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

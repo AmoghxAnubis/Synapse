@@ -9,6 +9,7 @@ import Lenis from "lenis";
  */
 export default function SmoothScroll() {
     const lenisRef = useRef<Lenis | null>(null);
+    const rafHandleRef = useRef<number | null>(null);
 
     useEffect(() => {
         const lenis = new Lenis({
@@ -22,11 +23,14 @@ export default function SmoothScroll() {
 
         function raf(time: number) {
             lenis.raf(time);
-            requestAnimationFrame(raf);
+            rafHandleRef.current = requestAnimationFrame(raf);
         }
-        requestAnimationFrame(raf);
+        rafHandleRef.current = requestAnimationFrame(raf);
 
         return () => {
+            if (rafHandleRef.current) {
+                cancelAnimationFrame(rafHandleRef.current);
+            }
             lenis.destroy();
             lenisRef.current = null;
         };

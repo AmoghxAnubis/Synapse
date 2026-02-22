@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
     ArrowLeft,
-    Brain,
     GitPullRequest,
     MessageSquare,
     BookOpen,
@@ -225,7 +224,7 @@ export default function IntegrationsPage() {
                         Connected Brains
                     </h1>
                     <p className="mt-2 max-w-lg text-sm leading-relaxed text-zinc-500">
-                        Sync your external workspaces into Synapse's local memory. All data
+                        Sync your external workspaces into Synapse&apos;s local memory. All data
                         is pulled down and processed by your local NPU — nothing leaves your
                         machine.
                     </p>

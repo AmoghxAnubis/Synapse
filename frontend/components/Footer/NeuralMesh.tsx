@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -14,32 +14,56 @@ export default function NeuralMesh() {
     const linesRef = useRef<THREE.LineSegments>(null);
     const { viewport } = useThree();
 
-    // Generate initial positions & velocities
-    const { positions, basePositions, velocities } = useMemo(() => {
-        const positions = new Float32Array(PARTICLE_COUNT * 3);
-        const basePositions = new Float32Array(PARTICLE_COUNT * 3);
-        const velocities = new Float32Array(PARTICLE_COUNT * 3);
+    // Use a ref to store static data that doesn't trigger re-renders
+    const physicsRef = useRef<{
+        basePositions: Float32Array;
+        velocities: Float32Array;
+    } | null>(null);
 
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const x = (Math.random() - 0.5) * 14;
-            const y = (Math.random() - 0.5) * 8;
-            const z = (Math.random() - 0.5) * 4;
+    // Initialize positions only once
+    const positions = useMemo(() => {
+        const pos = new Float32Array(PARTICLE_COUNT * 3);
+        const base = new Float32Array(PARTICLE_COUNT * 3);
+        const vel = new Float32Array(PARTICLE_COUNT * 3);
 
-            positions[i * 3] = x;
-            positions[i * 3 + 1] = y;
-            positions[i * 3 + 2] = z;
-
-            basePositions[i * 3] = x;
-            basePositions[i * 3 + 1] = y;
-            basePositions[i * 3 + 2] = z;
-
-            velocities[i * 3] = (Math.random() - 0.5) * 0.005;
-            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.005;
-            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+        // Deterministic PRNG for stable rendering
+        let seed = 123456789;
+        function random() {
+            seed = (seed * 1664525 + 1013904223) % 4294967296;
+            return seed / 4294967296;
         }
 
-        return { positions, basePositions, velocities };
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const x = (random() - 0.5) * 14;
+            const y = (random() - 0.5) * 8;
+            const z = (random() - 0.5) * 4;
+
+            pos[i * 3] = x;
+            pos[i * 3 + 1] = y;
+            pos[i * 3 + 2] = z;
+
+            base[i * 3] = x;
+            base[i * 3 + 1] = y;
+            base[i * 3 + 2] = z;
+
+            vel[i * 3] = (random() - 0.5) * 0.005;
+            vel[i * 3 + 1] = (random() - 0.5) * 0.005;
+            vel[i * 3 + 2] = (random() - 0.5) * 0.002;
+        }
+
+        // We defer assigning to physicsRef until useEffect to avoid "updating ref during render" warning.
+        // However, we need to pass these values out.
+        // We'll return an object containing everything, then set the ref in useEffect.
+        return { pos, base, vel };
     }, []);
+
+    useEffect(() => {
+        // Set the ref here, which is safe
+        physicsRef.current = {
+            basePositions: positions.base,
+            velocities: positions.vel
+        };
+    }, [positions]);
 
     // Line geometry for connections
     const lineGeometry = useMemo(() => {
@@ -54,8 +78,9 @@ export default function NeuralMesh() {
     }, []);
 
     useFrame((state) => {
-        if (!pointsRef.current) return;
+        if (!pointsRef.current || !physicsRef.current) return;
 
+        const { basePositions, velocities } = physicsRef.current;
         const geo = pointsRef.current.geometry;
         const posAttr = geo.attributes.position as THREE.BufferAttribute;
         const arr = posAttr.array as Float32Array;
@@ -99,8 +124,11 @@ export default function NeuralMesh() {
         posAttr.needsUpdate = true;
 
         // Update connections
-        const linePos = lineGeometry.attributes.position.array as Float32Array;
-        const lineCol = lineGeometry.attributes.color.array as Float32Array;
+        const linesGeo = linesRef.current?.geometry;
+        if (!linesGeo) return;
+
+        const linePos = linesGeo.attributes.position.array as Float32Array;
+        const lineCol = linesGeo.attributes.color.array as Float32Array;
         let lineIdx = 0;
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -139,9 +167,9 @@ export default function NeuralMesh() {
             if (lineIdx >= PARTICLE_COUNT * 6) break;
         }
 
-        lineGeometry.setDrawRange(0, lineIdx * 2);
-        (lineGeometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-        (lineGeometry.attributes.color as THREE.BufferAttribute).needsUpdate = true;
+        linesGeo.setDrawRange(0, lineIdx * 2);
+        (linesGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+        (linesGeo.attributes.color as THREE.BufferAttribute).needsUpdate = true;
     });
 
     return (
@@ -151,7 +179,7 @@ export default function NeuralMesh() {
                 <bufferGeometry>
                     <bufferAttribute
                         attach="attributes-position"
-                        args={[positions, 3]}
+                        args={[positions.pos, 3]}
                     />
                 </bufferGeometry>
                 <pointsMaterial
