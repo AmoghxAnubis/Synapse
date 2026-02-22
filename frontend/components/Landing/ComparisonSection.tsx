@@ -104,7 +104,7 @@ export default function ComparisonSection() {
                 </motion.div>
 
                 {/* ─── Comparison Rows ─── */}
-                <div className="space-y-3">
+                <div className="space-y-4 relative z-20">
                     {comparisonData.map((item, i) => (
                         <motion.div
                             key={item.title}
@@ -116,31 +116,33 @@ export default function ComparisonSection() {
                                 delay: i * 0.08,
                                 ease: "easeOut" as const,
                             }}
-                            className="group grid grid-cols-1 gap-3 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-md md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5"
+                            className="group relative overflow-hidden grid grid-cols-1 gap-3 rounded-[1.5rem] border border-zinc-200/60 bg-white p-4 transition-all duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-2xl hover:shadow-zinc-200/50 md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5"
                         >
+                            {/* Glow & Pattern Background */}
+                            <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-400/20 opacity-0 blur-[40px] transition-all duration-700 group-hover:scale-150 group-hover:opacity-100" />
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
                             {/* Label column */}
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 ring-1 ring-black/[0.04] transition-colors group-hover:bg-zinc-200/60">
-                                    <item.icon className="h-4 w-4" />
+                            <div className="relative z-10 flex items-center gap-4">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 text-zinc-600 shadow-sm transition-transform duration-500 group-hover:scale-110">
+                                    <item.icon className="h-5 w-5" />
                                 </div>
-                                <div>
-                                    <h4 className="text-sm font-semibold text-foreground">
-                                        {item.title}
-                                    </h4>
-                                </div>
+                                <h4 className="text-sm font-bold tracking-tight text-zinc-900">
+                                    {item.title}
+                                </h4>
                             </div>
 
                             {/* "Bad" — Existing solutions */}
-                            <div className="flex items-start gap-2.5 rounded-xl bg-zinc-50/80 p-3 md:p-3.5">
-                                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60" />
-                                <p className="text-[13px] leading-relaxed text-zinc-400">
+                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-zinc-50/80 p-4 transition-colors duration-300 group-hover:bg-zinc-100/50 md:p-4">
+                                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60 transition-transform duration-300 group-hover:scale-110 group-hover:text-red-400" />
+                                <p className="text-[13px] leading-relaxed text-zinc-500">
                                     {item.bad}
                                 </p>
                             </div>
 
                             {/* "Good" — Synapse */}
-                            <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50/60 p-3 ring-1 ring-emerald-100 md:p-3.5">
-                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-emerald-50/60 p-4 ring-1 ring-emerald-100/50 transition-colors duration-300 group-hover:bg-emerald-50 md:p-4">
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500 transition-transform duration-300 group-hover:scale-110 group-hover:text-emerald-600" />
                                 <p className="text-[13px] font-medium leading-relaxed text-zinc-700">
                                     {item.good}
                                 </p>

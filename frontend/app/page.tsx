@@ -300,7 +300,7 @@ export default function LandingPage() {
                 description:
                   "Drag-and-drop any PDF, text, or document. Synapse chunks it, embeds it via AMD Ryzen AI NPU, and stores it in local vector memory.",
                 badge: "Upload → ChromaDB",
-                gradient: "from-emerald-500/10 to-teal-500/5",
+                glowColor: "from-emerald-500/20 to-teal-400/20",
                 iconColor: "text-emerald-600",
               },
               {
@@ -310,7 +310,7 @@ export default function LandingPage() {
                 description:
                   "Ask anything. Synapse searches your memory bank, retrieves the most relevant chunks, and generates grounded answers via local Ollama LLM.",
                 badge: "Query → LLM + Sources",
-                gradient: "from-purple-500/10 to-violet-500/5",
+                glowColor: "from-purple-500/20 to-violet-400/20",
                 iconColor: "text-purple-600",
               },
               {
@@ -320,32 +320,51 @@ export default function LandingPage() {
                 description:
                   "Switch between Focus, Meeting, and Research modes. Synapse rearranges your workspace — silencing notifications or opening tools automatically.",
                 badge: "Mode → OS Control",
-                gradient: "from-blue-500/10 to-indigo-500/5",
+                glowColor: "from-blue-500/20 to-indigo-400/20",
                 iconColor: "text-blue-600",
               },
             ].map((pillar, i) => (
               <FadeIn key={pillar.title} delay={i * 0.12}>
-                <Card
-                  className={`group relative overflow-hidden rounded-2xl border-zinc-200 bg-gradient-to-br ${pillar.gradient} p-8 transition-all duration-300 hover:border-zinc-300 hover:shadow-lg`}
-                >
-                  <div
-                    className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-black/[0.04] ${pillar.iconColor}`}
-                  >
-                    <pillar.icon className="h-5 w-5" />
+                <Card className="group relative flex h-full flex-col overflow-hidden rounded-[2rem] border border-zinc-200/60 bg-white p-8 transition-all duration-500 hover:-translate-y-2 hover:border-zinc-300 hover:shadow-2xl hover:shadow-zinc-200/50">
+                  {/* Number Watermark */}
+                  <div className="pointer-events-none absolute -bottom-6 -right-4 z-0 text-9xl font-black text-zinc-50/80 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-110">
+                    0{i + 1}
                   </div>
-                  <h3 className="text-lg font-semibold">{pillar.title}</h3>
-                  <p className="mt-0.5 text-sm font-medium text-muted-foreground">
-                    {pillar.subtitle}
-                  </p>
-                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                    {pillar.description}
-                  </p>
-                  <Badge
-                    variant="secondary"
-                    className="mt-5 rounded-full border border-zinc-200 bg-white text-[10px] font-semibold uppercase tracking-wider text-zinc-600 shadow-sm"
-                  >
-                    {pillar.badge}
-                  </Badge>
+
+                  {/* Glow & Pattern Background */}
+                  <div className={`pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br ${pillar.glowColor} opacity-0 blur-[40px] transition-all duration-700 group-hover:scale-150 group-hover:opacity-100`} />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                  <div className="relative z-10 flex h-full flex-col">
+                    {/* Icon */}
+                    <div className={`mb-6 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 shadow-sm transition-transform duration-500 group-hover:scale-110 ${pillar.iconColor}`}>
+                      <pillar.icon className="h-5 w-5" />
+                    </div>
+
+                    {/* Header */}
+                    <h3 className="text-xl font-bold tracking-tight text-zinc-900">{pillar.title}</h3>
+                    <div className="mt-2 flex items-center gap-3">
+                      <span className="h-px w-4 bg-zinc-300 transition-all duration-500 group-hover:w-8 group-hover:bg-zinc-400" />
+                      <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+                        {pillar.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Body */}
+                    <p className="mt-6 flex-grow text-sm leading-relaxed text-zinc-600">
+                      {pillar.description}
+                    </p>
+
+                    {/* Footer / Badge */}
+                    <div className="mt-8 pt-4">
+                      <Badge
+                        variant="secondary"
+                        className="rounded-full border border-zinc-200/80 bg-zinc-50/50 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-600 backdrop-blur-sm transition-all duration-300 group-hover:border-zinc-300 group-hover:bg-white"
+                      >
+                        {pillar.badge}
+                      </Badge>
+                    </div>
+                  </div>
                 </Card>
               </FadeIn>
             ))}
