@@ -28,6 +28,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { checkHealth } from "@/lib/api";
 import dynamic from "next/dynamic";
+import { LazySection } from "@/components/ui/LazySection";
 
 const InteractiveFooter = dynamic(
   () => import("@/components/Footer/InteractiveFooter"),
@@ -179,20 +180,24 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* ─── Hero ─── */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-20">
+      <section className="relative flex min-h-screen flex-col overflow-hidden px-6 pt-40 pb-24">
+        {/* Neural network canvas — absolute background */}
+        <HeroIllustration />
+
         {/* Noise / grain texture overlay */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.035]"
+          className="pointer-events-none absolute inset-0 z-[1] opacity-[0.04]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
             backgroundSize: "200px 200px",
           }}
         />
 
-        <FadeIn className="relative z-10 flex flex-col items-center text-center">
+        {/* ── Hero text — centred above canvas ── */}
+        <FadeIn className="relative z-10 flex w-full flex-col items-center text-center">
           <Badge
             variant="secondary"
-            className="mb-6 gap-1.5 rounded-full border border-zinc-200 bg-zinc-100 px-4 py-1.5 text-xs font-semibold text-zinc-700"
+            className="mb-6 gap-1.5 rounded-full border border-zinc-200 bg-white/80 px-4 py-1.5 text-xs font-semibold text-zinc-700 backdrop-blur-sm"
           >
             <Sparkles className="h-3 w-3" />
             Local-First · Privacy-Centric · AMD Ryzen AI
@@ -228,7 +233,7 @@ export default function LandingPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-full border-black/10 px-8 text-base font-medium"
+                className="rounded-full border-zinc-300 bg-white/70 px-8 text-base font-medium backdrop-blur-sm"
               >
                 <Github className="mr-2 h-4 w-4" />
                 View Source
@@ -237,45 +242,34 @@ export default function LandingPage() {
           </div>
         </FadeIn>
 
-        {/* Neural network illustration */}
-        <div className="relative z-0 mt-8 w-full max-w-5xl">
-          <HeroIllustration />
-        </div>
-
-        {/* ─── "Built On" tech logo bar ─── */}
-        <FadeIn delay={0.3} className="relative z-10 w-full pb-8">
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
-              Built on
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-              {[
-                "AMD Ryzen AI",
-                "Ollama",
-                "ChromaDB",
-                "FastAPI",
-                "Next.js",
-              ].map((name, i, arr) => (
-                <span key={name} className="flex items-center gap-8">
-                  <span className="text-sm font-medium tracking-wide text-zinc-400">
+        {/* ── "Built On" logo bar — pushed to bottom ── */}
+        <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-16">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-400">
+            Built on
+          </p>
+          <div className="flex flex-wrap items-center justify-center">
+            {["AMD Ryzen AI", "Ollama", "ChromaDB", "FastAPI", "Next.js"].map(
+              (name, i, arr) => (
+                <span key={name} className="flex items-center">
+                  <span className="px-5 text-sm font-semibold tracking-wide text-zinc-500">
                     {name}
                   </span>
                   {i < arr.length - 1 && (
-                    <span className="hidden h-1 w-1 rounded-full bg-zinc-300 sm:block" />
+                    <span className="h-3 w-px bg-zinc-300" />
                   )}
                 </span>
-              ))}
-            </div>
+              )
+            )}
           </div>
-        </FadeIn>
+        </div>
 
         {/* Scroll indicator */}
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-10 z-10"
+          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
         >
-          <ChevronDown className="h-5 w-5 text-muted-foreground/40" />
+          <ChevronDown className="h-5 w-5 text-zinc-400/60" />
         </motion.div>
       </section>
 
@@ -283,295 +277,307 @@ export default function LandingPage() {
       <SectionDivider />
 
       {/* ─── The Three Pillars ─── */}
-      <section
-        id="features"
-        className="mx-auto max-w-6xl px-6 py-32 md:px-12"
-      >
-        <FadeIn>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Core Systems
-          </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Three pillars of Synapse
-          </h2>
-        </FadeIn>
+      <LazySection>
+        <section
+          id="features"
+          className="mx-auto max-w-6xl px-6 py-32 md:px-12"
+        >
+          <FadeIn>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Core Systems
+            </p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Three pillars of Synapse
+            </h2>
+          </FadeIn>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {[
-            {
-              icon: Eye,
-              title: "The Eyes",
-              subtitle: "Memory Ingestion",
-              description:
-                "Drag-and-drop any PDF, text, or document. Synapse chunks it, embeds it via AMD Ryzen AI NPU, and stores it in local vector memory.",
-              badge: "Upload → ChromaDB",
-              gradient: "from-emerald-500/10 to-teal-500/5",
-              iconColor: "text-emerald-600",
-            },
-            {
-              icon: Mic,
-              title: "The Voice",
-              subtitle: "RAG Chat Engine",
-              description:
-                "Ask anything. Synapse searches your memory bank, retrieves the most relevant chunks, and generates grounded answers via local Ollama LLM.",
-              badge: "Query → LLM + Sources",
-              gradient: "from-purple-500/10 to-violet-500/5",
-              iconColor: "text-purple-600",
-            },
-            {
-              icon: Hand,
-              title: "The Hands",
-              subtitle: "OS Orchestrator",
-              description:
-                "Switch between Focus, Meeting, and Research modes. Synapse rearranges your workspace — silencing notifications or opening tools automatically.",
-              badge: "Mode → OS Control",
-              gradient: "from-blue-500/10 to-indigo-500/5",
-              iconColor: "text-blue-600",
-            },
-          ].map((pillar, i) => (
-            <FadeIn key={pillar.title} delay={i * 0.12}>
-              <Card
-                className={`group relative overflow-hidden rounded-2xl border-zinc-200 bg-gradient-to-br ${pillar.gradient} p-8 transition-all duration-300 hover:border-zinc-300 hover:shadow-lg`}
-              >
-                <div
-                  className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-black/[0.04] ${pillar.iconColor}`}
+          <div className="mt-16 grid gap-6 md:grid-cols-3">
+            {[
+              {
+                icon: Eye,
+                title: "The Eyes",
+                subtitle: "Memory Ingestion",
+                description:
+                  "Drag-and-drop any PDF, text, or document. Synapse chunks it, embeds it via AMD Ryzen AI NPU, and stores it in local vector memory.",
+                badge: "Upload → ChromaDB",
+                gradient: "from-emerald-500/10 to-teal-500/5",
+                iconColor: "text-emerald-600",
+              },
+              {
+                icon: Mic,
+                title: "The Voice",
+                subtitle: "RAG Chat Engine",
+                description:
+                  "Ask anything. Synapse searches your memory bank, retrieves the most relevant chunks, and generates grounded answers via local Ollama LLM.",
+                badge: "Query → LLM + Sources",
+                gradient: "from-purple-500/10 to-violet-500/5",
+                iconColor: "text-purple-600",
+              },
+              {
+                icon: Hand,
+                title: "The Hands",
+                subtitle: "OS Orchestrator",
+                description:
+                  "Switch between Focus, Meeting, and Research modes. Synapse rearranges your workspace — silencing notifications or opening tools automatically.",
+                badge: "Mode → OS Control",
+                gradient: "from-blue-500/10 to-indigo-500/5",
+                iconColor: "text-blue-600",
+              },
+            ].map((pillar, i) => (
+              <FadeIn key={pillar.title} delay={i * 0.12}>
+                <Card
+                  className={`group relative overflow-hidden rounded-2xl border-zinc-200 bg-gradient-to-br ${pillar.gradient} p-8 transition-all duration-300 hover:border-zinc-300 hover:shadow-lg`}
                 >
-                  <pillar.icon className="h-5 w-5" />
-                </div>
-                <h3 className="text-lg font-semibold">{pillar.title}</h3>
-                <p className="mt-0.5 text-sm font-medium text-muted-foreground">
-                  {pillar.subtitle}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  {pillar.description}
-                </p>
-                <Badge
-                  variant="secondary"
-                  className="mt-5 rounded-full border border-zinc-200 bg-white text-[10px] font-semibold uppercase tracking-wider text-zinc-600 shadow-sm"
-                >
-                  {pillar.badge}
-                </Badge>
-              </Card>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
+                  <div
+                    className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-black/[0.04] ${pillar.iconColor}`}
+                  >
+                    <pillar.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-semibold">{pillar.title}</h3>
+                  <p className="mt-0.5 text-sm font-medium text-muted-foreground">
+                    {pillar.subtitle}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                    {pillar.description}
+                  </p>
+                  <Badge
+                    variant="secondary"
+                    className="mt-5 rounded-full border border-zinc-200 bg-white text-[10px] font-semibold uppercase tracking-wider text-zinc-600 shadow-sm"
+                  >
+                    {pillar.badge}
+                  </Badge>
+                </Card>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+      </LazySection>
 
       {/* ─── Transition: Features → Comparison ─── */}
       <SectionDivider />
 
       {/* ─── Problem vs. Solution Comparison ─── */}
-      <ComparisonSection />
+      <LazySection height="800px">
+        <ComparisonSection />
+      </LazySection>
 
       {/* ─── Transition: Comparison → Architecture ─── */}
       <SectionDivider />
 
       {/* ─── Architecture ─── */}
-      <section
-        id="architecture"
-        className="bg-zinc-50 py-32"
-      >
-        <div className="mx-auto max-w-5xl px-6 md:px-12">
-          <FadeIn className="flex flex-col items-center text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Under the Hood
-            </p>
-            <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight sm:text-4xl">
-              Hardware-aware pipeline
-            </h2>
-            <p className="mt-4 max-w-lg text-zinc-600">
-              Every query flows through a neural routing layer that assigns work
-              to the optimal processor — NPU for embeddings, GPU for inference,
-              CPU as fallback.
-            </p>
-          </FadeIn>
+      <LazySection>
+        <section
+          id="architecture"
+          className="bg-zinc-50 py-32"
+        >
+          <div className="mx-auto max-w-5xl px-6 md:px-12">
+            <FadeIn className="flex flex-col items-center text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Under the Hood
+              </p>
+              <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight sm:text-4xl">
+                Hardware-aware pipeline
+              </h2>
+              <p className="mt-4 max-w-lg text-zinc-600">
+                Every query flows through a neural routing layer that assigns work
+                to the optimal processor — NPU for embeddings, GPU for inference,
+                CPU as fallback.
+              </p>
+            </FadeIn>
 
-          {/* Pipeline cards — 2 column */}
-          <div className="mt-14 grid gap-5 sm:grid-cols-2">
-            {[
-              {
-                icon: Upload,
-                name: "Document Ingestion",
-                desc: "Upload PDFs, text files, and code. Documents are chunked, cleaned, and queued for embedding.",
-                tag: "Input Layer",
-              },
-              {
-                icon: Cpu,
-                name: "NPU Embedding",
-                desc: "Ryzen AI NPU accelerates vector embedding generation — faster and more power-efficient than CPU fallback.",
-                tag: "AMD Ryzen AI",
-              },
-              {
-                icon: Brain,
-                name: "Vector Storage",
-                desc: "Embeddings are indexed in a local ChromaDB instance. Semantic search runs entirely on your machine.",
-                tag: "ChromaDB",
-              },
-              {
-                icon: MessageSquare,
-                name: "LLM Inference",
-                desc: "Queries are answered by a local Llama 3 model via Ollama, grounded with retrieved context chunks.",
-                tag: "Ollama",
-              },
-            ].map((step, i) => (
-              <FadeIn key={step.name} delay={i * 0.08}>
-                <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
-                      <step.icon className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold">{step.name}</h3>
-                        <Badge
-                          variant="secondary"
-                          className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
-                        >
-                          {step.tag}
-                        </Badge>
+            {/* Pipeline cards — 2 column */}
+            <div className="mt-14 grid gap-5 sm:grid-cols-2">
+              {[
+                {
+                  icon: Upload,
+                  name: "Document Ingestion",
+                  desc: "Upload PDFs, text files, and code. Documents are chunked, cleaned, and queued for embedding.",
+                  tag: "Input Layer",
+                },
+                {
+                  icon: Cpu,
+                  name: "NPU Embedding",
+                  desc: "Ryzen AI NPU accelerates vector embedding generation — faster and more power-efficient than CPU fallback.",
+                  tag: "AMD Ryzen AI",
+                },
+                {
+                  icon: Brain,
+                  name: "Vector Storage",
+                  desc: "Embeddings are indexed in a local ChromaDB instance. Semantic search runs entirely on your machine.",
+                  tag: "ChromaDB",
+                },
+                {
+                  icon: MessageSquare,
+                  name: "LLM Inference",
+                  desc: "Queries are answered by a local Llama 3 model via Ollama, grounded with retrieved context chunks.",
+                  tag: "Ollama",
+                },
+              ].map((step, i) => (
+                <FadeIn key={step.name} delay={i * 0.08}>
+                  <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
+                        <step.icon className="h-5 w-5" />
                       </div>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {step.desc}
-                      </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-semibold">{step.name}</h3>
+                          <Badge
+                            variant="secondary"
+                            className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
+                          >
+                            {step.tag}
+                          </Badge>
+                        </div>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {step.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              </FadeIn>
-            ))}
-          </div>
-
-          {/* Flow summary */}
-          <FadeIn delay={0.35} className="mt-10 flex justify-center">
-            <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white/60 px-5 py-2.5 shadow-sm backdrop-blur-xl">
-              {["Ingest", "Embed", "Store", "Query"].map((s, i, arr) => (
-                <span key={s} className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-zinc-600">{s}</span>
-                  {i < arr.length - 1 && (
-                    <ArrowRight className="h-3 w-3 text-zinc-300" />
-                  )}
-                </span>
+                  </Card>
+                </FadeIn>
               ))}
             </div>
-          </FadeIn>
-        </div>
-      </section>
+
+            {/* Flow summary */}
+            <FadeIn delay={0.35} className="mt-10 flex justify-center">
+              <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white/60 px-5 py-2.5 shadow-sm backdrop-blur-xl">
+                {["Ingest", "Embed", "Store", "Query"].map((s, i, arr) => (
+                  <span key={s} className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-zinc-600">{s}</span>
+                    {i < arr.length - 1 && (
+                      <ArrowRight className="h-3 w-3 text-zinc-300" />
+                    )}
+                  </span>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      </LazySection>
 
       {/* ─── Transition: Architecture → Stack ─── */}
       <SectionDivider />
 
       {/* ─── Tech Stack — Editorial Layout ─── */}
-      <TechStackSection />
+      <LazySection height="1000px">
+        <TechStackSection />
+      </LazySection>
 
       {/* ─── Transition: Stack → Integrations ─── */}
       <SectionDivider />
 
       {/* ─── Integrations ─── */}
-      <section
-        id="integrations"
-        className="bg-zinc-50/50 py-32"
-      >
-        <div className="mx-auto max-w-5xl px-6 md:px-12">
-          {/* Header */}
-          <FadeIn className="flex flex-col items-center text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Integrations
-            </p>
-            <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight sm:text-4xl">
-              Pull your world into Synapse
-            </h2>
-            <p className="mt-4 max-w-lg text-zinc-600">
-              Connect your platforms and let Synapse ingest PRs, messages,
-              docs, and tickets into local ChromaDB — zero cloud leakage.
-            </p>
-          </FadeIn>
+      <LazySection>
+        <section
+          id="integrations"
+          className="bg-zinc-50/50 py-32"
+        >
+          <div className="mx-auto max-w-5xl px-6 md:px-12">
+            {/* Header */}
+            <FadeIn className="flex flex-col items-center text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Integrations
+              </p>
+              <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight sm:text-4xl">
+                Pull your world into Synapse
+              </h2>
+              <p className="mt-4 max-w-lg text-zinc-600">
+                Connect your platforms and let Synapse ingest PRs, messages,
+                docs, and tickets into local ChromaDB — zero cloud leakage.
+              </p>
+            </FadeIn>
 
-          {/* Cards — 2×2 */}
-          <div className="mt-14 grid gap-5 sm:grid-cols-2">
-            {[
-              {
-                icon: GitPullRequest,
-                name: "GitHub",
-                desc: "Sync repositories, pull requests, issues, and code reviews into local memory.",
-                tag: "Code & Reviews",
-              },
-              {
-                icon: MessageSquare,
-                name: "Slack",
-                desc: "Pull saved messages, channel threads, and team conversations for contextual answers.",
-                tag: "Messages & Threads",
-              },
-              {
-                icon: BookOpen,
-                name: "Notion",
-                desc: "Ingest workspace docs, databases, meeting notes, and wikis for deep RAG queries.",
-                tag: "Docs & Databases",
-              },
-              {
-                icon: LayoutGrid,
-                name: "Jira",
-                desc: "Sync active sprint tickets, epics, stories, and bug reports into your knowledge base.",
-                tag: "Sprints & Tickets",
-              },
-            ].map((int, i) => (
-              <FadeIn key={int.name} delay={i * 0.08}>
-                <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
-                  <div className="flex items-start gap-4">
-                    {/* Icon */}
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
-                      <int.icon className="h-5 w-5" />
-                    </div>
+            {/* Cards — 2×2 */}
+            <div className="mt-14 grid gap-5 sm:grid-cols-2">
+              {[
+                {
+                  icon: GitPullRequest,
+                  name: "GitHub",
+                  desc: "Sync repositories, pull requests, issues, and code reviews into local memory.",
+                  tag: "Code & Reviews",
+                },
+                {
+                  icon: MessageSquare,
+                  name: "Slack",
+                  desc: "Pull saved messages, channel threads, and team conversations for contextual answers.",
+                  tag: "Messages & Threads",
+                },
+                {
+                  icon: BookOpen,
+                  name: "Notion",
+                  desc: "Ingest workspace docs, databases, meeting notes, and wikis for deep RAG queries.",
+                  tag: "Docs & Databases",
+                },
+                {
+                  icon: LayoutGrid,
+                  name: "Jira",
+                  desc: "Sync active sprint tickets, epics, stories, and bug reports into your knowledge base.",
+                  tag: "Sprints & Tickets",
+                },
+              ].map((int, i) => (
+                <FadeIn key={int.name} delay={i * 0.08}>
+                  <Card className="group rounded-2xl border-white/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/80 hover:shadow-md">
+                    <div className="flex items-start gap-4">
+                      {/* Icon */}
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04]">
+                        <int.icon className="h-5 w-5" />
+                      </div>
 
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold">{int.name}</h3>
-                        <Badge
-                          variant="secondary"
-                          className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
-                        >
-                          {int.tag}
-                        </Badge>
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {int.desc}
-                      </p>
-                      <div className="mt-3 flex items-center gap-3">
-                        <span className="flex items-center gap-1.5 text-xs text-zinc-400">
-                          <span className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
-                          Ready to connect
-                        </span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-semibold">{int.name}</h3>
+                          <Badge
+                            variant="secondary"
+                            className="border border-white/60 bg-white/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm"
+                          >
+                            {int.tag}
+                          </Badge>
+                        </div>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {int.desc}
+                        </p>
+                        <div className="mt-3 flex items-center gap-3">
+                          <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
+                            Ready to connect
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              </FadeIn>
-            ))}
+                  </Card>
+                </FadeIn>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <FadeIn delay={0.35} className="mt-12 flex flex-col items-center text-center">
+              <Link href="/settings/integrations">
+                <Button
+                  size="lg"
+                  className="rounded-full bg-foreground px-8 text-base font-medium text-white hover:bg-foreground/90"
+                >
+                  <Plug className="mr-2 h-4 w-4" />
+                  Connect Your Tools
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <p className="mt-4 flex items-center gap-1.5 text-xs text-zinc-400">
+                <Shield className="h-3.5 w-3.5" />
+                API keys stay on your machine. Data is pulled, never pushed.
+              </p>
+            </FadeIn>
           </div>
-
-          {/* CTA */}
-          <FadeIn delay={0.35} className="mt-12 flex flex-col items-center text-center">
-            <Link href="/settings/integrations">
-              <Button
-                size="lg"
-                className="rounded-full bg-foreground px-8 text-base font-medium text-white hover:bg-foreground/90"
-              >
-                <Plug className="mr-2 h-4 w-4" />
-                Connect Your Tools
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <p className="mt-4 flex items-center gap-1.5 text-xs text-zinc-400">
-              <Shield className="h-3.5 w-3.5" />
-              API keys stay on your machine. Data is pulled, never pushed.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
+        </section>
+      </LazySection>
 
       {/* ─── Transition: Integrations → Footer ─── */}
       <SectionDivider />
 
       {/* ─── Interactive Footer ─── */}
-      <InteractiveFooter />
+      <LazySection height="400px">
+        <InteractiveFooter />
+      </LazySection>
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-zinc-200 px-6 py-8 md:px-12">
