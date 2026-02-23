@@ -52,10 +52,10 @@ export default function ComparisonSection() {
     return (
         <section
             id="comparison"
-            className="relative overflow-hidden border-y border-zinc-200 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 py-28"
+            className="relative overflow-hidden border-y border-zinc-200 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 py-28 dark:border-white/10 dark:from-zinc-950/50 dark:via-background dark:to-zinc-950/50"
         >
             {/* Lightweight decorative accents (no blur — perf optimized) */}
-            <div className="pointer-events-none absolute -top-32 left-1/4 h-[400px] w-[400px] rounded-full bg-emerald-50/40" />
+            <div className="pointer-events-none absolute -top-32 left-1/4 h-[400px] w-[400px] rounded-full bg-emerald-50/40 dark:bg-emerald-900/10" />
             <div className="pointer-events-none absolute -bottom-32 right-1/4 h-[350px] w-[350px] rounded-full bg-purple-50/30" />
 
             <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-12">
@@ -73,7 +73,7 @@ export default function ComparisonSection() {
                     <h2 className="mt-3 max-w-lg text-3xl font-bold tracking-tight sm:text-4xl">
                         The Cost of Fragmented Context
                     </h2>
-                    <p className="mt-4 max-w-md text-zinc-500">
+                    <p className="mt-4 max-w-md text-zinc-500 dark:text-zinc-400">
                         Stop pasting private data into cloud chat windows.
                         <br className="hidden sm:block" />
                         Start owning your intelligence.
@@ -89,15 +89,15 @@ export default function ComparisonSection() {
                     className="mb-4 hidden grid-cols-[1fr_1fr_1fr] items-end gap-4 px-2 md:grid"
                 >
                     <div />
-                    <div className="flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-zinc-100/80 px-4 py-1.5">
+                    <div className="flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-zinc-100/80 px-4 py-1.5 dark:border-white/10 dark:bg-white/5">
                         <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                             Existing Solutions
                         </span>
                     </div>
-                    <div className="flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5">
+                    <div className="flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                             Synapse Core
                         </span>
                     </div>
@@ -116,33 +116,33 @@ export default function ComparisonSection() {
                                 delay: i * 0.08,
                                 ease: "easeOut" as const,
                             }}
-                            className="group relative overflow-hidden grid grid-cols-1 gap-3 rounded-[1.5rem] border border-zinc-200/60 bg-white p-4 transition-all duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-2xl hover:shadow-zinc-200/50 md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5"
+                            className="group relative overflow-hidden grid grid-cols-1 gap-3 rounded-[1.5rem] border border-zinc-200/60 bg-white p-4 transition-all duration-500 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-2xl hover:shadow-zinc-200/50 md:grid-cols-[1fr_1fr_1fr] md:items-center md:gap-4 md:p-5 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10 dark:shadow-none"
                         >
                             {/* Background Pattern */}
-                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-multiply" />
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-multiply dark:mix-blend-overlay dark:opacity-20" />
 
                             {/* Label column */}
                             <div className="relative z-10 flex items-center gap-4">
-                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 text-zinc-600 shadow-sm transition-transform duration-500 group-hover:scale-110">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 text-zinc-600 shadow-sm transition-transform duration-500 group-hover:scale-110 dark:border-white/10 dark:bg-black/20">
                                     <item.icon className="h-5 w-5" />
                                 </div>
-                                <h4 className="text-sm font-bold tracking-tight text-zinc-900">
+                                <h4 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
                                     {item.title}
                                 </h4>
                             </div>
 
                             {/* "Bad" — Existing solutions */}
-                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-zinc-50/80 p-4 transition-colors duration-300 group-hover:bg-zinc-100/50 md:p-4">
+                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-zinc-50/80 p-4 transition-colors duration-300 group-hover:bg-zinc-100/50 md:p-4 dark:bg-black/20 dark:group-hover:bg-white/5">
                                 <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60 transition-transform duration-300 group-hover:scale-110 group-hover:text-red-400" />
-                                <p className="text-[13px] leading-relaxed text-zinc-500">
+                                <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
                                     {item.bad}
                                 </p>
                             </div>
 
                             {/* "Good" — Synapse */}
-                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-emerald-50/60 p-4 ring-1 ring-emerald-100/50 transition-colors duration-300 group-hover:bg-emerald-50 md:p-4">
+                            <div className="relative z-10 flex h-full items-start gap-3 rounded-2xl bg-emerald-50/60 p-4 ring-1 ring-emerald-100/50 transition-colors duration-300 group-hover:bg-emerald-50 md:p-4 dark:bg-emerald-500/5 dark:ring-emerald-500/20 dark:group-hover:bg-emerald-500/10">
                                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500 transition-transform duration-300 group-hover:scale-110 group-hover:text-emerald-600" />
-                                <p className="text-[13px] font-medium leading-relaxed text-zinc-700">
+                                <p className="text-[13px] font-medium leading-relaxed text-zinc-700 dark:text-zinc-300">
                                     {item.good}
                                 </p>
                             </div>
@@ -160,7 +160,7 @@ export default function ComparisonSection() {
                 >
                     <Badge
                         variant="secondary"
-                        className="gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 text-xs font-medium text-zinc-500 shadow-sm"
+                        className="gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 text-xs font-medium text-zinc-500 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-400"
                     >
                         <Shield className="h-3.5 w-3.5 text-emerald-500" />
                         100% local inference · zero cloud leakage · your hardware, your data

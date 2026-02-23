@@ -81,7 +81,7 @@ function IntegrationCard({ int, delay }: { int: typeof integrations[0]; delay: n
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="group relative overflow-hidden rounded-2xl border flex flex-col justify-between border-zinc-200/50 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-500 hover:border-zinc-300/80 hover:bg-white/90 hover:shadow-xl hover:shadow-zinc-200/50"
+                className="group relative overflow-hidden rounded-2xl border flex flex-col justify-between border-zinc-200/50 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition-all duration-500 hover:border-zinc-300/80 hover:bg-white/90 hover:shadow-xl hover:shadow-zinc-200/50 dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10 dark:shadow-none"
             >
                 {/* Spotlight Gradient */}
                 <motion.div
@@ -99,12 +99,12 @@ function IntegrationCard({ int, delay }: { int: typeof integrations[0]; delay: n
 
                 {/* Grid Pattern Background - appears on hover */}
                 <div
-                    className="pointer-events-none absolute inset-0 -z-10 opacity-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:12px_12px] transition-opacity duration-700 group-hover:opacity-100"
+                    className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:12px_12px] opacity-0 transition-opacity duration-700 group-hover:opacity-100 dark:mix-blend-overlay dark:opacity-20"
                 />
 
                 <div className="relative z-10 flex items-start gap-4">
                     {/* Icon */}
-                    <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04] overflow-hidden">
+                    <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/80 text-zinc-600 ring-1 ring-black/[0.04] overflow-hidden dark:bg-black/20 dark:text-zinc-400 dark:ring-white/10">
                         <motion.div
                             animate={{
                                 scale: isHovered ? [1, 1.2, 1] : 1,
@@ -112,27 +112,27 @@ function IntegrationCard({ int, delay }: { int: typeof integrations[0]; delay: n
                             }}
                             transition={{ duration: 0.5 }}
                         >
-                            <int.icon className="absolute inset-0 m-auto h-5 w-5 text-zinc-900 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <int.icon className="absolute inset-0 m-auto h-5 w-5 text-zinc-900 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:text-zinc-100" />
                             <int.icon className="h-5 w-5 transition-opacity duration-300 group-hover:opacity-0" />
                         </motion.div>
                     </div>
 
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
-                            <h3 className="text-sm font-semibold text-zinc-900">{int.name}</h3>
+                            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{int.name}</h3>
                             <Badge
                                 variant="secondary"
-                                className="border border-zinc-200/80 bg-zinc-50/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm transition-colors duration-300 group-hover:border-zinc-300 group-hover:bg-white group-hover:text-zinc-700"
+                                className="border border-zinc-200/80 bg-zinc-50/50 text-[10px] font-semibold text-zinc-500 backdrop-blur-sm transition-colors duration-300 group-hover:border-zinc-300 group-hover:bg-white group-hover:text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400 dark:group-hover:border-white/20 dark:group-hover:bg-white/10 dark:group-hover:text-zinc-300"
                             >
                                 {int.tag}
                             </Badge>
                         </div>
-                        <p className="mt-2 text-sm leading-relaxed text-zinc-500 transition-colors duration-300 group-hover:text-zinc-700">
+                        <p className="mt-2 text-sm leading-relaxed text-zinc-500 transition-colors duration-300 group-hover:text-zinc-700 dark:text-zinc-400 dark:group-hover:text-zinc-300">
                             {int.desc}
                         </p>
 
                         {/* Dynamic Status Bar */}
-                        <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 transition-colors duration-300 group-hover:border-zinc-200">
+                        <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 transition-colors duration-300 group-hover:border-zinc-200 dark:border-white/10 dark:group-hover:border-white/20">
                             <div className="flex items-center gap-2">
                                 <span className="relative flex h-2 w-2 items-center justify-center">
                                     {isHovered ? (
@@ -141,16 +141,16 @@ function IntegrationCard({ int, delay }: { int: typeof integrations[0]; delay: n
                                             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                                         </>
                                     ) : (
-                                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-zinc-300"></span>
+                                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600"></span>
                                     )}
                                 </span>
-                                <span className={`text-[11px] font-medium transition-colors duration-300 ${isHovered ? 'text-emerald-600' : 'text-zinc-400'}`}>
+                                <span className={`text-[11px] font-medium transition-colors duration-300 ${isHovered ? 'text-emerald-600' : 'text-zinc-400 dark:text-zinc-500'}`}>
                                     {isHovered ? int.syncText : "Ready to connect"}
                                 </span>
                             </div>
 
                             {/* Simulated Progress Bar (Visible on Hover) */}
-                            <div className="h-1 w-12 overflow-hidden rounded-full bg-zinc-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <div className="h-1 w-12 overflow-hidden rounded-full bg-zinc-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-zinc-800">
                                 <motion.div
                                     className="h-full bg-emerald-400"
                                     initial={{ x: "-100%" }}
@@ -172,11 +172,11 @@ function IntegrationCard({ int, delay }: { int: typeof integrations[0]; delay: n
 
 export default function IntegrationsSection() {
     return (
-        <section id="integrations" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-zinc-50/50 py-32">
+        <section id="integrations" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-zinc-50/50 py-32 dark:bg-zinc-950/50">
 
             {/* Ambient background glows */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div className="h-[40rem] w-[40rem] rounded-full bg-zinc-200/20 blur-3xl" />
+                <div className="h-[40rem] w-[40rem] rounded-full bg-zinc-200/20 blur-3xl dark:bg-zinc-800/20" />
             </div>
 
             <div className="relative z-10 mx-auto w-full max-w-5xl px-6 md:px-12">
@@ -185,10 +185,10 @@ export default function IntegrationsSection() {
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
                         Integrations
                     </p>
-                    <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight text-zinc-900 sm:text-5xl lg:max-w-xl">
+                    <h2 className="mt-3 max-w-md text-3xl font-bold tracking-tight text-zinc-900 sm:text-5xl lg:max-w-xl dark:text-zinc-100">
                         Pull your world into Synapse
                     </h2>
-                    <p className="mt-5 max-w-lg text-sm text-zinc-500 sm:text-base">
+                    <p className="mt-5 max-w-lg text-sm text-zinc-500 sm:text-base dark:text-zinc-400">
                         Connect your platforms and let Synapse ingest PRs, messages,
                         docs, and tickets into local ChromaDB — zero cloud leakage.
                     </p>
@@ -206,7 +206,7 @@ export default function IntegrationsSection() {
                     <Link href="/settings/integrations">
                         <Button
                             size="lg"
-                            className="group relative overflow-hidden rounded-full bg-zinc-900 px-8 py-6 text-base font-medium text-white shadow-lg transition-all hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/20"
+                            className="group relative overflow-hidden rounded-full bg-zinc-900 px-8 py-6 text-base font-medium text-white shadow-lg transition-all hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/20 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:shadow-none"
                         >
                             <span className="relative z-10 flex items-center">
                                 <Plug className="mr-2 h-4 w-4 transition-transform group-hover:-rotate-12" />
@@ -215,7 +215,7 @@ export default function IntegrationsSection() {
                             </span>
                         </Button>
                     </Link>
-                    <div className="mt-6 flex items-center gap-2 rounded-full border border-zinc-200/80 bg-white/50 px-4 py-2 text-xs text-zinc-500 backdrop-blur-sm">
+                    <div className="mt-6 flex items-center gap-2 rounded-full border border-zinc-200/80 bg-white/50 px-4 py-2 text-xs text-zinc-500 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
                         <Shield className="h-3.5 w-3.5 text-zinc-400" />
                         API keys stay on your machine. Data is pulled, never pushed.
                     </div>
