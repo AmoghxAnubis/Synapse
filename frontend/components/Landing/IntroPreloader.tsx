@@ -27,12 +27,12 @@ export default function IntroPreloader() {
                     // Wait slightly longer on the final "Online" message
                     setTimeout(() => {
                         setIsLoading(false);
-                    }, 600);
+                    }, 1000);
                     return prev;
                 }
                 return prev + 1;
             });
-        }, 350);
+        }, 800);
 
         return () => {
             clearInterval(interval);
