@@ -1,7 +1,6 @@
 "use client";
 
 import ChatInterface from "@/components/ChatInterface";
-import OrchestratorDock from "@/components/OrchestratorDock";
 
 export default function Dashboard() {
     return (
@@ -30,13 +29,8 @@ export default function Dashboard() {
             </header>
 
             {/* Main Center Area */}
-            <div className="flex-1 min-h-0 relative z-10 w-full max-w-4xl mx-auto pb-28">
+            <div className="flex-1 min-h-0 relative z-10 w-full max-w-4xl mx-auto pb-4">
                 <ChatInterface />
-            </div>
-
-            {/* Bottom Orchestrator Dock */}
-            <div className="relative z-20">
-                <OrchestratorDock />
             </div>
         </div>
     );

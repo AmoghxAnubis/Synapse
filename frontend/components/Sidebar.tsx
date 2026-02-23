@@ -11,7 +11,8 @@ import {
     Bot,
     ChevronLeft,
     ChevronRight,
-    Search
+    Search,
+    Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils"; // Assuming utils exists for classNames
 
@@ -30,6 +31,16 @@ const sidebarItems = [
         name: "Agents",
         href: "/dashboard/agents",
         icon: Bot,
+    },
+    {
+        name: "Meetings",
+        href: "/dashboard/meetings",
+        icon: Calendar,
+    },
+    {
+        name: "Research",
+        href: "/dashboard/research",
+        icon: Search,
     },
     {
         name: "Settings",
