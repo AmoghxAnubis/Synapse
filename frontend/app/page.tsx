@@ -56,6 +56,10 @@ const HeroIllustration = dynamic(
   () => import("@/components/Landing/HeroIllustration"),
   { ssr: false }
 );
+const IntroPreloader = dynamic(
+  () => import("@/components/Landing/IntroPreloader"),
+  { ssr: false }
+);
 
 /* ──────────────────── Section divider ──────────────────── */
 function SectionDivider({ flip = false }: { flip?: boolean }) {
@@ -119,6 +123,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white transition-colors duration-500 dark:bg-background text-foreground">
+      <IntroPreloader />
       <SmoothScroll />
 
       {/* ─── Navbar ─── */}
