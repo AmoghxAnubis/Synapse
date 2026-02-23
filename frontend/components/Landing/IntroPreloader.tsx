@@ -41,25 +41,24 @@ export default function IntroPreloader() {
         };
     }, []);
 
-    // Ensure we restore scrolling just in case when closing finishes
-    useEffect(() => {
-        if (!isLoading) {
-            document.body.style.overflow = "";
-        }
-    }, [isLoading]);
+    // Removed immediate scroll restore to prevent layout shift during exit animation.
+    // Scroll restore will happen in AnimatePresence onExitComplete instead.
 
     return (
-        <AnimatePresence>
+        <AnimatePresence onExitComplete={() => {
+            // Restore scroll only AFTER the exit animation finishes
+            document.body.style.overflow = "";
+        }}>
             {isLoading && (
                 <motion.div
                     // The main overlay background
                     className="fixed inset-0 z-[999] flex items-center justify-center bg-[#09090B] text-zinc-100"
 
-                    // Exit animation: Elegant cubic-bezier slide UP
-                    exit={{ y: "-100%" }}
+                    // Exit animation: Elegant slide UP + slight fade
+                    exit={{ y: "-100%", opacity: 0 }}
                     transition={{
-                        duration: 0.8,
-                        ease: [0.76, 0, 0.24, 1],
+                        duration: 1,
+                        ease: [0.22, 1, 0.36, 1], // custom easeOutQuint for smoother decel
                     }}
                 >
                     <AnimatePresence mode="wait">
