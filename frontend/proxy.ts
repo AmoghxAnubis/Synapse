@@ -6,7 +6,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
 ]);
 
-export const proxy = clerkMiddleware((auth, req) => {
+export default clerkMiddleware((auth, req) => {
   if (!isPublicRoute(req)) {
     auth.protect();
   }
