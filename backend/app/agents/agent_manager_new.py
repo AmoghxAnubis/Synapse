@@ -7,7 +7,7 @@ from app.agents.tools.mcp_github_server import MCPGitHubServer
 from app.agents.tools.mcp_combo_client import MCPComboClient
 
 try:
-    from app.agents.tools.mcp_notion_server import MCPNotionServer
+    from app.agents.tools.mcp_notion_server_fixed import MCPNotionServer
     NOTION_AVAILABLE = True
 except ImportError:
     NOTION_AVAILABLE = False
