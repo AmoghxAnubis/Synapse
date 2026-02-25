@@ -173,7 +173,7 @@ export default function LandingPage() {
             </Badge>
           )}
           <ThemeToggle />
-          <Link href="/auth">
+          <Link href="/sign-in">
             <Button
               variant="ghost"
               className="hidden rounded-full px-4 text-sm font-medium text-zinc-600 hover:text-foreground sm:inline-flex"
@@ -181,7 +181,7 @@ export default function LandingPage() {
               Log In
             </Button>
           </Link>
-          <Link href="/auth">
+          <Link href="/sign-in">
             <Button className="rounded-full bg-foreground px-5 text-sm font-medium text-white hover:bg-foreground/90">
               Get Started
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
