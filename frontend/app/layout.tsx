@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
+import ClientProviders from "@/components/ClientProviders";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,47 +27,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased cursor-none`} suppressHydrationWarning>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          {/* Header / Navbar */}
-          <header className="flex justify-between items-center px-6 h-16 border-b border-zinc-200">
-            <Link href="/">
-              <h1 className="text-lg font-bold cursor-pointer">
-                Synapse
-              </h1>
-            </Link>
-
-            <div className="flex items-center gap-4">
-              <SignedOut>
-                <Link href="/sign-in">
-                  <button className="px-4 py-2 border rounded">
-                    Sign In
-                  </button>
-                </Link>
-
-                <Link href="/sign-up">
-                  <button className="bg-black text-white rounded-full px-4 py-2 text-sm">
-                    Sign Up
-                  </button>
-                </Link>
-              </SignedOut>
-
-              <SignedIn>
-                <UserButton afterSignOutUrl="/" />
-              </SignedIn>
-            </div>
-          </header>
-
-          {/* Main Content */}
-          <main>{children}</main>
-
-          {/* Global Toast Notifications */}
+          <ClientProviders>
+            {children}
+          </ClientProviders>
           <Toaster position="bottom-right" />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 
 const DOT_SIZE = 10;
 const CROSSHAIR_LENGTH = 28;
@@ -19,43 +19,44 @@ export default function CustomCursor() {
     const prevX = useRef(-100);
     const prevY = useRef(-100);
     const isHovering = useRef(false);
-    const raf = useRef<number>(0);
-
-    const animate = useCallback(() => {
-        // Speed from frame delta (for crosshair stretch only)
-        const dx = mouseX.current - prevX.current;
-        const dy = mouseY.current - prevY.current;
-        const speed = Math.sqrt(dx * dx + dy * dy);
-
-        prevX.current = mouseX.current;
-        prevY.current = mouseY.current;
-
-        const dynamicLength = Math.min(
-            CROSSHAIR_LENGTH + speed * 1.2,
-            CROSSHAIR_LENGTH * 2.2
-        );
-        const scale = dynamicLength / CROSSHAIR_LENGTH;
-
-        if (containerRef.current) {
-            // Direct position — zero lag
-            containerRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
-        }
-
-        // Stretch crosshairs using scale transform to avoid layout thrashing
-        if (leftLineRef.current) leftLineRef.current.style.transform = `scaleX(${scale})`;
-        if (rightLineRef.current) rightLineRef.current.style.transform = `scaleX(${scale})`;
-        if (topLineRef.current) topLineRef.current.style.transform = `scaleY(${scale})`;
-        if (bottomLineRef.current) bottomLineRef.current.style.transform = `scaleY(${scale})`;
-
-        // Scale dot on hover
-        if (dotRef.current) {
-            dotRef.current.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
-        }
-
-        raf.current = requestAnimationFrame(animate);
-    }, []);
 
     useEffect(() => {
+        let rafId: number;
+
+        const animate = () => {
+            // Speed from frame delta (for crosshair stretch only)
+            const dx = mouseX.current - prevX.current;
+            const dy = mouseY.current - prevY.current;
+            const speed = Math.sqrt(dx * dx + dy * dy);
+
+            prevX.current = mouseX.current;
+            prevY.current = mouseY.current;
+
+            const dynamicLength = Math.min(
+                CROSSHAIR_LENGTH + speed * 1.2,
+                CROSSHAIR_LENGTH * 2.2
+            );
+            const scale = dynamicLength / CROSSHAIR_LENGTH;
+
+            if (containerRef.current) {
+                // Direct position — zero lag
+                containerRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
+            }
+
+            // Stretch crosshairs using scale transform to avoid layout thrashing
+            if (leftLineRef.current) leftLineRef.current.style.transform = `scaleX(${scale})`;
+            if (rightLineRef.current) rightLineRef.current.style.transform = `scaleX(${scale})`;
+            if (topLineRef.current) topLineRef.current.style.transform = `scaleY(${scale})`;
+            if (bottomLineRef.current) bottomLineRef.current.style.transform = `scaleY(${scale})`;
+
+            // Scale dot on hover
+            if (dotRef.current) {
+                dotRef.current.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
+            }
+
+            rafId = requestAnimationFrame(animate);
+        };
+
         const onMove = (e: MouseEvent) => {
             mouseX.current = e.clientX;
             mouseY.current = e.clientY;
@@ -81,15 +82,15 @@ export default function CustomCursor() {
         document.addEventListener("mousemove", onMove);
         document.addEventListener("mouseover", onEnter);
         document.addEventListener("mouseout", onLeave);
-        raf.current = requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
 
         return () => {
             document.removeEventListener("mousemove", onMove);
             document.removeEventListener("mouseover", onEnter);
             document.removeEventListener("mouseout", onLeave);
-            cancelAnimationFrame(raf.current);
+            cancelAnimationFrame(rafId);
         };
-    }, [animate]);
+    }, []);
 
     return (
         <div

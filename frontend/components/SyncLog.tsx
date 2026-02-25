@@ -57,7 +57,7 @@ export default function SyncLog({ entries }: SyncLogProps) {
                     <div className="p-4 font-mono text-xs leading-relaxed">
                         {entries.length === 0 ? (
                             <p className="text-zinc-400">
-                                No sync activity yet. Connect an integration and hit "Sync Now"
+                                No sync activity yet. Connect an integration and hit &quot;Sync Now&quot;
                                 to see logs here.
                             </p>
                         ) : (

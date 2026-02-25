@@ -1,18 +1,13 @@
 "use client";
 
-import { Brain, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import HardwareStatusBanner from "@/components/HardwareStatusBanner";
-import MemoryDropzone from "@/components/MemoryDropzone";
 import ChatInterface from "@/components/ChatInterface";
-import OrchestratorDock from "@/components/OrchestratorDock";
 
 export default function Dashboard() {
     return (
-        <div className="relative min-h-screen bg-white">
+        <div className="flex h-full flex-col relative">
             {/* Subtle grid background */}
             <div
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 z-0"
                 style={{
                     backgroundImage:
                         "linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)",
@@ -20,24 +15,23 @@ export default function Dashboard() {
                 }}
             />
 
-            {/* Top status banner */}
-            <HardwareStatusBanner />
+            {/* Page Header (Breadcrumb Style) */}
+            <header className="mb-6 flex items-center justify-between relative z-10">
+                <nav className="text-sm text-neutral-500 font-medium">
+                    <span className="hover:text-neutral-800 cursor-pointer dark:text-neutral-400 dark:hover:text-neutral-200">
+                        Synapse
+                    </span>
+                    <span className="mx-2">/</span>
+                    <span className="text-neutral-900 dark:text-neutral-100">
+                        Chat & Orchestrator
+                    </span>
+                </nav>
+            </header>
 
-            {/* Main content grid */}
-            <main className="relative mx-auto flex h-screen max-w-7xl gap-6 px-6 pt-[72px] pb-28">
-                {/* Left sidebar — Memory Dropzone */}
-                <aside className="w-72 shrink-0 pt-4">
-                    <MemoryDropzone />
-                </aside>
-
-                {/* Center — Chat Interface */}
-                <section className="flex-1 min-w-0 pt-4">
-                    <ChatInterface />
-                </section>
-            </main>
-
-            {/* Bottom dock — Orchestrator */}
-            <OrchestratorDock />
+            {/* Main Center Area */}
+            <div className="flex-1 min-h-0 relative z-10 w-full max-w-4xl mx-auto pb-4">
+                <ChatInterface />
+            </div>
         </div>
     );
 }

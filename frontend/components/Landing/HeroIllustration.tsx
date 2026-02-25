@@ -1,14 +1,17 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useTheme } from "next-themes";
 
 export default function HeroIllustration() {
+    const { resolvedTheme } = useTheme();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(0);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+        const isDark = resolvedTheme === "dark";
 
         // Make the canvas fill its parent container
         const setSize = () => {
@@ -60,9 +63,15 @@ export default function HeroIllustration() {
 
             // Background
             const bg = ctx.createLinearGradient(0, 0, 0, ch);
-            bg.addColorStop(0, "rgb(248,248,249)");
-            bg.addColorStop(0.5, "rgb(236,236,240)");
-            bg.addColorStop(1, "rgb(218,218,224)");
+            if (isDark) {
+                bg.addColorStop(0, "rgb(9,9,11)");
+                bg.addColorStop(0.5, "rgb(15,15,20)");
+                bg.addColorStop(1, "rgb(20,20,25)");
+            } else {
+                bg.addColorStop(0, "rgb(248,248,249)");
+                bg.addColorStop(0.5, "rgb(236,236,240)");
+                bg.addColorStop(1, "rgb(218,218,224)");
+            }
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, cw, ch);
 
@@ -88,7 +97,7 @@ export default function HeroIllustration() {
                         ctx.beginPath();
                         ctx.moveTo(pts[i].x, pts[i].y);
                         ctx.lineTo(pts[j].x, pts[j].y);
-                        ctx.strokeStyle = `rgba(50,50,65,${alpha})`;
+                        ctx.strokeStyle = isDark ? `rgba(200,200,225,${alpha})` : `rgba(50,50,65,${alpha})`;
                         ctx.lineWidth = (1 - dist / MAX_DIST) * 1.8;
                         ctx.stroke();
                     }
@@ -100,26 +109,26 @@ export default function HeroIllustration() {
                 // Halo
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r + 3, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(80,80,100,0.1)";
+                ctx.fillStyle = isDark ? "rgba(200,200,225,0.1)" : "rgba(80,80,100,0.1)";
                 ctx.fill();
                 // Core
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(40,40,55,0.75)";
+                ctx.fillStyle = isDark ? "rgba(220,220,250,0.75)" : "rgba(40,40,55,0.75)";
                 ctx.fill();
             }
 
             // Top fade — blends into white page above
             const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.22);
-            topFade.addColorStop(0, "rgba(255,255,255,1)");
-            topFade.addColorStop(1, "rgba(255,255,255,0)");
+            topFade.addColorStop(0, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
+            topFade.addColorStop(1, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
             ctx.fillStyle = topFade;
             ctx.fillRect(0, 0, cw, ch * 0.22);
 
             // Bottom fade — flows into next section
             const botFade = ctx.createLinearGradient(0, ch * 0.75, 0, ch);
-            botFade.addColorStop(0, "rgba(255,255,255,0)");
-            botFade.addColorStop(1, "rgba(255,255,255,0.9)");
+            botFade.addColorStop(0, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
+            botFade.addColorStop(1, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
             ctx.fillStyle = botFade;
             ctx.fillRect(0, 0, cw, ch);
 
@@ -133,7 +142,7 @@ export default function HeroIllustration() {
             window.removeEventListener("resize", setSize);
             window.removeEventListener("resize", initPts);
         };
-    }, []);
+    }, [resolvedTheme]);
 
     return (
         <canvas
