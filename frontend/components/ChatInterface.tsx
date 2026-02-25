@@ -2,20 +2,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, Bot } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Loader2, Bot } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { askSynapse } from "@/lib/api";
 import MessageBubble, { type Message } from "@/components/MessageBubble";
+import ChatInput from "./ChatInput";
 
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
@@ -24,8 +21,7 @@ export default function ChatInterface() {
         }
     }, [messages]);
 
-    const handleSend = async () => {
-        const query = input.trim();
+    const handleSend = async (query: string) => {
         if (!query || isLoading) return;
 
         const userMsg: Message = {
@@ -36,7 +32,6 @@ export default function ChatInterface() {
         };
 
         setMessages((prev) => [...prev, userMsg]);
-        setInput("");
         setIsLoading(true);
 
         try {
@@ -60,7 +55,6 @@ export default function ChatInterface() {
             setMessages((prev) => [...prev, errMsg]);
         } finally {
             setIsLoading(false);
-            inputRef.current?.focus();
         }
     };
 
@@ -131,32 +125,7 @@ export default function ChatInterface() {
             </div>
 
             {/* Input bar */}
-            <div className="mt-3">
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSend();
-                    }}
-                    className="flex gap-2"
-                >
-                    <Input
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask Synapse..."
-                        className="h-11 flex-1 rounded-xl border-zinc-200 bg-white text-sm shadow-sm placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-400"
-                        disabled={isLoading}
-                    />
-                    <Button
-                        type="submit"
-                        size="icon"
-                        disabled={isLoading || !input.trim()}
-                        className="h-11 w-11 shrink-0 rounded-xl bg-foreground text-white shadow-sm transition-transform hover:bg-foreground/90 hover:scale-105 active:scale-95"
-                    >
-                        <Send className="h-4 w-4" />
-                    </Button>
-                </form>
-            </div>
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
         </div>
     );
 }
