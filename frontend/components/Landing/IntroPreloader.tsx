@@ -54,11 +54,11 @@ export default function IntroPreloader() {
                     // The main overlay background
                     className="fixed inset-0 z-[999] flex items-center justify-center bg-[#09090B] text-zinc-100"
 
-                    // Exit animation: Elegant slide UP + slight fade
-                    exit={{ y: "-100%", opacity: 0 }}
+                    // Exit animation: Ultra-smooth fade out with slight blur
+                    exit={{ opacity: 0, filter: "blur(10px)" }}
                     transition={{
-                        duration: 1,
-                        ease: [0.22, 1, 0.36, 1], // custom easeOutQuint for smoother decel
+                        duration: 1.2,
+                        ease: "easeOut",
                     }}
                 >
                     <AnimatePresence mode="wait">
