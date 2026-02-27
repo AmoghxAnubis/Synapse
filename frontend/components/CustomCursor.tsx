@@ -23,6 +23,12 @@ export default function CustomCursor() {
     useEffect(() => {
         let rafId: number;
 
+        // Optimization: Track last applied styles to avoid redundant DOM writes
+        let lastX = -100;
+        let lastY = -100;
+        let lastScale = 1;
+        let lastHover = false;
+
         const animate = () => {
             // Speed from frame delta (for crosshair stretch only)
             const dx = mouseX.current - prevX.current;
@@ -38,20 +44,45 @@ export default function CustomCursor() {
             );
             const scale = dynamicLength / CROSSHAIR_LENGTH;
 
-            if (containerRef.current) {
+            // Optimization: Skip DOM updates if state hasn't changed
+            // We check if position, scale, and hover state are identical to last frame
+            const x = mouseX.current;
+            const y = mouseY.current;
+            const hover = isHovering.current;
+            const scaleChanged = Math.abs(scale - lastScale) > 0.001;
+
+            if (
+                x === lastX &&
+                y === lastY &&
+                !scaleChanged &&
+                hover === lastHover
+            ) {
+                rafId = requestAnimationFrame(animate);
+                return;
+            }
+
+            if (containerRef.current && (x !== lastX || y !== lastY)) {
                 // Direct position — zero lag
-                containerRef.current.style.transform = `translate3d(${mouseX.current}px, ${mouseY.current}px, 0)`;
+                containerRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                lastX = x;
+                lastY = y;
             }
 
             // Stretch crosshairs using scale transform to avoid layout thrashing
-            if (leftLineRef.current) leftLineRef.current.style.transform = `scaleX(${scale})`;
-            if (rightLineRef.current) rightLineRef.current.style.transform = `scaleX(${scale})`;
-            if (topLineRef.current) topLineRef.current.style.transform = `scaleY(${scale})`;
-            if (bottomLineRef.current) bottomLineRef.current.style.transform = `scaleY(${scale})`;
+            if (scaleChanged) {
+                const scaleStr = `scaleX(${scale})`;
+                const scaleYStr = `scaleY(${scale})`;
+                if (leftLineRef.current) leftLineRef.current.style.transform = scaleStr;
+                if (rightLineRef.current) rightLineRef.current.style.transform = scaleStr;
+                if (topLineRef.current) topLineRef.current.style.transform = scaleYStr;
+                if (bottomLineRef.current) bottomLineRef.current.style.transform = scaleYStr;
+                lastScale = scale;
+            }
 
             // Scale dot on hover
-            if (dotRef.current) {
-                dotRef.current.style.transform = `scale(${isHovering.current ? 1.6 : 1})`;
+            if (dotRef.current && hover !== lastHover) {
+                dotRef.current.style.transform = `scale(${hover ? 1.6 : 1})`;
+                lastHover = hover;
             }
 
             rafId = requestAnimationFrame(animate);
