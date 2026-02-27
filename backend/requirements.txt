@@ -11,3 +11,4 @@ pypdf
 pygithub
 transformers
 notion-client
+pydantic

@@ -14,7 +14,7 @@ import json
 from typing import Dict, Any, Optional, List
 
 try:
-    from notion_client import NotionClient
+    from notion_client import Client
     NOTION_CLIENT_AVAILABLE = True
 except ImportError:
     NOTION_CLIENT_AVAILABLE = False
@@ -48,7 +48,7 @@ class MCPNotionServer:
             return False
             
         try:
-            self.client = NotionClient(token_v2=self.token)
+            self.client = Client(auth=self.token)
             self._connected = True
             print("✅ MCP Notion Server connected successfully!")
             return True
@@ -124,7 +124,7 @@ class MCPNotionServer:
                     properties={"title": {"title": [{"text": {"content": title}}]}}
                 )
             
-            page_id = new_page.id
+            page_id = new_page["id"]
             
             # Add content if provided
             if content:
@@ -166,11 +166,11 @@ class MCPNotionServer:
             
             return {
                 "success": True,
-                "page_id": page.id,
+                "page_id": page["id"],
                 "title": title,
-                "url": page.url,
-                "created_time": page.created_time,
-                "last_edited_time": page.last_edited_time
+                "url": page.get("url", ""),
+                "created_time": page.get("created_time", ""),
+                "last_edited_time": page.get("last_edited_time", "")
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -214,12 +214,12 @@ class MCPNotionServer:
                 # Get child pages
                 blocks = self.client.blocks.children.list(parent_page_id)
                 pages = []
-                for block in blocks.results:
-                    if block.type == "child_page":
+                for block in blocks["results"]:
+                    if block.get("type") == "child_page":
                         pages.append({
-                            "id": block.id,
-                            "title": block.title,
-                            "url": block.url
+                            "id": block["id"],
+                            "title": block.get("title", "Untitled"),
+                            "url": block.get("url", "")
                         })
             else:
                 # Search for all pages
@@ -228,15 +228,15 @@ class MCPNotionServer:
                     sort_direction="descending"
                 )
                 pages = []
-                for page in search_results.results:
+                for page in search_results["results"]:
                     title = "Untitled"
-                    if "title" in page.properties:
-                        if page.properties["title"]["title"]:
-                            title = page.properties["title"]["title"][0].get("text", {}).get("content", "Untitled")
+                    if "properties" in page and "title" in page["properties"]:
+                        if page["properties"]["title"]["title"]:
+                            title = page["properties"]["title"]["title"][0].get("text", {}).get("content", "Untitled")
                     pages.append({
-                        "id": page.id,
+                        "id": page["id"],
                         "title": title,
-                        "url": page.url
+                        "url": page.get("url", "")
                     })
             
             return {
@@ -286,8 +286,8 @@ class MCPNotionServer:
             return {
                 "success": True,
                 "message": f"✅ Database '{title}' created!",
-                "database_id": database.id,
-                "database_url": database.url
+                "database_id": database["id"],
+                "database_url": database.get("url", "")
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -301,18 +301,18 @@ class MCPNotionServer:
             results = self.client.databases.query(database_id, filter=filter)
             
             items = []
-            for page in results.results:
+            for page in results["results"]:
                 title = "Untitled"
                 if "properties" in page:
-                    name_prop = page.properties.get("Name") or page.properties.get("title")
+                    name_prop = page["properties"].get("Name") or page["properties"].get("title")
                     if name_prop and "title" in name_prop:
                         if name_prop["title"]:
                             title = name_prop["title"][0].get("text", {}).get("content", "Untitled")
                 
                 items.append({
-                    "id": page.id,
+                    "id": page["id"],
                     "title": title,
-                    "url": page.url
+                    "url": page.get("url", "")
                 })
             
             return {
@@ -338,9 +338,9 @@ class MCPNotionServer:
             
             return {
                 "success": True,
-                "database_id": database.id,
+                "database_id": database["id"],
                 "title": title,
-                "url": database.url,
+                "url": database.get("url", ""),
                 "properties": list(database.get("properties", {}).keys())
             }
         except Exception as e:
@@ -387,16 +387,16 @@ class MCPNotionServer:
             blocks = self.client.blocks.children.list(page_id)
             
             block_list = []
-            for block in blocks.results:
-                block_type = block.type
+            for block in blocks["results"]:
+                block_type = block.get("type", "")
                 text = ""
-                if hasattr(block, block_type):
-                    content = getattr(block, block_type)
+                if block_type in block:
+                    content = block[block_type]
                     if "rich_text" in content and content["rich_text"]:
                         text = content["rich_text"][0].get("text", {}).get("content", "")
                 
                 block_list.append({
-                    "id": block.id,
+                    "id": block["id"],
                     "type": block_type,
                     "content": text
                 })
@@ -425,24 +425,24 @@ class MCPNotionServer:
                 )
             
             items = []
-            for item in results.results:
-                item_type = item.object
+            for item in results["results"]:
+                item_type = item.get("object", "unknown")
                 title = "Untitled"
                 
                 if item_type == "page":
-                    if "title" in item.properties:
-                        if item.properties["title"]["title"]:
-                            title = item.properties["title"]["title"][0].get("text", {}).get("content", "Untitled")
+                    if "properties" in item and "title" in item["properties"]:
+                        if item["properties"]["title"]["title"]:
+                            title = item["properties"]["title"]["title"][0].get("text", {}).get("content", "Untitled")
                 elif item_type == "database":
                     if "title" in item:
                         if item["title"]:
                             title = item["title"][0].get("text", {}).get("content", "Untitled")
                 
                 items.append({
-                    "id": item.id,
+                    "id": item["id"],
                     "type": item_type,
                     "title": title,
-                    "url": item.url
+                    "url": item.get("url", "")
                 })
             
             return {

@@ -1,7 +1,7 @@
 """
-Combined MCP Client for GitHub and Notion
-==========================================
-Supports both GitHub and Notion operations through natural language commands.
+Combined MCP Client for GitHub, Notion, Jira, and Slack
+======================================================
+Supports GitHub, Notion, Jira, and Slack operations through natural language commands.
 """
 
 import json
@@ -11,22 +11,98 @@ from typing import Dict, Any, Optional
 
 class MCPComboClient:
     """
-    Combined MCP Client for GitHub and Notion.
+    Combined MCP Client for GitHub, Notion, Jira, and Slack.
     Routes commands to appropriate server based on context.
     """
     
-    def __init__(self, github_server=None, notion_server=None):
+    def __init__(self, github_server=None, notion_server=None, jira_server=None, slack_server=None):
         self.github_server = github_server
         self.notion_server = notion_server
+        self.jira_server = jira_server
+        self.slack_server = slack_server
     
-    def set_servers(self, github_server=None, notion_server=None):
+    def set_servers(self, github_server=None, notion_server=None, jira_server=None, slack_server=None):
         self.github_server = github_server
         self.notion_server = notion_server
+        self.jira_server = jira_server
+        self.slack_server = slack_server
     
     def parse_natural_command(self, user_input: str) -> Dict[str, Any]:
         """Parse natural language command and determine target service."""
         original_input = user_input
         user_input = user_input.lower().strip()
+        
+        # ==================== SLACK COMMANDS ====================
+        
+        # Send message to Slack
+        if re.search(r'slack.*message|send.*slack|message.*slack', user_input):
+            channel_match = re.search(r'(?:to|channel|#)\s*["\']?(\w+)["\']?', original_input)
+            text_match = re.search(r'(?:message|text|content)\s+["\']([^"\']+)["\']', original_input)
+            
+            if channel_match and text_match:
+                return {
+                    "service": "slack",
+                    "operation": "send_message",
+                    "channel": channel_match.group(1),
+                    "text": text_match.group(1)
+                }
+        
+        # List Slack channels
+        if re.search(r'slack.*channels|list.*slack.*channels|show.*slack', user_input):
+            return {"service": "slack", "operation": "list_channels"}
+        
+        # Create Slack channel
+        if re.search(r'create.*slack.*channel|new.*slack.*channel', user_input):
+            name_match = re.search(r'(?:called|named|name)\s+["\']?(\w+)["\']?', original_input)
+            if name_match:
+                return {
+                    "service": "slack",
+                    "operation": "create_channel",
+                    "name": name_match.group(1)
+                }
+        
+        # Slack status
+        if re.search(r'slack.*status|check.*slack|slack.*connected', user_input):
+            return {"service": "slack", "operation": "status"}
+        
+        # ==================== JIRA COMMANDS ====================
+        
+        # Create Jira issue
+        if re.search(r'jira.*issue|create.*jira.*ticket|new.*jira.*issue', user_input):
+            project_match = re.search(r'(?:project|proj)\s+["\']?(\w+)["\']?', original_input)
+            title_match = re.search(r'(?:called|titled|named|title)\s+["\']?([^"\']+)["\']?', original_input)
+            desc_match = re.search(r'(?:description|desc)\s+["\']([^"\']+)["\']', original_input)
+            
+            return {
+                "service": "jira",
+                "operation": "create_issue",
+                "project_key": project_match.group(1) if project_match else "PROJ",
+                "summary": title_match.group(1).strip() if title_match else "New Issue",
+                "description": desc_match.group(1) if desc_match else ""
+            }
+        
+        # List Jira issues
+        if re.search(r'jira.*issues|list.*jira|show.*jira.*issues', user_input):
+            project_match = re.search(r'(?:project|proj)\s+["\']?(\w+)["\']?', original_input)
+            return {
+                "service": "jira",
+                "operation": "list_issues",
+                "project_key": project_match.group(1) if project_match else None
+            }
+        
+        # Jira search
+        if re.search(r'jira.*search|find.*jira|search.*jira', user_input):
+            query_match = re.search(r'for\s+["\']?([^"\']+)["\']?', original_input)
+            query = query_match.group(1) if query_match else ""
+            return {"service": "jira", "operation": "search_issues", "query": query}
+        
+        # Jira projects
+        if re.search(r'jira.*projects|list.*jira.*projects', user_input):
+            return {"service": "jira", "operation": "list_projects"}
+        
+        # Jira status
+        if re.search(r'jira.*status|check.*jira|jira.*connected', user_input):
+            return {"service": "jira", "operation": "status"}
         
         # ==================== NOTION COMMANDS ====================
         
@@ -84,8 +160,6 @@ class MCPComboClient:
             return {"service": "notion", "operation": "status"}
         
         # ==================== GITHUB COMMANDS ====================
-        
-        # CHECK MORE SPECIFIC COMMANDS BEFORE GENERAL ONES
         
         # List issues - Check BEFORE list repo (more specific)
         if re.search(r'list.*issue|show.*issue', user_input):
@@ -227,6 +301,22 @@ class MCPComboClient:
             except Exception as e:
                 return {"success": False, "error": str(e)}
         
+        elif service == "jira":
+            if not self.jira_server or not self.jira_server.is_connected():
+                return {"success": False, "error": "Jira not connected. Set JIRA_SERVER, JIRA_EMAIL, JIRA_TOKEN."}
+            try:
+                return self.jira_server.execute_command(command)
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+        
+        elif service == "slack":
+            if not self.slack_server or not self.slack_server.is_connected():
+                return {"success": False, "error": "Slack not connected. Set SLACK_TOKEN."}
+            try:
+                return self.slack_server.execute_command(command)
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+        
         return {"success": False, "error": "No service available for this command."}
     
     def format_result_for_user(self, result: Dict[str, Any]) -> str:
@@ -245,6 +335,10 @@ class MCPComboClient:
             message += f"\n📁 Repo: {result['repo_url']}"
         if "pr_url" in result:
             message += f"\n🔗 PR: {result['pr_url']}"
+        if "issue_url" in result:
+            message += f"\n🎫 Issue: {result['issue_url']}"
+        if "channel_id" in result:
+            message += f"\n💬 Channel: {result['channel_id']}"
         
         # Add lists
         if "pages" in result:
@@ -269,7 +363,22 @@ class MCPComboClient:
             issues = result["issues"]
             message = f"📋 Found {len(issues)} issues:"
             for issue in issues[:5]:
-                message += f"\n  • #{issue['number']}: {issue['title']}"
+                if 'key' in issue:
+                    message += f"\n  • {issue['key']}: {issue.get('summary', issue.get('title', 'Untitled'))}"
+                else:
+                    message += f"\n  • #{issue['number']}: {issue['title']}"
+        
+        if "projects" in result:
+            projects = result["projects"]
+            message = f"📋 Found {len(projects)} Jira projects:"
+            for proj in projects[:5]:
+                message += f"\n  • {proj['key']}: {proj['name']}"
+        
+        if "channels" in result:
+            channels = result["channels"]
+            message = f"📋 Found {len(channels)} Slack channels:"
+            for channel in channels[:5]:
+                message += f"\n  • #{channel['name']}"
         
         if "results" in result:
             items = result["results"]
@@ -281,5 +390,5 @@ class MCPComboClient:
         return message
 
 
-def create_mcp_combo_client(github_server=None, notion_server=None) -> MCPComboClient:
-    return MCPComboClient(github_server, notion_server)
+def create_mcp_combo_client(github_server=None, notion_server=None, jira_server=None, slack_server=None) -> MCPComboClient:
+    return MCPComboClient(github_server, notion_server, jira_server, slack_server)
