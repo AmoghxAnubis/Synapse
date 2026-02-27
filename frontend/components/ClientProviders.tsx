@@ -1,20 +1,21 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
-    ssr: false,
+  ssr: false,
 });
 
 export default function ClientProviders({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <>
-            <CustomCursor />
-            {children}
-        </>
-    );
+  return (
+    <ClerkProvider>
+      <CustomCursor />
+      {children}
+    </ClerkProvider>
+  );
 }

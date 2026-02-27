@@ -7,28 +7,55 @@ export default function HeroIllustration() {
     const { resolvedTheme } = useTheme();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(0);
+    const isVisibleRef = useRef<boolean>(true);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const isDark = resolvedTheme === "dark";
-
-        // Make the canvas fill its parent container
-        const setSize = () => {
-            const parent = canvas.parentElement!;
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = parent.offsetWidth * dpr;
-            canvas.height = parent.offsetHeight * dpr;
-        };
-        setSize();
-        window.addEventListener("resize", setSize);
-
         const ctx = canvas.getContext("2d")!;
 
         // ── helpers ──────────────────────────────────────────────
         const dpr = () => window.devicePixelRatio || 1;
         const CW = () => canvas.width / dpr();
         const CH = () => canvas.height / dpr();
+
+        let bg: CanvasGradient;
+        let topFade: CanvasGradient;
+        let botFade: CanvasGradient;
+
+        const updateGradients = () => {
+            const ch = CH();
+            bg = ctx.createLinearGradient(0, 0, 0, ch);
+            if (isDark) {
+                bg.addColorStop(0, "rgb(9,9,11)");
+                bg.addColorStop(0.5, "rgb(15,15,20)");
+                bg.addColorStop(1, "rgb(20,20,25)");
+            } else {
+                bg.addColorStop(0, "rgb(248,248,249)");
+                bg.addColorStop(0.5, "rgb(236,236,240)");
+                bg.addColorStop(1, "rgb(218,218,224)");
+            }
+
+            topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.22);
+            topFade.addColorStop(0, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
+            topFade.addColorStop(1, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
+
+            botFade = ctx.createLinearGradient(0, ch * 0.75, 0, ch);
+            botFade.addColorStop(0, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
+            botFade.addColorStop(1, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
+        };
+
+        // Make the canvas fill its parent container
+        const setSize = () => {
+            const parent = canvas.parentElement!;
+            const d = window.devicePixelRatio || 1;
+            canvas.width = parent.offsetWidth * d;
+            canvas.height = parent.offsetHeight * d;
+            updateGradients();
+        };
+        setSize();
+        window.addEventListener("resize", setSize);
 
         // ── particles ────────────────────────────────────────────
         const COUNT = 90;
@@ -56,22 +83,17 @@ export default function HeroIllustration() {
         const MAX_DIST = 170; // connection threshold (px)
 
         const draw = () => {
+            if (!isVisibleRef.current) {
+                rafRef.current = 0;
+                return;
+            }
+
             const cw = CW();
             const ch = CH();
             const d = dpr();
             ctx.setTransform(d, 0, 0, d, 0, 0);
 
             // Background
-            const bg = ctx.createLinearGradient(0, 0, 0, ch);
-            if (isDark) {
-                bg.addColorStop(0, "rgb(9,9,11)");
-                bg.addColorStop(0.5, "rgb(15,15,20)");
-                bg.addColorStop(1, "rgb(20,20,25)");
-            } else {
-                bg.addColorStop(0, "rgb(248,248,249)");
-                bg.addColorStop(0.5, "rgb(236,236,240)");
-                bg.addColorStop(1, "rgb(218,218,224)");
-            }
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, cw, ch);
 
@@ -119,25 +141,38 @@ export default function HeroIllustration() {
             }
 
             // Top fade — blends into white page above
-            const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.22);
-            topFade.addColorStop(0, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
-            topFade.addColorStop(1, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
             ctx.fillStyle = topFade;
             ctx.fillRect(0, 0, cw, ch * 0.22);
 
             // Bottom fade — flows into next section
-            const botFade = ctx.createLinearGradient(0, ch * 0.75, 0, ch);
-            botFade.addColorStop(0, isDark ? "rgba(9,9,11,0)" : "rgba(255,255,255,0)");
-            botFade.addColorStop(1, isDark ? "rgba(9,9,11,1)" : "rgba(255,255,255,1)");
             ctx.fillStyle = botFade;
             ctx.fillRect(0, 0, cw, ch);
 
             rafRef.current = requestAnimationFrame(draw);
         };
 
-        rafRef.current = requestAnimationFrame(draw);
+        // ── intersection observer ────────────────────────────────
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    isVisibleRef.current = true;
+                    if (!rafRef.current) {
+                        draw();
+                    }
+                } else {
+                    isVisibleRef.current = false;
+                }
+            },
+            { threshold: 0 }
+        );
+        observer.observe(canvas);
+
+        // Initial start (optimistic)
+        isVisibleRef.current = true;
+        draw();
 
         return () => {
+            observer.disconnect();
             cancelAnimationFrame(rafRef.current);
             window.removeEventListener("resize", setSize);
             window.removeEventListener("resize", initPts);
