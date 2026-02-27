@@ -7,3 +7,8 @@ chromadb
 requests
 python-dotenv
 huggingface_hub
+pypdf
+pygithub
+transformers
+notion-client
+pydantic
