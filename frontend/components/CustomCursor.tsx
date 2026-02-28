@@ -22,6 +22,8 @@ export default function CustomCursor() {
 
     useEffect(() => {
         let rafId: number;
+        let lastHoverState = false;
+        let lastSpeed = 0;
 
         const animate = () => {
             // Speed from frame delta (for crosshair stretch only)
@@ -29,8 +31,19 @@ export default function CustomCursor() {
             const dy = mouseY.current - prevY.current;
             const speed = Math.sqrt(dx * dx + dy * dy);
 
+            const hasMoved = dx !== 0 || dy !== 0;
+            const hoverChanged = lastHoverState !== isHovering.current;
+
+            // Idle check: if nothing changed and speed was already 0, skip DOM updates
+            if (!hasMoved && lastSpeed === 0 && !hoverChanged) {
+                rafId = requestAnimationFrame(animate);
+                return;
+            }
+
             prevX.current = mouseX.current;
             prevY.current = mouseY.current;
+            lastHoverState = isHovering.current;
+            lastSpeed = speed;
 
             const dynamicLength = Math.min(
                 CROSSHAIR_LENGTH + speed * 1.2,
@@ -79,9 +92,9 @@ export default function CustomCursor() {
             isHovering.current = false;
         };
 
-        document.addEventListener("mousemove", onMove);
-        document.addEventListener("mouseover", onEnter);
-        document.addEventListener("mouseout", onLeave);
+        document.addEventListener("mousemove", onMove, { passive: true });
+        document.addEventListener("mouseover", onEnter, { passive: true });
+        document.addEventListener("mouseout", onLeave, { passive: true });
         rafId = requestAnimationFrame(animate);
 
         return () => {
