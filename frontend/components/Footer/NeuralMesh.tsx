@@ -6,7 +6,9 @@ import * as THREE from "three";
 
 const PARTICLE_COUNT = 150;
 const CONNECTION_DISTANCE = 1.6;
+const CONNECTION_DISTANCE_SQ = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 const MOUSE_RADIUS = 3.0;
+const MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS;
 const LERP_SPEED = 0.025;
 
 export default function NeuralMesh() {
@@ -16,29 +18,29 @@ export default function NeuralMesh() {
 
     // Generate initial positions & velocities
     const { positions, basePositions, velocities } = useMemo(() => {
-        const positions = new Float32Array(PARTICLE_COUNT * 3);
-        const basePositions = new Float32Array(PARTICLE_COUNT * 3);
-        const velocities = new Float32Array(PARTICLE_COUNT * 3);
+        const pos = new Float32Array(PARTICLE_COUNT * 3);
+        const basePos = new Float32Array(PARTICLE_COUNT * 3);
+        const vels = new Float32Array(PARTICLE_COUNT * 3);
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const x = (Math.random() - 0.5) * 14;
             const y = (Math.random() - 0.5) * 8;
             const z = (Math.random() - 0.5) * 4;
 
-            positions[i * 3] = x;
-            positions[i * 3 + 1] = y;
-            positions[i * 3 + 2] = z;
+            pos[i * 3] = x;
+            pos[i * 3 + 1] = y;
+            pos[i * 3 + 2] = z;
 
-            basePositions[i * 3] = x;
-            basePositions[i * 3 + 1] = y;
-            basePositions[i * 3 + 2] = z;
+            basePos[i * 3] = x;
+            basePos[i * 3 + 1] = y;
+            basePos[i * 3 + 2] = z;
 
-            velocities[i * 3] = (Math.random() - 0.5) * 0.005;
-            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.005;
-            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+            vels[i * 3] = (Math.random() - 0.5) * 0.005;
+            vels[i * 3 + 1] = (Math.random() - 0.5) * 0.005;
+            vels[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
         }
 
-        return { positions, basePositions, velocities };
+        return { positions: pos, basePositions: basePos, velocities: vels };
     }, []);
 
     // Line geometry for connections
@@ -83,9 +85,10 @@ export default function NeuralMesh() {
             // Mouse attraction
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const distSq = dx * dx + dy * dy;
 
-            if (dist < MOUSE_RADIUS) {
+            if (distSq < MOUSE_RADIUS_SQ) {
+                const dist = Math.sqrt(distSq);
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
@@ -108,9 +111,10 @@ export default function NeuralMesh() {
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const dSq = dx * dx + dy * dy + dz * dz;
 
-                if (d < CONNECTION_DISTANCE) {
+                if (dSq < CONNECTION_DISTANCE_SQ) {
+                    const d = Math.sqrt(dSq);
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;
