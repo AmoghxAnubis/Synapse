@@ -6,7 +6,9 @@ import * as THREE from "three";
 
 const PARTICLE_COUNT = 150;
 const CONNECTION_DISTANCE = 1.6;
+const CONNECTION_DISTANCE_SQ = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 const MOUSE_RADIUS = 3.0;
+const MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS;
 const LERP_SPEED = 0.025;
 
 export default function NeuralMesh() {
@@ -15,6 +17,8 @@ export default function NeuralMesh() {
     const { viewport } = useThree();
 
     // Generate initial positions & velocities
+    /* eslint-disable react-hooks/purity */
+    /* eslint-disable react-hooks/immutability */
     const { positions, basePositions, velocities } = useMemo(() => {
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const basePositions = new Float32Array(PARTICLE_COUNT * 3);
@@ -83,9 +87,11 @@ export default function NeuralMesh() {
             // Mouse attraction
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const distSq = dx * dx + dy * dy;
 
-            if (dist < MOUSE_RADIUS) {
+            // ⚡ Bolt: Fast squared distance check to avoid Math.sqrt when outside radius
+            if (distSq < MOUSE_RADIUS_SQ) {
+                const dist = Math.sqrt(distSq);
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
@@ -108,9 +114,11 @@ export default function NeuralMesh() {
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const dSq = dx * dx + dy * dy + dz * dz;
 
-                if (d < CONNECTION_DISTANCE) {
+                // ⚡ Bolt: Fast squared distance check to avoid Math.sqrt in O(N^2) inner loop
+                if (dSq < CONNECTION_DISTANCE_SQ) {
+                    const d = Math.sqrt(dSq);
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;

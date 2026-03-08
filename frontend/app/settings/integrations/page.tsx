@@ -46,7 +46,7 @@ const integrations: Integration[] = [
         id: "slack",
         name: "Slack",
         description:
-            "Sync saved messages & channel context. Pull important conversations and threads into Synapse's brain.",
+            "Sync saved messages & channel context. Pull important conversations and threads into Synapse&apos;s brain.",
         icon: <MessageSquare className="h-5 w-5" />,
         accentColor: "orange",
     },
@@ -225,7 +225,7 @@ export default function IntegrationsPage() {
                         Connected Brains
                     </h1>
                     <p className="mt-2 max-w-lg text-sm leading-relaxed text-zinc-500">
-                        Sync your external workspaces into Synapse's local memory. All data
+                        Sync your external workspaces into Synapse&apos;s local memory. All data
                         is pulled down and processed by your local NPU — nothing leaves your
                         machine.
                     </p>
