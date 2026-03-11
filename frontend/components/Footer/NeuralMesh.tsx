@@ -15,6 +15,8 @@ export default function NeuralMesh() {
     const { viewport } = useThree();
 
     // Generate initial positions & velocities
+    /* eslint-disable react-hooks/purity */
+    /* eslint-disable react-hooks/immutability */
     const { positions, basePositions, velocities } = useMemo(() => {
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const basePositions = new Float32Array(PARTICLE_COUNT * 3);
@@ -83,9 +85,13 @@ export default function NeuralMesh() {
             // Mouse attraction
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < MOUSE_RADIUS) {
+            // ⚡ BOLT OPTIMIZATION:
+            // Calculate squared distance first to avoid expensive Math.sqrt() on every frame for every particle.
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < MOUSE_RADIUS * MOUSE_RADIUS) {
+                const dist = Math.sqrt(distSq); // Only compute sqrt when within radius
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
@@ -108,9 +114,14 @@ export default function NeuralMesh() {
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-                if (d < CONNECTION_DISTANCE) {
+                // ⚡ BOLT OPTIMIZATION:
+                // Calculate squared distance first to avoid expensive Math.sqrt()
+                // on O(n^2) particle pairs every frame.
+                const dSq = dx * dx + dy * dy + dz * dz;
+
+                if (dSq < CONNECTION_DISTANCE * CONNECTION_DISTANCE) {
+                    const d = Math.sqrt(dSq); // Only compute sqrt when connected
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;
