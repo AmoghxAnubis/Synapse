@@ -1,3 +1,7 @@
 ## 2024-05-15 - [CustomCursor Animation Optimization]
 **Learning:** The CustomCursor component in `frontend/components/CustomCursor.tsx` was running a continuous `requestAnimationFrame` loop that modified DOM styles directly every frame, even when the mouse was completely stationary. This caused unnecessary main-thread overhead.
 **Action:** Introduced an early-return check inside the `requestAnimationFrame` loop to skip DOM updates when the mouse hasn't moved and its hover state hasn't changed. Added `{ passive: true }` to mouse event listeners to improve scroll performance. Always look for ways to pause animation loops when the target element is idle.
+
+## 2024-05-20 - [NeuralMesh Distance Calculation Optimization]
+**Learning:** The `NeuralMesh` component in `frontend/components/Footer/NeuralMesh.tsx` was performing over 11,000 `Math.sqrt()` operations per frame inside a nested loop for distance calculations (mouse attraction and particle connections). This caused unnecessary CPU overhead.
+**Action:** Replaced the initial `Math.sqrt()` distance calculations with squared distance checks (`dx*dx + dy*dy < radius*radius`). Deferred the expensive `Math.sqrt()` calculation to run *only* if the particles are within the connection threshold. This drastically reduces CPU overhead in WebGL/Canvas render loops while preserving the exact visual behavior.
