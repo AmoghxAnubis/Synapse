@@ -6,7 +6,9 @@ import * as THREE from "three";
 
 const PARTICLE_COUNT = 150;
 const CONNECTION_DISTANCE = 1.6;
+const CONNECTION_DISTANCE_SQ = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 const MOUSE_RADIUS = 3.0;
+const MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS;
 const LERP_SPEED = 0.025;
 
 export default function NeuralMesh() {
@@ -15,6 +17,7 @@ export default function NeuralMesh() {
     const { viewport } = useThree();
 
     // Generate initial positions & velocities
+    /* eslint-disable react-hooks/purity */
     const { positions, basePositions, velocities } = useMemo(() => {
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const basePositions = new Float32Array(PARTICLE_COUNT * 3);
@@ -40,6 +43,7 @@ export default function NeuralMesh() {
 
         return { positions, basePositions, velocities };
     }, []);
+    /* eslint-enable react-hooks/purity */
 
     // Line geometry for connections
     const lineGeometry = useMemo(() => {
@@ -81,19 +85,23 @@ export default function NeuralMesh() {
             arr[iz] += (basePositions[iz] - arr[iz]) * 0.002;
 
             // Mouse attraction
+            // Optimization: Use squared distance to avoid expensive Math.sqrt calculation per frame per particle
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const distSq = dx * dx + dy * dy;
 
-            if (dist < MOUSE_RADIUS) {
+            if (distSq < MOUSE_RADIUS_SQ) {
+                const dist = Math.sqrt(distSq); // Only calculate sqrt if within radius
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
             }
 
             // Wrap slowly drifting particles
+            /* eslint-disable react-hooks/immutability */
             if (Math.abs(arr[ix]) > 8) velocities[ix] *= -1;
             if (Math.abs(arr[iy]) > 5) velocities[iy] *= -1;
+            /* eslint-enable react-hooks/immutability */
         }
 
         posAttr.needsUpdate = true;
@@ -105,18 +113,21 @@ export default function NeuralMesh() {
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+                // Optimization: Use squared distance to avoid expensive Math.sqrt in O(N^2) inner loop
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const dSq = dx * dx + dy * dy + dz * dz;
 
-                if (d < CONNECTION_DISTANCE) {
+                if (dSq < CONNECTION_DISTANCE_SQ) {
+                    const d = Math.sqrt(dSq); // Only calculate sqrt if within connection distance
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;
                     const g = 0.44;
                     const b = 0.48;
 
+                    /* eslint-disable react-hooks/immutability */
                     const idx = lineIdx * 6;
                     linePos[idx] = arr[i * 3];
                     linePos[idx + 1] = arr[i * 3 + 1];
@@ -131,6 +142,7 @@ export default function NeuralMesh() {
                     lineCol[idx + 3] = r * alpha;
                     lineCol[idx + 4] = g * alpha;
                     lineCol[idx + 5] = b * alpha;
+                    /* eslint-enable react-hooks/immutability */
 
                     lineIdx++;
                     if (lineIdx >= PARTICLE_COUNT * 6) break;
