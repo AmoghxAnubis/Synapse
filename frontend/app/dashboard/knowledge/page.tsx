@@ -36,7 +36,7 @@ export default function KnowledgeBase() {
                 <div className="lg:col-span-1">
                     <MemoryDropzone />
                     <p className="text-sm text-neutral-500 mt-4 dark:text-neutral-400">
-                        Upload documents (PDF, TXT, MD, DOCX) to expand Synapse's knowledge base.
+                        Upload documents (PDF, TXT, MD, DOCX) to expand Synapse&apos;s knowledge base.
                         Files are processed locally and stored securely.
                     </p>
                 </div>

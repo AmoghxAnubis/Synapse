@@ -160,7 +160,7 @@ export default function AgentsPage() {
                                     Knowledge Context
                                 </h3>
                                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-                                    Connect uploaded documents or specific folders to this agent's immediate memory.
+                                    Connect uploaded documents or specific folders to this agent&apos;s immediate memory.
                                 </p>
 
                                 <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
