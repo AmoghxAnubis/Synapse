@@ -1,3 +1,7 @@
 ## 2024-05-15 - [CustomCursor Animation Optimization]
 **Learning:** The CustomCursor component in `frontend/components/CustomCursor.tsx` was running a continuous `requestAnimationFrame` loop that modified DOM styles directly every frame, even when the mouse was completely stationary. This caused unnecessary main-thread overhead.
 **Action:** Introduced an early-return check inside the `requestAnimationFrame` loop to skip DOM updates when the mouse hasn't moved and its hover state hasn't changed. Added `{ passive: true }` to mouse event listeners to improve scroll performance. Always look for ways to pause animation loops when the target element is idle.
+
+## 2024-07-25 - [WebGL Squared Distance Check Optimization]
+**Learning:** In WebGL render loops (like `@react-three/fiber` components such as `NeuralMesh`), computing `Math.sqrt` on every frame for distance calculations, especially in O(N^2) connection loops, can introduce significant CPU overhead per frame, which may result in less smooth rendering on target industry-level corporate computers.
+**Action:** Use squared distance checks (`d2 < THRESHOLD * THRESHOLD`) instead of absolute distance checks where possible. Only compute `Math.sqrt(d2)` if the distance falls within the required threshold limit. This drastically reduces the number of expensive math operations executed each frame.
