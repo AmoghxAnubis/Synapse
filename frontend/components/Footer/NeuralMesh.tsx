@@ -15,6 +15,8 @@ export default function NeuralMesh() {
     const { viewport } = useThree();
 
     // Generate initial positions & velocities
+    /* eslint-disable react-hooks/purity */
+    /* eslint-disable react-hooks/immutability */
     const { positions, basePositions, velocities } = useMemo(() => {
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const basePositions = new Float32Array(PARTICLE_COUNT * 3);
@@ -83,9 +85,12 @@ export default function NeuralMesh() {
             // Mouse attraction
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < MOUSE_RADIUS) {
+            // ⚡ Bolt Optimization: Use squared distance to avoid expensive Math.sqrt per frame for every particle
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < MOUSE_RADIUS * MOUSE_RADIUS) {
+                const dist = Math.sqrt(distSq); // Only compute true distance if within radius
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
@@ -103,14 +108,19 @@ export default function NeuralMesh() {
         const lineCol = lineGeometry.attributes.color.array as Float32Array;
         let lineIdx = 0;
 
+        const connectionDistSq = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
+
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             for (let j = i + 1; j < PARTICLE_COUNT; j++) {
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-                if (d < CONNECTION_DISTANCE) {
+                // ⚡ Bolt Optimization: Use squared distance (avoid ~11,000 Math.sqrt calls per frame)
+                const dSq = dx * dx + dy * dy + dz * dz;
+
+                if (dSq < connectionDistSq) {
+                    const d = Math.sqrt(dSq); // Compute only for actual connections
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;
