@@ -1,7 +1,16 @@
 "use client";
 
 import MemoryDropzone from "@/components/MemoryDropzone";
-import { Database } from "lucide-react";
+import { Database, Link as LinkIcon, BookOpen, GraduationCap, UploadCloud, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function KnowledgeBase() {
     return (
@@ -24,9 +33,49 @@ export default function KnowledgeBase() {
                     </h1>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button className="bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors">
-                        Add Source
-                    </button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="flex items-center gap-2 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600">
+                                <span>Add Source</span>
+                                <ChevronDown className="h-4 w-4 opacity-70" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 mt-1 rounded-xl shadow-lg border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 animate-in fade-in-80 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 p-1">
+                            <DropdownMenuLabel className="text-xs font-semibold text-neutral-500 uppercase tracking-wider dark:text-neutral-400 px-2 py-1.5 mt-1">
+                                Data Sources
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-neutral-100 dark:bg-neutral-800" />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2 px-2 rounded-md transition-colors">
+                                    <UploadCloud className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                    <span>Upload Files</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2 px-2 rounded-md transition-colors">
+                                    <LinkIcon className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                    <span>Add Web URL</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2 px-2 rounded-md transition-colors">
+                                    <Database className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                    <span>Connect Database</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator className="bg-neutral-100 dark:bg-neutral-800" />
+                            <DropdownMenuLabel className="text-xs font-semibold text-neutral-500 uppercase tracking-wider dark:text-neutral-400 px-2 py-1.5 mt-1">
+                                Integrations
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-neutral-100 dark:bg-neutral-800" />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2 px-2 rounded-md transition-colors">
+                                    <BookOpen className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                    <span>Academic Learning Link</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer focus:bg-neutral-100 dark:focus:bg-neutral-800 py-2 px-2 rounded-md transition-colors text-blue-600 dark:text-blue-400 focus:text-blue-700 dark:focus:text-blue-300">
+                                    <GraduationCap className="h-4 w-4" />
+                                    <span>Login with IEEE</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </header>
 
