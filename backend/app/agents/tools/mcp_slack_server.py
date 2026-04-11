@@ -50,6 +50,12 @@ class MCPSlackServer:
         
         if not self.token:
             print("⚠️ Slack token missing. Set SLACK_TOKEN environment variable.")
+            print("slack-sdk package not installed. Install with: pip install slack-sdk")
+            self._connected = False
+            return False
+        
+        if not self.token:
+            print("Slack token missing. Set SLACK_TOKEN environment variable.")
             self._connected = False
             return False
             
@@ -58,10 +64,10 @@ class MCPSlackServer:
             # Test connection
             self.client.auth_test()
             self._connected = True
-            print("✅ MCP Slack Server connected successfully!")
+            print("MCP Slack Server connected successfully!")
             return True
         except SlackApiError as e:
-            print(f"❌ Failed to connect to Slack: {e.response['error']}")
+            print(f"Failed to connect to Slack: {e.response['error']}")
             self._connected = False
             return False
         except Exception as e:

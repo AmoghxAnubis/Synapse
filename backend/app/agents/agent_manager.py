@@ -33,43 +33,43 @@ except ImportError:
 
 class AgentManager:
     def __init__(self):
-        print("🕵️ Initializing Agentic Capabilities...")
-        self.github = GitHubConnector()
+        print("Initializing Agentic Capabilities...")
+        self.combo_client = MCPComboClient()
         self.app_launcher = AppLauncher()
         
         # Initialize MCP Servers
-        print("🔌 Initializing MCP GitHub Server...")
+        print("Initializing MCP GitHub Server...")
         self.mcp_github_server = MCPGitHubServer()
         
         # Initialize Notion MCP Server if available
         if NOTION_AVAILABLE:
-            print("🔌 Initializing MCP Notion Server...")
+            print("Initializing MCP Notion Server...")
             try:
                 self.mcp_notion_server = MCPNotionServer()
             except Exception as e:
-                print(f"⚠️ Notion MCP Server init failed: {e}")
+                print(f"Notion MCP Server init failed: {e}")
                 self.mcp_notion_server = None
         else:
             self.mcp_notion_server = None
         
         # Initialize Jira MCP Server if available
         if JIRA_AVAILABLE:
-            print("🔌 Initializing MCP Jira Server...")
+            print("Initializing MCP Jira Server...")
             try:
                 self.mcp_jira_server = MCPJiraServer()
             except Exception as e:
-                print(f"⚠️ Jira MCP Server init failed: {e}")
+                print(f"Jira MCP Server init failed: {e}")
                 self.mcp_jira_server = None
         else:
             self.mcp_jira_server = None
         
         # Initialize Slack MCP Server if available
         if SLACK_AVAILABLE:
-            print("🔌 Initializing MCP Slack Server...")
+            print("Initializing MCP Slack Server...")
             try:
                 self.mcp_slack_server = MCPSlackServer()
             except Exception as e:
-                print(f"⚠️ Slack MCP Server init failed: {e}")
+                print(f"Jira MCP Server init failed: {e}")
                 self.mcp_slack_server = None
         else:
             self.mcp_slack_server = None
@@ -81,6 +81,25 @@ class AgentManager:
             jira_server=self.mcp_jira_server,
             slack_server=self.mcp_slack_server
         )
+
+        # Persona Agent Definitions
+        self.persona_agents = {
+            "Research Assistant": {
+                "description": "Expert in synthesizing information and citing sources.",
+                "instructions": "You are an expert research assistant. Your goal is to synthesize information from the web and provided documents into clear, concise summaries. Always cite your sources. Do not make assumptions beyond the provided data.",
+                "icon": "Globe"
+            },
+            "Code Wizard": {
+                "description": "Senior developer specializing in debugging and best practices.",
+                "instructions": "You are a senior full-stack developer and 'Code Wizard'. You provide high-quality code snippets, explain complex logic simply, and always focus on security and best practices.",
+                "icon": "Code"
+            },
+            "Document Analyzer": {
+                "description": "Specialist in extracting insights from complex documents.",
+                "instructions": "You are a document analysis specialist. Your goal is to extract key insights, summarize complex data, and identify patterns within the provided document context.",
+                "icon": "FileText"
+            }
+        }
         
     def route_request(self, user_query):
         """
@@ -89,12 +108,29 @@ class AgentManager:
         """
         query = user_query.lower()
 
+        # --- PERSONA ROUTING (New) ---
+        # Check if query starts with [Agent Name]
+        import re
+        persona_match = re.match(r"^\[(.*?)\]", user_query)
+        if persona_match:
+            persona_name = persona_match.group(1)
+            if persona_name in self.persona_agents:
+                print(f"Adopting Persona: {persona_name}")
+                # Return the persona prompt and the cleaned query
+                cleaned_query = user_query.replace(f"[{persona_name}]", "").strip()
+                return {
+                    "type": "persona",
+                    "persona": persona_name,
+                    "prompt": self.persona_agents[persona_name]["instructions"],
+                    "query": cleaned_query
+                }
+
         # --- ROUTING LOGIC ---
         
         # 0. APP LAUNCHING INTENT (Check first!)
         is_app_request, app_name = self.app_launcher.is_app_request(user_query)
         if is_app_request:
-            print(f"🔀 Routing to: App Launcher -> {app_name}")
+            print(f"Routing to: App Launcher -> {app_name}")
             return self.app_launcher.launch_app(app_name)
         
         # 1. SLACK OPERATIONS - Route to MCP Slack Server
@@ -102,10 +138,10 @@ class AgentManager:
         has_slack_intent = any(keyword in query for keyword in slack_keywords)
         
         if has_slack_intent:
-            print("🔀 Routing to: MCP Slack Server")
+            print("Routing to: MCP Slack Server")
             
             if not self.mcp_slack_server or not self.mcp_slack_server.is_connected():
-                return "⚠️ Slack MCP Server not connected. Please set SLACK_TOKEN environment variable."
+                return "Slack MCP Server not connected. Please set SLACK_TOKEN environment variable."
             
             result = self.mcp_client.execute(user_query)
             return self.mcp_client.format_result_for_user(result)
@@ -115,10 +151,10 @@ class AgentManager:
         has_jira_intent = any(keyword in query for keyword in jira_keywords)
         
         if has_jira_intent:
-            print("🔀 Routing to: MCP Jira Server")
+            print("Routing to: MCP Jira Server")
             
             if not self.mcp_jira_server or not self.mcp_jira_server.is_connected():
-                return "⚠️ Jira MCP Server not connected. Please set JIRA_SERVER, JIRA_EMAIL, and JIRA_TOKEN environment variables."
+                return "Jira MCP Server not connected. Please set JIRA_SERVER, JIRA_EMAIL, and JIRA_TOKEN environment variables."
             
             result = self.mcp_client.execute(user_query)
             return self.mcp_client.format_result_for_user(result)
@@ -128,10 +164,10 @@ class AgentManager:
         has_notion_intent = any(keyword in query for keyword in notion_keywords)
         
         if has_notion_intent:
-            print("🔀 Routing to: MCP Notion Server")
+            print("Routing to: MCP Notion Server")
             
             if not self.mcp_notion_server or not self.mcp_notion_server.is_connected():
-                return "⚠️ Notion MCP Server not connected. Please set NOTION_TOKEN environment variable."
+                return "Notion MCP Server not connected. Please set NOTION_TOKEN environment variable."
             
             result = self.mcp_client.execute(user_query)
             return self.mcp_client.format_result_for_user(result)
@@ -145,10 +181,10 @@ class AgentManager:
         has_github_intent = any(keyword in query for keyword in github_intent_keywords)
         
         if has_github_intent:
-            print("🔀 Routing to: MCP GitHub Server")
+            print("Routing to: MCP GitHub Server")
             
             if not self.mcp_github_server.is_connected():
-                return "⚠️ GitHub MCP Server not connected. Please set GITHUB_TOKEN environment variable."
+                return "GitHub MCP Server not connected. Please set GITHUB_TOKEN environment variable."
             
             result = self.mcp_client.execute(user_query)
             return self.mcp_client.format_result_for_user(result)
@@ -194,3 +230,32 @@ class AgentManager:
             "jira": jira_status,
             "slack": slack_status
         }
+    
+    def get_available_agents(self):
+        """Returns a unified list of platform agents and persona agents."""
+        mcp_statuses = self.get_mcp_status()
+        
+        # 1. Platform Agents
+        agents_list = []
+        for platform, status in mcp_statuses.items():
+            agents_list.append({
+                "name": platform.capitalize(),
+                "id": platform,
+                "type": "platform",
+                "connected": status.get("status") == "connected",
+                "description": f"Access your {platform.capitalize()} data.",
+                "icon": "Bot"
+            })
+            
+        # 2. Persona Agents
+        for name, data in self.persona_agents.items():
+            agents_list.append({
+                "name": name,
+                "id": name,
+                "type": "persona",
+                "connected": True, # Persona agents are always 'connected'
+                "description": data["description"],
+                "icon": data["icon"]
+            })
+            
+        return agents_list

@@ -6,21 +6,21 @@ import os
 
 class AMDBridge:
     def __init__(self):
-        print("\n--- 🧠 SYNAPSE HARDWARE CHECK ---")
+        print("\n--- [BRAIN] SYNAPSE HARDWARE CHECK ---")
         self.providers = ort.get_available_providers()
         
         # 1. Hardware Detection Logic
         if 'VitisAIExecutionProvider' in self.providers:
-            print("✅ SUCCESS: AMD Ryzen AI (NPU) Detected.")
+            print("SUCCESS: AMD Ryzen AI (NPU) Detected.")
             self.execution_providers = ['VitisAIExecutionProvider']
             self.hardware_mode = "NPU"
         elif 'ROCMExecutionProvider' in self.providers:
-            print("✅ SUCCESS: AMD ROCm (GPU) Detected.")
+            print("SUCCESS: AMD ROCm (GPU) Detected.")
             self.execution_providers = ['ROCMExecutionProvider']
             self.hardware_mode = "GPU"
         else:
-            print("⚠️ AMD Hardware not found.")
-            print("🔄 ACTIVATE: Compatibility Mode (CPU Fallback).")
+            print("WARNING: AMD Hardware not found.")
+            print("REFRESH: Compatibility Mode (CPU Fallback).")
             self.execution_providers = ['CPUExecutionProvider']
             self.hardware_mode = "CPU_MOCK"
 
@@ -30,7 +30,7 @@ class AMDBridge:
         self.session = ort.InferenceSession(self.model_path, providers=self.execution_providers)
         
         # 3. Load the Tokenizer
-        print("📖 Loading Tokenizer...")
+        print("READ: Loading Tokenizer...")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
 
     def _get_model(self):
@@ -85,6 +85,6 @@ if __name__ == "__main__":
     test_sentence = "AMD Ryzen AI is powerful."
     vector = bridge.embed_text(test_sentence)
     
-    print(f"\n🧪 TEST: Text converted to vector successfully.")
-    print(f"📏 Vector Dimensions: {len(vector)}") # Should be 384
-    print(f"🔢 First 5 numbers: {vector[:5]}")
+    print(f"\nTEST: Text converted to vector successfully.")
+    print(f"Vector Dimensions: {len(vector)}") # Should be 384
+    print(f"First 5 numbers: {vector[:5]}")

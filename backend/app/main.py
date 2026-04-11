@@ -5,6 +5,7 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 import sys
+from typing import List, Optional
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,7 +32,7 @@ app.add_middleware(
 )
 
 # --- INITIALIZATION ---
-print("🔌 Booting Synapse Core...")
+print("Booting Synapse Core...")
 memory = MemoryBank()           # The Hippocampus (Database)
 llm = LocalLLM(model="llama3")  # The Prefrontal Cortex (Ollama)
 agent_manager = AgentManager()  # The Hands (Toolbelt)
@@ -39,6 +40,7 @@ agent_manager = AgentManager()  # The Hands (Toolbelt)
 # --- DATA MODELS ---
 class Query(BaseModel):
     text: str
+    sources: Optional[List[str]] = None
 
 class ModeRequest(BaseModel):
     mode: str
@@ -81,6 +83,31 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/sources")
+def list_sources():
+    """Lists all unique document sources stored in memory."""
+    try:
+        sources = memory.get_all_sources()
+        return {
+            "status": "success",
+            "sources": sources,
+            "count": len(sources)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/agents")
+def list_agents():
+    """Lists all available agents (Platform + Persona)."""
+    try:
+        agents = agent_manager.get_available_agents()
+        return {
+            "status": "success",
+            "agents": agents
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # --- 2. THE VOICE & HANDS (Agentic Search) ---
 @app.post("/ask")
 def ask_synapse(query: Query):
@@ -93,11 +120,31 @@ def ask_synapse(query: Query):
     print(f"User asked: {query.text}")
 
     # --- STEP 1: AGENTIC ROUTING (The Switchboard) ---
-    # We ask the Agent Manager if this looks like a tool request
+    # We ask the Agent Manager if this looks like a tool request or persona request
     agent_response = agent_manager.route_request(query.text)
     
     if agent_response:
-        print("🤖 Agent handled the request.")
+        # Check if it's a Persona adoption
+        if isinstance(agent_response, dict) and agent_response.get("type") == "persona":
+            print(f"Adopting persona: {agent_response['persona']}")
+            persona_prompt = agent_response["prompt"]
+            user_query_cleaned = agent_response["query"]
+            
+            # Run normal RAG but with the persona prompt and source pinning
+            results = memory.recall(user_query_cleaned, n_results=3, source_filter=query.sources)
+            retrieved_docs = results['documents'][0] if results['documents'] else []
+            context_block = "\n".join(retrieved_docs) if retrieved_docs else "No relevant memory found."
+            
+            ai_response = llm.generate_answer(context_block, user_query_cleaned, system_prompt=persona_prompt)
+            
+            return {
+                "answer": ai_response,
+                "sources": retrieved_docs,
+                "hardware_flow": f"Persona_Router({agent_response['persona']}) -> {memory.brain.hardware_mode} -> ROCm_Sim"
+            }
+            
+        # Standard Tool Response
+        print("Agent handled the request.")
         return {
             "answer": agent_response,
             "sources": ["External API (GitHub/Tool)"],
@@ -105,11 +152,11 @@ def ask_synapse(query: Query):
         }
 
     # --- STEP 2: STANDARD RAG (The Memory) ---
-    print("🧠 No agent needed. Searching Memory...")
+    print("No agent needed. Searching Memory...")
     
     # A. Search local memory
-    results = memory.recall(query.text, n_results=3)
-    retrieved_docs = results['documents'][0]
+    results = memory.recall(query.text, n_results=3, source_filter=query.sources)
+    retrieved_docs = results['documents'][0] if results['documents'] else []
     
     # B. Check if we found anything
     if not retrieved_docs:

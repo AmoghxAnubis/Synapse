@@ -51,7 +51,12 @@ class MCPJiraServer:
             return False
         
         if not self.server or not self.email or not self.api_token:
-            print("⚠️ Jira credentials missing. Set JIRA_SERVER, JIRA_EMAIL, and JIRA_TOKEN.")
+            print("jira package not installed. Install with: pip install jira")
+            self._connected = False
+            return False
+        
+        if not self.server or not self.email or not self.api_token:
+            print("Jira credentials missing. Set JIRA_SERVER, JIRA_EMAIL, and JIRA_TOKEN.")
             self._connected = False
             return False
             
@@ -61,10 +66,10 @@ class MCPJiraServer:
                 basic_auth=(self.email, self.api_token)
             )
             self._connected = True
-            print("✅ MCP Jira Server connected successfully!")
+            print("MCP Jira Server connected successfully!")
             return True
         except Exception as e:
-            print(f"❌ Failed to connect to Jira: {e}")
+            print(f"Failed to connect to Jira: {e}")
             self._connected = False
             return False
     

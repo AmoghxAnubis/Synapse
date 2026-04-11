@@ -50,7 +50,7 @@ class MCPNotionServer:
         try:
             self.client = Client(auth=self.token)
             self._connected = True
-            print("✅ MCP Notion Server connected successfully!")
+            print("MCP Notion Server connected successfully!")
             return True
         except Exception as e:
             print(f"❌ Failed to connect to Notion: {e}")

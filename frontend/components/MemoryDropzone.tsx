@@ -15,7 +15,11 @@ interface UploadedFile {
     timestamp: Date;
 }
 
-export default function MemoryDropzone() {
+interface MemoryDropzoneProps {
+    onUploadSuccess?: () => void;
+}
+
+export default function MemoryDropzone({ onUploadSuccess }: MemoryDropzoneProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -35,6 +39,8 @@ export default function MemoryDropzone() {
             toast.success(`Ingested: ${result.filename}`, {
                 description: `${result.chunks_processed} chunks processed via ${result.hardware}`,
             });
+            // Notify parent to refresh list
+            if (onUploadSuccess) onUploadSuccess();
         } catch {
             toast.error("Upload failed", {
                 description: "Could not reach Synapse backend.",

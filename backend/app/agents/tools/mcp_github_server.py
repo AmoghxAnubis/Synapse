@@ -45,10 +45,10 @@ class MCPGitHubServer:
             self.client = Github(self.token)
             self.user = self.client.get_user()
             self._connected = True
-            print("✅ MCP GitHub Server connected successfully!")
+            print("MCP GitHub Server connected successfully!")
             return True
         except Exception as e:
-            print(f"❌ Failed to connect to GitHub: {e}")
+            print(f"FAILED: Failed to connect to GitHub: {e}")
             self._connected = False
             return False
     
@@ -105,7 +105,7 @@ class MCPGitHubServer:
             )
             return {
                 "success": True,
-                "message": f"✅ Repository '{name}' created successfully!",
+                "message": f"Repository '{name}' created successfully!",
                 "repo_url": repo.html_url,
                 "repo_name": repo.full_name
             }
@@ -136,7 +136,7 @@ class MCPGitHubServer:
             repo.delete()
             return {
                 "success": True,
-                "message": f"✅ Repository '{repo_name}' deleted successfully!"
+                "message": f"Repository '{repo_name}' deleted successfully!"
             }
         except GithubException as e:
             return {"success": False, "error": f"Failed to delete repository: {e.data.get('message', str(e))}"}
@@ -222,7 +222,7 @@ class MCPGitHubServer:
             self.user.add_to_starred(repo)
             return {
                 "success": True,
-                "message": f"⭐ Starred '{repo_name}'!"
+                "message": f"Starred '{repo_name}'!"
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -237,7 +237,7 @@ class MCPGitHubServer:
             self.user.remove_from_starred(repo)
             return {
                 "success": True,
-                "message": f"☆ Unstarred '{repo_name}'!"
+                "message": f"Unstarred '{repo_name}'!"
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -308,7 +308,7 @@ class MCPGitHubServer:
             commit = result['commit']
             return {
                 "success": True,
-                "message": f"✅ Pushed commit to '{repo_name}/{branch}'!",
+                "message": f"Pushed commit to '{repo_name}/{branch}'!",
                 "commit_sha": commit.sha,
                 "commit_url": commit.html_url,
                 "commit_message": commit.message
