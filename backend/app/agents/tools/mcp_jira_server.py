@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional, List
 try:
     from jira import JIRA
     JIRA_AVAILABLE = True
-except ImportError:
+except ImportError:    
     JIRA_AVAILABLE = False
 
 
