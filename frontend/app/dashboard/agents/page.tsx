@@ -668,12 +668,6 @@ export default function AgentsPage() {
 }
 
 
-const agentIconsMap: Record<string, any> = {
-    Bot: Bot,
-    Globe: Globe,
-    Code: Code,
-    FileText: FileText,
-};
 
 export default function AgentsPage() {
     const [agents, setAgents] = useState<Agent[]>([]);
