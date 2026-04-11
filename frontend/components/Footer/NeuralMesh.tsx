@@ -15,6 +15,8 @@ export default function NeuralMesh() {
     const { viewport } = useThree();
 
     // Generate initial positions & velocities
+    /* eslint-disable react-hooks/purity */
+    /* eslint-disable react-hooks/immutability */
     const { positions, basePositions, velocities } = useMemo(() => {
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const basePositions = new Float32Array(PARTICLE_COUNT * 3);
@@ -83,9 +85,10 @@ export default function NeuralMesh() {
             // Mouse attraction
             const dx = mx - arr[ix];
             const dy = my - arr[iy];
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const distSq = dx * dx + dy * dy;
 
-            if (dist < MOUSE_RADIUS) {
+            if (distSq < MOUSE_RADIUS * MOUSE_RADIUS) {
+                const dist = Math.sqrt(distSq);
                 const force = (1 - dist / MOUSE_RADIUS) * LERP_SPEED;
                 arr[ix] += dx * force;
                 arr[iy] += dy * force;
@@ -102,15 +105,17 @@ export default function NeuralMesh() {
         const linePos = lineGeometry.attributes.position.array as Float32Array;
         const lineCol = lineGeometry.attributes.color.array as Float32Array;
         let lineIdx = 0;
+        const connectionDistanceSq = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             for (let j = i + 1; j < PARTICLE_COUNT; j++) {
                 const dx = arr[i * 3] - arr[j * 3];
                 const dy = arr[i * 3 + 1] - arr[j * 3 + 1];
                 const dz = arr[i * 3 + 2] - arr[j * 3 + 2];
-                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const dSq = dx * dx + dy * dy + dz * dz;
 
-                if (d < CONNECTION_DISTANCE) {
+                if (dSq < connectionDistanceSq) {
+                    const d = Math.sqrt(dSq);
                     const alpha = 1 - d / CONNECTION_DISTANCE;
                     // zinc-500 tone: rgb(113, 113, 122) → normalized
                     const r = 0.44;
