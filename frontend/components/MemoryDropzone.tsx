@@ -15,7 +15,11 @@ interface UploadedFile {
     timestamp: Date;
 }
 
-export default function MemoryDropzone() {
+interface MemoryDropzoneProps {
+    onUploadSuccess?: () => void;
+}
+
+export default function MemoryDropzone({ onUploadSuccess }: MemoryDropzoneProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -35,6 +39,7 @@ export default function MemoryDropzone() {
             toast.success(`Ingested: ${result.filename}`, {
                 description: `${result.chunks_processed} chunks processed via ${result.hardware}`,
             });
+            if (onUploadSuccess) onUploadSuccess();
         } catch {
             toast.error("Upload failed", {
                 description: "Could not reach Synapse backend.",
@@ -83,8 +88,8 @@ export default function MemoryDropzone() {
                 onClick={() => inputRef.current?.click()}
                 whileHover={{ scale: 1.01 }}
                 className={`relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-8 transition-all duration-300 ${isDragging
-                        ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100"
-                        : "border-zinc-300 bg-zinc-50/50 hover:border-zinc-400 hover:bg-zinc-50"
+                    ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100"
+                    : "border-zinc-300 bg-zinc-50/50 hover:border-zinc-400 hover:bg-zinc-50"
                     }`}
             >
                 <input

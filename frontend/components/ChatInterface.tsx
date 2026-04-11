@@ -2,17 +2,49 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Bot } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { askSynapse } from "@/lib/api";
+import { askSynapse, fetchSources, fetchAgents, type Source, type Agent } from "@/lib/api";
 import MessageBubble, { type Message } from "@/components/MessageBubble";
 import ChatInput from "./ChatInput";
+import { X, Globe, Code, FileText, Bot } from "lucide-react";
+
+// Mapping string icon names to Lucide components
+const agentIcons: Record<string, any> = {
+    Globe: Globe,
+    Code: Code,
+    FileText: FileText,
+    Bot: Bot,
+};
 
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedSources, setSelectedSources] = useState<string[]>([]);
+    const [availableSources, setAvailableSources] = useState<Source[]>([]);
+    const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
+    const [availableAgents, setAvailableAgents] = useState<Agent[]>([]);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Fetch sources and agents for @ and / commands
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const [sourcesData, agentsData] = await Promise.all([
+                    fetchSources(),
+                    fetchAgents()
+                ]);
+
+                const filteredSources = sourcesData.filter(s => s.name !== 'user_input' && s.name !== 'web_ui');
+                setAvailableSources(filteredSources);
+                setAvailableAgents(agentsData);
+            } catch (err) {
+                console.error("Failed to load context for chat", err);
+            }
+        };
+        load();
+    }, []);
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
@@ -35,7 +67,7 @@ export default function ChatInterface() {
         setIsLoading(true);
 
         try {
-            const response = await askSynapse(query);
+            const response = await askSynapse(query, selectedSources, activeAgent?.id);
             const aiMsg: Message = {
                 id: crypto.randomUUID(),
                 role: "ai",
@@ -124,8 +156,64 @@ export default function ChatInterface() {
                 </ScrollArea>
             </div>
 
+            {/* Context chips (Agents and Sources) */}
+            <div className="flex flex-wrap gap-2 px-1 mb-2">
+                {/* Active Agent Chip */}
+                {activeAgent && (
+                    <Badge
+                        variant="secondary"
+                        className="bg-emerald-50 text-emerald-700 border-emerald-200 pl-2 pr-1 py-1 rounded-lg flex items-center gap-1 animate-in fade-in slide-in-from-bottom-1"
+                    >
+                        {(() => {
+                            const Icon = agentIcons[activeAgent.icon] || Bot;
+                            return <Icon className="h-3 w-3" />;
+                        })()}
+                        <span className="font-semibold">{activeAgent.name}</span>
+                        <button
+                            onClick={() => setActiveAgent(null)}
+                            className="p-0.5 hover:bg-emerald-200 rounded-md transition-colors"
+                        >
+                            <X className="h-3 w-3" />
+                        </button>
+                    </Badge>
+                )}
+
+                {/* Source selection chips */}
+                {selectedSources.map((source) => (
+                    <Badge
+                        key={source}
+                        variant="secondary"
+                        className="bg-purple-50 text-purple-700 border-purple-200 pl-2 pr-1 py-1 rounded-lg flex items-center gap-1 animate-in fade-in slide-in-from-bottom-1"
+                    >
+                        <span className="truncate max-w-[150px]">{source}</span>
+                        <button
+                            onClick={() => setSelectedSources(prev => prev.filter(s => s !== source))}
+                            className="p-0.5 hover:bg-purple-200 rounded-md transition-colors"
+                        >
+                            <X className="h-3 w-3" />
+                        </button>
+                    </Badge>
+                ))}
+            </div>
+
             {/* Input bar */}
-            <ChatInput onSend={handleSend} isLoading={isLoading} />
+            <ChatInput
+                onSend={handleSend}
+                isLoading={isLoading}
+                availableSources={availableSources.map(s => s.name)}
+                selectedSources={selectedSources}
+                onAddSource={(name) => {
+                    if (!selectedSources.includes(name)) {
+                        setSelectedSources(prev => [...prev, name]);
+                    }
+                }}
+                availableAgents={availableAgents}
+                activeAgentId={activeAgent?.id || null}
+                onSelectAgent={(agentId) => {
+                    const agent = availableAgents.find(a => a.id === agentId);
+                    if (agent) setActiveAgent(agent);
+                }}
+            />
         </div>
     );
 }

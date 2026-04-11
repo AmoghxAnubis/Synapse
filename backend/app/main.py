@@ -17,7 +17,9 @@ from app.core.memory import MemoryBank
 from app.core.ingester import FileIngester
 from app.core.llm import LocalLLM
 from app.core.orchestrator import system_orchestrator
-from app.agents.agent_manager import AgentManager  # <--- NEW: The Tool Router
+from app.agents.agent_manager import AgentManager
+from app.core.agents import AGENTS  # Default agents
+from app.core.agent_store import agent_store  # Custom agents store
 
 app = FastAPI(title="Synapse Backend", version="2.1")
 
@@ -39,6 +41,8 @@ agent_manager = AgentManager()  # The Hands (Toolbelt)
 # --- DATA MODELS ---
 class Query(BaseModel):
     text: str
+    selected_sources: list[str] = []
+    agent_id: int | None = None
 
 class ModeRequest(BaseModel):
     mode: str
@@ -108,7 +112,11 @@ def ask_synapse(query: Query):
     print("🧠 No agent needed. Searching Memory...")
     
     # A. Search local memory
-    results = memory.recall(query.text, n_results=3)
+    results = memory.recall(
+        query.text, 
+        n_results=3, 
+        source_filters=query.selected_sources
+    )
     retrieved_docs = results['documents'][0]
     
     # B. Check if we found anything
@@ -118,13 +126,29 @@ def ask_synapse(query: Query):
         context_block = "\n".join(retrieved_docs)
 
     # C. Send to Llama 3 (Ollama)
-    ai_response = llm.generate_answer(context_block, query.text)
-    
-    return {
-        "answer": ai_response,
-        "sources": retrieved_docs,
-        "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim"
-    }
+    try:
+        # Check if a specific agent Persona is requested
+        system_prompt = None
+        if query.agent_id:
+            all_agents = agent_store.get_all_agents()
+            agent = next((a for a in all_agents if a["id"] == query.agent_id), None)
+            if agent:
+                system_prompt = agent.get("system_instruction")
+                print(f"🎭 Applying Persona: {agent['name']}")
+
+        ai_response = llm.generate_answer(
+            context_block, 
+            query.text, 
+            system_prompt=system_prompt
+        )
+        
+        return {
+            "answer": ai_response,
+            "sources": retrieved_docs,
+            "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # --- 3. THE AUTONOMIC SYSTEM (Orchestrator) ---
 @app.post("/set_mode")
@@ -141,6 +165,55 @@ def change_workflow(request: ModeRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- 4. THE MEMORY MANAGER (Source Control) ---
+@app.get("/sources")
+def list_sources():
+    """Returns all unique documentation sources currently in memory."""
+    try:
+        return memory.get_sources()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/sources/{source_name}")
+def delete_source(source_name: str):
+    """Removes a source and all its associated vectors from memory."""
+    try:
+        memory.delete_source(source_name)
+        return {"status": "success", "message": f"Source {source_name} deleted."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/agents")
+def list_agents():
+    """Returns all configured specialized personas (defaults + custom)."""
+    return agent_store.get_all_agents()
+
+@app.post("/agents")
+def create_agent(agent_data: dict):
+    """Saves a new custom agent."""
+    try:
+        return agent_store.add_agent(agent_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/agents/{agent_id}")
+def delete_agent(agent_id: int):
+    """Removes a custom agent."""
+    try:
+        success = agent_store.delete_agent(agent_id)
+        if not success:
+            raise HTTPException(status_code=400, detail="Cannot delete default agent or agent not found")
+        return {"status": "success"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/mcp/status")
+def get_mcp_status():
+    """Returns the connection status of all external integrations (GitHub, Slack, etc)."""
+    return agent_manager.get_mcp_status()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
