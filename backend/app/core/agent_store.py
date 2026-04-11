@@ -23,11 +23,11 @@ class AgentStore:
         # Build a map of custom agents by ID (overlays override defaults)
         custom_by_id = {a["id"]: a for a in custom_agents}
         
-        # Merge: use overlay if exists, otherwise use default
+        # Merge: use default as base, overlay on top (so new default fields survive)
         merged = []
         for default in DEFAULT_AGENTS:
             if default["id"] in custom_by_id:
-                merged.append(custom_by_id.pop(default["id"]))
+                merged.append({**default, **custom_by_id.pop(default["id"])})
             else:
                 merged.append(default)
         
