@@ -668,9 +668,6 @@ export default function AgentsPage() {
 }
 
 
-
-export default function AgentsPage() {
-    const [agents, setAgents] = useState<Agent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
