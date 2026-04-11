@@ -5,9 +5,30 @@ import { Bot, Plus, Settings2, FileText, Globe, Code, BrainCircuit, Trash2, Sear
 import { cn } from "@/lib/utils";
 
 const mockAgents = [
-    { id: 1, name: "Research Assistant", description: "Deep dives into topics", icon: Globe, active: true },
-    { id: 2, name: "Code Wizard", description: "Helps with debugging", icon: Code, active: false },
-    { id: 3, name: "Document Analyzer", description: "Summarizes PDFs", icon: FileText, active: false },
+    { 
+        id: 1, 
+        name: "Research Assistant", 
+        description: "Deep dives into topics", 
+        icon: Globe, 
+        active: true,
+        systemInstruction: "You are an expert research assistant. Your goal is to synthesize information from the web and provided documents into clear, concise summaries.\n\nAlways cite your sources. Do not make assumptions beyond the provided data."
+    },
+    { 
+        id: 2, 
+        name: "Code Wizard", 
+        description: "Helps with debugging", 
+        icon: Code, 
+        active: false,
+        systemInstruction: "You are a senior software engineer and code wizard. Your primary function is to help debug issues, optimize logic, and write robust, clean, and well-documented code.\n\nAlways think step-by-step. Prioritize security, performance, and best practices."
+    },
+    { 
+        id: 3, 
+        name: "Document Analyzer", 
+        description: "Summarizes PDFs", 
+        icon: FileText, 
+        active: false,
+        systemInstruction: "You are a precise document analyzer. Your role is to read, extract, and summarize key insights from PDFs, docs, and text files.\n\nHighlight important metrics, dates, and conclusions. Avoid hallucinating details not explicitly present in the texts."
+    },
 ];
 
 export default function AgentsPage() {
@@ -101,8 +122,10 @@ export default function AgentsPage() {
                                     Define the core behavior, persona, and primary directives for this agent.
                                 </p>
                                 <textarea
+                                    key={`agent-sys-inst-${selectedAgent.id}`}
                                     className="w-full h-40 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:text-neutral-200 resize-none font-mono"
-                                    defaultValue={"You are an expert research assistant. Your goal is to synthesize information from the web and provided documents into clear, concise summaries.\n\nAlways cite your sources. Do not make assumptions beyond the provided data."}
+                                    defaultValue={selectedAgent.systemInstruction}
+                                    onChange={(e) => { selectedAgent.systemInstruction = e.target.value }}
                                 />
                             </section>
 
