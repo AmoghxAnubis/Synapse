@@ -66,6 +66,14 @@ const integrations: Integration[] = [
         icon: <LayoutGrid className="h-5 w-5" />,
         accentColor: "blue",
     },
+    {
+        id: "discord",
+        name: "Discord",
+        description:
+            "Sync Discord servers, channels & conversations. Pull messages and context from your communities.",
+        icon: <MessageSquare className="h-5 w-5" />,
+        accentColor: "indigo",
+    },
 ];
 
 /* ─── Page component ─────────────────────────────────── */
@@ -79,6 +87,7 @@ export default function IntegrationsPage() {
         slack: "disconnected",
         notion: "disconnected",
         jira: "disconnected",
+        discord: "disconnected",
     });
 
     const [activeToggles, setActiveToggles] = useState<
@@ -88,6 +97,7 @@ export default function IntegrationsPage() {
         slack: true,
         notion: true,
         jira: true,
+        discord: true,
     });
 
     const [lastSynced, setLastSynced] = useState<
@@ -97,6 +107,7 @@ export default function IntegrationsPage() {
         slack: undefined,
         notion: undefined,
         jira: undefined,
+        discord: undefined,
     });
 
     // Modal state
