@@ -4,17 +4,47 @@ import { useRouter } from "next/navigation";
 import { Bot, ArrowLeft, BrainCircuit, AlignLeft, Sparkles, Globe, TerminalSquare, FileText, Code } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { createAgent } from "@/lib/api";
+import { toast } from "sonner";
 
 const ICONS = [
-    { name: "Bot (Default)", icon: Bot },
-    { name: "Globe (Research)", icon: Globe },
-    { name: "Code (Development)", icon: Code },
-    { name: "FileText (Document)", icon: FileText },
+    { name: "Bot (Default)", icon: Bot, iconName: "Bot" },
+    { name: "Globe (Research)", icon: Globe, iconName: "Globe" },
+    { name: "Code (Development)", icon: Code, iconName: "Code" },
+    { name: "FileText (Document)", icon: FileText, iconName: "FileText" },
 ];
 
 export default function CreateAgentPage() {
     const router = useRouter();
     const [selectedIconIdx, setSelectedIconIdx] = useState(0);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [systemInstruction, setSystemInstruction] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSave = async () => {
+        if (!name || !systemInstruction) {
+            toast.error("Name and System Instructions are required");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            await createAgent({
+                name,
+                description,
+                system_instruction: systemInstruction,
+                icon: ICONS[selectedIconIdx].iconName
+            });
+            toast.success("Agent created successfully!");
+            router.push('/dashboard/agents');
+        } catch (err) {
+            toast.error("Failed to create agent");
+            console.error(err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <div className="flex h-full flex-col">
@@ -49,10 +79,12 @@ export default function CreateAgentPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <button 
-                        onClick={() => router.push('/dashboard/agents')}
-                        className="px-4 py-2 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-md text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer"
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="px-4 py-2 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 rounded-md text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-2"
                     >
-                        Save & Create
+                        {isSaving && <BrainCircuit className="h-4 w-4 animate-spin" />}
+                        {isSaving ? "Saving..." : "Save & Create"}
                     </button>
                 </div>
             </header>
@@ -71,7 +103,9 @@ export default function CreateAgentPage() {
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Agent Name</label>
                                 <input 
                                     type="text" 
-                                    placeholder="e.g. Content Writer Writer"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="e.g. Content Writer"
                                     className="w-full bg-white dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:text-neutral-200"
                                 />
                             </div>
@@ -79,6 +113,8 @@ export default function CreateAgentPage() {
                                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Short Description</label>
                                 <input 
                                     type="text" 
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
                                     placeholder="e.g. Helps in writing blog posts and tweets"
                                     className="w-full bg-white dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:text-neutral-200"
                                 />
@@ -121,6 +157,8 @@ export default function CreateAgentPage() {
                             Define the persona, role, and rules your agent must follow.
                         </p>
                         <textarea
+                            value={systemInstruction}
+                            onChange={(e) => setSystemInstruction(e.target.value)}
                             placeholder="You are an expert... Your main focus is to..."
                             className="w-full h-48 bg-white dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:text-neutral-200 resize-none font-mono"
                         />

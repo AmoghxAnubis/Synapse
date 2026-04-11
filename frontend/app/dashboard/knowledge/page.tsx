@@ -1,7 +1,7 @@
 "use client";
 
 import MemoryDropzone from "@/components/MemoryDropzone";
-import { Database, Link as LinkIcon, BookOpen, GraduationCap, UploadCloud, ChevronDown } from "lucide-react";
+import { Database, Link as LinkIcon, BookOpen, GraduationCap, UploadCloud, ChevronDown, Loader2, FileText } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState, useEffect, useCallback } from "react";
+import { fetchSources, deleteSource, type Source } from "@/lib/api";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
 
 export default function KnowledgeBase() {
+    const [sources, setSources] = useState<Source[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const loadSources = useCallback(async () => {
+        try {
+            const data = await fetchSources();
+            // Filter out internal tags if any
+            const filtered = data.filter(s => s.name !== 'user_input' && s.name !== 'web_ui');
+            setSources(filtered);
+        } catch {
+            toast.error("Failed to load sources");
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadSources();
+    }, [loadSources]);
+
+    const handleDelete = async (name: string) => {
+        try {
+            await deleteSource(name);
+            toast.success(`Deleted: ${name}`);
+            loadSources();
+        } catch {
+            toast.error(`Failed to delete ${name}`);
+        }
+    };
+
     return (
         <div className="flex h-full flex-col">
             {/* Page Header */}
@@ -79,26 +113,70 @@ export default function KnowledgeBase() {
                 </div>
             </header>
 
-            {/* Main Content Area */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left col - Dropzone (taking up 1 col) */}
                 <div className="lg:col-span-1">
-                    <MemoryDropzone />
+                    <MemoryDropzone onUploadSuccess={loadSources} />
                     <p className="text-sm text-neutral-500 mt-4 dark:text-neutral-400">
                         Upload documents (PDF, TXT, MD, DOCX) to expand Synapse's knowledge base.
                         Files are processed locally and stored securely.
                     </p>
                 </div>
 
-                {/* Right col - List of uploaded sources (taking up 2 cols) */}
-                <div className="lg:col-span-2 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 p-6 flex flex-col items-center justify-center text-center">
-                    <Database className="h-10 w-10 text-neutral-300 dark:text-neutral-700 mb-4" />
-                    <h3 className="font-medium text-neutral-900 dark:text-neutral-100 mb-1">
-                        No Knowledge Sources Yet
-                    </h3>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm">
-                        Upload your first document using the dropzone on the left. Synapse will process it and index it for future conversations.
-                    </p>
+                <div className="lg:col-span-2 border border-neutral-200 dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 p-6 flex flex-col">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                            <BookOpen className="h-5 w-5 text-neutral-400" />
+                            Ingested Sources
+                        </h3>
+                        <span className="text-xs font-medium text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 rounded-full">
+                            {sources.length} Total
+                        </span>
+                    </div>
+
+                    {isLoading ? (
+                        <div className="flex flex-1 items-center justify-center">
+                            <Loader2 className="h-8 w-8 animate-spin text-neutral-300" />
+                        </div>
+                    ) : sources.length === 0 ? (
+                        <div className="flex flex-1 flex-col items-center justify-center text-center">
+                            <Database className="h-10 w-10 text-neutral-200 dark:text-neutral-800 mb-4" />
+                            <h4 className="font-medium text-neutral-900 dark:text-neutral-100 mb-1">
+                                No Knowledge Sources Yet
+                            </h4>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm">
+                                Upload your first document using the dropzone on the left.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            {sources.map((source) => (
+                                <div 
+                                    key={source.name} 
+                                    className="flex items-center justify-between p-4 rounded-xl border border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group"
+                                >
+                                    <div className="flex items-center gap-4 overflow-hidden">
+                                        <div className="h-10 w-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center shrink-0">
+                                            <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
+                                                {source.name}
+                                            </h4>
+                                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                {source.chunks} chunks processed
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => handleDelete(source.name)}
+                                        className="h-8 w-8 rounded-md flex items-center justify-center text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
