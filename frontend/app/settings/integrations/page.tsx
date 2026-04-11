@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
     ArrowLeft,
@@ -20,6 +20,7 @@ import SyncLog, { type SyncLogEntry } from "@/components/SyncLog";
 import {
     saveIntegrationKey,
     triggerSync,
+    fetchIntegrationStatuses,
     type Platform,
 } from "@/lib/api";
 
@@ -116,6 +117,27 @@ export default function IntegrationsPage() {
 
     // Sync log
     const [logs, setLogs] = useState<SyncLogEntry[]>([]);
+
+    // Load real statuses from backend on mount
+    useEffect(() => {
+        fetchIntegrationStatuses().then((data) => {
+            const newStatuses: Record<Platform, IntegrationStatus> = {
+                github: "disconnected",
+                slack: "disconnected",
+                notion: "disconnected",
+                jira: "disconnected",
+                discord: "disconnected",
+            };
+            for (const [key, val] of Object.entries(data)) {
+                if (val.connected) {
+                    newStatuses[key as Platform] = "connected";
+                }
+            }
+            setStatuses(newStatuses);
+        }).catch(() => {
+            // Backend unreachable, keep defaults
+        });
+    }, []);
 
     const addLog = useCallback(
         (platform: string, message: string, type: SyncLogEntry["type"] = "info") => {
