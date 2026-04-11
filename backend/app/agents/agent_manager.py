@@ -30,6 +30,12 @@ try:
 except ImportError:
     SLACK_AVAILABLE = False
 
+try:
+    from agents.tools.mcp_discord_server import MCPDiscordServer
+    DISCORD_AVAILABLE = True
+except ImportError:
+    DISCORD_AVAILABLE = False
+
 
 class AgentManager:
     def __init__(self):
@@ -63,7 +69,7 @@ class AgentManager:
         else:
             self.mcp_jira_server = None
         
-        # Initialize Slack MCP Server if available
+# Initialize Slack MCP Server if available
         if SLACK_AVAILABLE:
             print("🔌 Initializing MCP Slack Server...")
             try:
@@ -74,12 +80,24 @@ class AgentManager:
         else:
             self.mcp_slack_server = None
         
+        # Initialize Discord MCP Server if available
+        if DISCORD_AVAILABLE:
+            print("🔌 Initializing MCP Discord Server...")
+            try:
+                self.mcp_discord_server = MCPDiscordServer()
+            except Exception as e:
+                print(f"⚠️ Discord MCP Server init failed: {e}")
+                self.mcp_discord_server = None
+        else:
+            self.mcp_discord_server = None
+        
         # Combined MCP client for all services
         self.mcp_client = MCPComboClient(
             github_server=self.mcp_github_server,
             notion_server=self.mcp_notion_server,
             jira_server=self.mcp_jira_server,
-            slack_server=self.mcp_slack_server
+            slack_server=self.mcp_slack_server,
+            discord_server=self.mcp_discord_server
         )
         
     def route_request(self, user_query):
@@ -97,7 +115,7 @@ class AgentManager:
             print(f"🔀 Routing to: App Launcher -> {app_name}")
             return self.app_launcher.launch_app(app_name)
         
-        # 1. SLACK OPERATIONS - Route to MCP Slack Server
+# 1. SLACK OPERATIONS - Route to MCP Slack Server
         slack_keywords = ["slack", "slack message", "send to slack", "slack channel", "slack dm"]
         has_slack_intent = any(keyword in query for keyword in slack_keywords)
         
@@ -106,6 +124,19 @@ class AgentManager:
             
             if not self.mcp_slack_server or not self.mcp_slack_server.is_connected():
                 return "⚠️ Slack MCP Server not connected. Please set SLACK_TOKEN environment variable."
+            
+            result = self.mcp_client.execute(user_query)
+            return self.mcp_client.format_result_for_user(result)
+        
+        # Discord OPERATIONS
+        discord_keywords = ["discord", "discord message", "send to discord", "discord channel"]
+        has_discord_intent = any(keyword in query for keyword in discord_keywords)
+        
+        if has_discord_intent:
+            print("🔀 Routing to: MCP Discord Server")
+            
+            if not self.mcp_discord_server or not self.mcp_discord_server.is_connected():
+                return "⚠️ Discord MCP Server not connected. Please set DISCORD_TOKEN environment variable."
             
             result = self.mcp_client.execute(user_query)
             return self.mcp_client.format_result_for_user(result)
@@ -188,9 +219,19 @@ class AgentManager:
         else:
             slack_status = {"status": "not initialized"}
         
+        discord_status = {}
+        if self.mcp_discord_server:
+            try:
+                discord_status = self.mcp_discord_server.get_status()
+            except:
+                discord_status = {"status": "error"}
+        else:
+            discord_status = {"status": "not initialized"}
+        
         return {
             "github": github_status,
             "notion": notion_status,
             "jira": jira_status,
-            "slack": slack_status
+            "slack": slack_status,
+            "discord": discord_status
         }

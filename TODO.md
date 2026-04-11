@@ -1,24 +1,29 @@
-# TODO: MCP GitHub Server Implementation - COMPLETED
+# Discord MCP Integration TODO
 
-## Tasks Completed:
-- [x] 1. Create `backend/app/agents/tools/mcp_github_server.py` - Comprehensive GitHub operations via MCP protocol
-- [x] 2. Create `backend/app/agents/tools/mcp_client.py` - Client to communicate with MCP server  
-- [x] 3. Update `backend/app/agents/agent_manager.py` - Add routing for all GitHub commands
-- [x] 4. Add notion-client to requirements.txt
+## Overview
+✅ Plan approved. Implementing Discord MCP server like existing (slack/notion/etc.).
 
-## Supported Operations (MCP Server):
-✅ Repository: create, delete, list, fork, star/unstar
-✅ Commits: push new commits, get commit history
-✅ Pull Requests: create, merge, close, list
-✅ Issues: create, close, open, comment on issues
-✅ Files: read file contents in repos
-✅ Branches: create, delete
+## Steps
+- [x] 1. Create `backend/app/agents/tools/mcp_discord_server.py` (Discord REST API for channels/messages/guilds)
+- [x] 2. Update `backend/app/agents/tools/mcp_combo_client.py` (add discord_server param, natural lang parsing, execute route)
+- [x] 3. Update `backend/app/agents/agent_manager.py` (import/init discord server, pass to combo client, keyword routing)
+- [x] 4. Update `frontend/app/settings/integrations/page.tsx` (add Discord to integrations list/states)
+- [x] 5. No new deps needed (uses requests)
+- [x] 6. No api.ts changes needed
 
-## Flow:
-User -> Ollama (natural language) -> AgentManager routes to MCPGitHubServer -> Executes operation -> Returns result to user via Ollama response
+- [ ] 5. Add `discord.py` to `backend/requirements.txt`
+- [ ] 6. Verify/update `frontend/lib/api.ts` Platform type
+- [ ] 7. Test: pip install, set DISCORD_TOKEN, frontend connect/sync, agent "send discord message"
 
-## Testing Results:
-✅ GitHub MCP Server connected successfully
-✅ "list my repositories on github" - Working
-✅ "search in Notion for meeting notes" - Routing works (needs NOTION_TOKEN)
-✅ MCP Notion Server initialized
+## Notes
+- Env: Add `DISCORD_TOKEN=your_bot_token` to backend/.env
+- Bot needs: Message Content Intent enabled in Discord Developer Portal
+- No design changes - reuse MessageSquare icon, indigo accent
+
+**Complete ✅ Discord MCP integrated!**
+
+Test:
+1. Add DISCORD_TOKEN=your_bot_token to backend/.env (Bot with Message Content intent)
+2. Backend restart
+3. Frontend /settings/integrations -> Discord card -> Connect
+4. Agent: "send discord message to CHANNEL_ID Hello from Synapse"

@@ -11,21 +11,23 @@ from typing import Dict, Any, Optional
 
 class MCPComboClient:
     """
-    Combined MCP Client for GitHub, Notion, Jira, and Slack.
+    Combined MCP Client for GitHub, Notion, Jira, Slack, Discord.
     Routes commands to appropriate server based on context.
     """
     
-    def __init__(self, github_server=None, notion_server=None, jira_server=None, slack_server=None):
+    def __init__(self, github_server=None, notion_server=None, jira_server=None, slack_server=None, discord_server=None):
         self.github_server = github_server
         self.notion_server = notion_server
         self.jira_server = jira_server
         self.slack_server = slack_server
+        self.discord_server = discord_server
     
-    def set_servers(self, github_server=None, notion_server=None, jira_server=None, slack_server=None):
+    def set_servers(self, github_server=None, notion_server=None, jira_server=None, slack_server=None, discord_server=None):
         self.github_server = github_server
         self.notion_server = notion_server
         self.jira_server = jira_server
         self.slack_server = slack_server
+        self.discord_server = discord_server
     
     def parse_natural_command(self, user_input: str) -> Dict[str, Any]:
         """Parse natural language command and determine target service."""
@@ -273,6 +275,39 @@ class MCPComboClient:
         if re.search(r'github.*status|check.*github|github.*connected', user_input):
             return {"service": "github", "operation": "status"}
         
+        # ==================== DISCORD COMMANDS ====================
+        
+        # Send message to Discord
+        if re.search(r'discord.*message|send.*discord|message.*discord', user_input):
+            channel_match = re.search(r'(?:to|channel|#)\s*["\']?(\\w+)["\']?', original_input)
+            text_match = re.search(r'(?:message|text|content)\s+["\']([^"\']+)["\']', original_input)
+            
+            if channel_match and text_match:
+                return {
+                    "service": "discord",
+                    "operation": "send_message",
+                    "channel_id": channel_match.group(1),
+                    "content": text_match.group(1)
+                }
+        
+        # List Discord guilds
+        if re.search(r'discord.*guilds|discord.*servers|list.*discord', user_input):
+            return {"service": "discord", "operation": "list_guilds"}
+        
+        # List Discord channels
+        if re.search(r'discord.*channels|list.*channels.*discord', user_input):
+            guild_match = re.search(r'(?:guild|server)\s*["\']?(\\w+)["\']?', original_input)
+            guild_id = guild_match.group(1) if guild_match else None
+            return {
+                "service": "discord",
+                "operation": "list_channels",
+                "guild_id": guild_id
+            }
+        
+        # Discord status
+        if re.search(r'discord.*status|check.*discord|discord.*connected', user_input):
+            return {"service": "discord", "operation": "status"}
+        
         # Unknown command
         return {"operation": None, "error": "Could not understand the command."}
     
@@ -314,6 +349,14 @@ class MCPComboClient:
                 return {"success": False, "error": "Slack not connected. Set SLACK_TOKEN."}
             try:
                 return self.slack_server.execute_command(command)
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+        
+        elif service == "discord":
+            if not self.discord_server or not self.discord_server.is_connected():
+                return {"success": False, "error": "Discord not connected. Set DISCORD_TOKEN."}
+            try:
+                return self.discord_server.execute_command(command)
             except Exception as e:
                 return {"success": False, "error": str(e)}
         
@@ -390,5 +433,5 @@ class MCPComboClient:
         return message
 
 
-def create_mcp_combo_client(github_server=None, notion_server=None, jira_server=None, slack_server=None) -> MCPComboClient:
-    return MCPComboClient(github_server, notion_server, jira_server, slack_server)
+def create_mcp_combo_client(github_server=None, notion_server=None, jira_server=None, slack_server=None, discord_server=None) -> MCPComboClient:
+    return MCPComboClient(github_server, notion_server, jira_server, slack_server, discord_server)
