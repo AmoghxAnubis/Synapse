@@ -21,6 +21,8 @@ export default function CreateAgentPage() {
     const [description, setDescription] = useState("");
     const [systemInstruction, setSystemInstruction] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+    const [webSearchEnabled, setWebSearchEnabled] = useState(false);
+    const [terminalEnabled, setTerminalEnabled] = useState(false);
 
     const handleSave = async () => {
         if (!name || !systemInstruction) {
@@ -34,7 +36,9 @@ export default function CreateAgentPage() {
                 name,
                 description,
                 system_instruction: systemInstruction,
-                icon: ICONS[selectedIconIdx].iconName
+                icon: ICONS[selectedIconIdx].iconName,
+                capabilities: { web_search: webSearchEnabled, terminal: terminalEnabled },
+                linked_sources: []
             });
             toast.success("Agent created successfully!");
             router.push('/dashboard/agents');
@@ -183,7 +187,7 @@ export default function CreateAgentPage() {
                                     </div>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" />
+                                    <input type="checkbox" className="sr-only peer" checked={webSearchEnabled} onChange={(e) => setWebSearchEnabled(e.target.checked)} />
                                     <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
                                 </label>
                             </div>
@@ -200,7 +204,7 @@ export default function CreateAgentPage() {
                                     </div>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" />
+                                    <input type="checkbox" className="sr-only peer" checked={terminalEnabled} onChange={(e) => setTerminalEnabled(e.target.checked)} />
                                     <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
                                 </label>
                             </div>
