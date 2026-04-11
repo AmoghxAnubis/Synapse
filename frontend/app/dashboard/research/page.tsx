@@ -1,251 +1,250 @@
 "use client";
 
-import { Search, Globe, FileText, ArrowRight, X } from "lucide-react";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { fetchSources, askSynapse, type Source } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { Search, Sparkles, FileText, Clock, X, Loader2, Globe } from "lucide-react";
+import { askSynapse, fetchSources, type Source } from "@/lib/api";
 import { toast } from "sonner";
+
+interface SearchHistoryEntry {
+    query: string;
+    type: string;
+    date: string;
+}
 
 export default function ResearchPage() {
     const [query, setQuery] = useState("");
     const [isSearching, setIsSearching] = useState(false);
-    const [selectedSources, setSelectedSources] = useState<string[]>([]);
+    const [results, setResults] = useState<{ answer: string; sources: string[] } | null>(null);
+
+    // Real search history from localStorage
+    const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
     const [availableSources, setAvailableSources] = useState<Source[]>([]);
 
-    // Suggestion popup state
-    const [showMentions, setShowMentions] = useState(false);
-    const [mentionFilter, setMentionFilter] = useState("");
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const recentTopics = [
-        { title: "React Server Components architecture", type: "Web", date: "2 hours ago" },
-        { title: "Local LLM Fine-tuning guide", type: "Doc", date: "Yesterday" },
-        { title: "Notion UI Design System", type: "Web", date: "Yesterday" },
-    ];
-
-    // Fetch sources on mount
     useEffect(() => {
-        const load = async () => {
-            try {
-                const data = await fetchSources();
-                const filtered = data.filter(s => s.name !== 'user_input' && s.name !== 'web_ui');
-                setAvailableSources(filtered);
-            } catch (err) {
-                console.error("Failed to load sources", err);
-            }
-        };
-        load();
+        try {
+            const stored = localStorage.getItem("synapse_research_history");
+            if (stored) setSearchHistory(JSON.parse(stored));
+        } catch {}
+
+        fetchSources().then(data => {
+            setAvailableSources(data.filter(s => s.name !== 'user_input' && s.name !== 'web_ui'));
+        }).catch(() => {});
     }, []);
 
-    // Detect @ mentions
-    useEffect(() => {
-        const lastAt = query.lastIndexOf("@");
-        if (lastAt !== -1 && (lastAt === 0 || query[lastAt - 1] === " ")) {
-            const filterText = query.slice(lastAt + 1);
-            if (!filterText.includes(" ")) {
-                setShowMentions(true);
-                setMentionFilter(filterText);
-                setSelectedIndex(0);
-                return;
-            }
-        }
-        setShowMentions(false);
-    }, [query]);
+    const handleSearch = async () => {
+        if (!query.trim() || isSearching) return;
 
-    const filteredSources = availableSources.filter(s =>
-        s.name.toLowerCase().includes(mentionFilter.toLowerCase()) &&
-        !selectedSources.includes(s.name)
-    );
+        setIsSearching(true);
+        setResults(null);
 
-    const handleSelectSource = useCallback((sourceName: string) => {
-        if (!selectedSources.includes(sourceName)) {
-            setSelectedSources(prev => [...prev, sourceName]);
-        }
-        const lastAt = query.lastIndexOf("@");
-        const newValue = query.slice(0, lastAt).trim() + " ";
-        setQuery(newValue);
-        setShowMentions(false);
-        inputRef.current?.focus();
-    }, [query, selectedSources]);
+        try {
+            const response = await askSynapse(query);
+            setResults({
+                answer: response.answer,
+                sources: response.sources || [],
+            });
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (showMentions && filteredSources.length > 0) {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                setSelectedIndex(prev => (prev + 1) % filteredSources.length);
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                setSelectedIndex(prev => (prev - 1 + filteredSources.length) % filteredSources.length);
-            } else if (e.key === "Enter" || e.key === "Tab") {
-                e.preventDefault();
-                handleSelectSource(filteredSources[selectedIndex].name);
-            } else if (e.key === "Escape") {
-                setShowMentions(false);
-            }
+            // Save to history
+            const newEntry: SearchHistoryEntry = {
+                query: query.trim(),
+                type: "Research",
+                date: new Date().toISOString(),
+            };
+            const updated = [newEntry, ...searchHistory].slice(0, 20); // Keep last 20
+            setSearchHistory(updated);
+            localStorage.setItem("synapse_research_history", JSON.stringify(updated));
+        } catch {
+            toast.error("Research query failed. Is the backend running?");
+        } finally {
+            setIsSearching(false);
         }
     };
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const text = query.trim();
-        if (text) {
-            setIsSearching(true);
-            try {
-                // We use askSynapse but perhaps Research Page has a different backend?
-                // For now, based on user's request "fetch sources from knowledge as well", 
-                // we'll assume it uses the same RAG pipeline.
-                const response = await askSynapse(text, selectedSources);
-                console.log("Research Result:", response);
-                toast.success("Research completed");
-                // In a real app, we'd navigate to results or show them below
-            } catch (err) {
-                toast.error("Research failed to connect to backend");
-            } finally {
-                setIsSearching(false);
-            }
-        }
+    const clearResults = () => {
+        setResults(null);
+        setQuery("");
     };
 
     return (
-        <div className="flex h-full flex-col max-w-5xl mx-auto px-4">
+        <div className="flex h-full flex-col max-w-5xl mx-auto w-full">
             {/* Header */}
-            <header className="mb-6 flex items-center justify-between border-b border-neutral-200 py-4 dark:border-neutral-800">
+            <header className="mb-6 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-neutral-800">
                 <div>
-                    <nav className="text-sm text-neutral-500 font-medium mb-1">
-                        <span className="hover:text-neutral-800 cursor-pointer dark:text-neutral-400 dark:hover:text-neutral-200">
-                            Synapse
-                        </span>
+                    <nav className="text-sm text-neutral-500 font-medium mb-1 dark:text-neutral-400">
+                        <span>Synapse</span>
                         <span className="mx-2">/</span>
-                        <span className="text-neutral-900 dark:text-neutral-100">
-                            Research
-                        </span>
+                        <span className="text-neutral-900 dark:text-neutral-100">Research</span>
                     </nav>
                     <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-                        <Search className="h-6 w-6" />
-                        Deep Research
+                        <Sparkles className="h-6 w-6 text-indigo-500" />
+                        Research Lab
                     </h1>
                 </div>
             </header>
 
-            <div className="flex flex-col items-center justify-center py-12 flex-1 relative">
-                <div className="w-full max-w-2xl text-center mb-12">
-                    <h2 className="text-3xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-                        What are we researching today?
-                    </h2>
-                    <p className="text-neutral-500 dark:text-neutral-400 mb-8">
-                        Search the web or query your documents for deep insights.
-                    </p>
-
-                    {/* Chips UI */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-4">
-                        <AnimatePresence>
-                            {selectedSources.map((source) => (
-                                <motion.div
-                                    key={source}
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                >
-                                    <Badge
-                                        variant="secondary"
-                                        className="bg-purple-50 text-purple-700 border-purple-200 pl-3 pr-1 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm"
-                                    >
-                                        <FileText className="h-3.5 w-3.5" />
-                                        <span className="font-medium">{source}</span>
-                                        <button
-                                            onClick={() => setSelectedSources(prev => prev.filter(s => s !== source))}
-                                            className="p-1 hover:bg-purple-200 rounded-lg transition-colors"
-                                        >
-                                            <X className="h-3 w-3" />
-                                        </button>
-                                    </Badge>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </div>
-
-                    <form onSubmit={handleSearch} className="relative group">
-                        <AnimatePresence>
-                            {showMentions && filteredSources.length > 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute bottom-full left-0 mb-4 w-full overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:bg-neutral-900 shadow-2xl z-50 p-1 text-left"
-                                >
-                                    <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 mb-1">
-                                        <Search className="h-4 w-4 text-neutral-400" />
-                                        <span className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Knowledge Sources</span>
-                                    </div>
-                                    <div className="max-h-64 overflow-y-auto">
-                                        {filteredSources.map((source, i) => (
-                                            <button
-                                                key={source.name}
-                                                type="button"
-                                                onClick={() => handleSelectSource(source.name)}
-                                                onMouseEnter={() => setSelectedIndex(i)}
-                                                className={`flex w-full items-center gap-4 px-4 py-3.5 text-left text-sm transition-all rounded-xl ${i === selectedIndex ? "bg-purple-50 text-purple-700 dark:bg-purple-900/20" : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                                                    }`}
-                                            >
-                                                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${i === selectedIndex ? "bg-purple-100 dark:bg-purple-900/40" : "bg-neutral-100 dark:bg-neutral-800"}`}>
-                                                    <FileText className={`h-5 w-5 ${i === selectedIndex ? "text-purple-600" : "text-neutral-500"}`} />
-                                                </div>
-                                                <div className="flex-1 truncate">
-                                                    <div className="font-semibold">{source.name}</div>
-                                                    <div className="text-[10px] opacity-60 uppercase">{source.chunks} chunks stored</div>
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <Search className="h-6 w-6 text-neutral-400 group-focus-within:text-purple-500 transition-colors" />
-                        </div>
+            {/* Search Bar */}
+            <div className="mb-6">
+                <div className="flex gap-3">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
                         <input
-                            ref={inputRef}
                             type="text"
-                            className="block w-full pl-14 pr-32 py-5 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-[2rem] shadow-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-xl transition-all outline-none"
-                            placeholder="Type @ to research specific documents..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            disabled={isSearching}
+                            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                            placeholder="Ask a research question..."
+                            className="w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 dark:text-neutral-200 shadow-sm"
                         />
-                        <button
-                            type="submit"
-                            disabled={isSearching || !query.trim()}
-                            className="absolute inset-y-2 right-2 px-6 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-[1.5rem] font-bold text-sm hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
-                        >
-                            {isSearching ? "Thinking..." : "Research"}
-                            <ArrowRight className="h-4 w-4" />
-                        </button>
-                    </form>
+                    </div>
+                    <button
+                        onClick={handleSearch}
+                        disabled={isSearching || !query.trim()}
+                        className="px-6 py-3 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-xl text-sm font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 disabled:opacity-50 transition-colors flex items-center gap-2 shadow-sm"
+                    >
+                        {isSearching ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Search className="h-4 w-4" />
+                        )}
+                        {isSearching ? "Searching..." : "Search"}
+                    </button>
+                </div>
+            </div>
+
+            {/* Results Section */}
+            {isSearching && (
+                <div className="mb-6 flex items-center gap-3 p-6 bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-800/30 rounded-xl">
+                    <Loader2 className="h-5 w-5 animate-spin text-indigo-600 dark:text-indigo-400" />
+                    <div>
+                        <p className="text-sm font-medium text-indigo-900 dark:text-indigo-300">Researching...</p>
+                        <p className="text-xs text-indigo-600 dark:text-indigo-400">Searching memory bank + generating answer via local LLM</p>
+                    </div>
+                </div>
+            )}
+
+            {results && (
+                <div className="mb-8 space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                    {/* Answer Card */}
+                    <div className="bg-white dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center bg-neutral-50 dark:bg-neutral-800">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="h-4 w-4 text-indigo-500" />
+                                <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Research Result</span>
+                            </div>
+                            <button 
+                                onClick={clearResults} 
+                                className="text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <p className="text-sm text-neutral-800 dark:text-neutral-200 whitespace-pre-wrap leading-relaxed">
+                                {results.answer}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Sources */}
+                    {results.sources && results.sources.length > 0 && results.sources[0] !== "" && (
+                        <div className="bg-white dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm p-4">
+                            <h4 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">Retrieved Sources</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {results.sources.map((src, i) => (
+                                    <span
+                                        key={i}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-xs rounded-lg"
+                                    >
+                                        <FileText className="h-3 w-3" />
+                                        <span className="max-w-[200px] truncate">{src}</span>
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Content - Split Layout */}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-0">
+                {/* Recent Research Sessions */}
+                <div className="lg:col-span-2">
+                    <div className="bg-white dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm overflow-hidden h-full">
+                        <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700 flex justify-between items-center">
+                            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-neutral-500" />
+                                Recent Research Sessions
+                            </h3>
+                            {searchHistory.length > 0 && (
+                                <button 
+                                    onClick={() => { setSearchHistory([]); localStorage.removeItem("synapse_research_history"); }}
+                                    className="text-xs text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300"
+                                >
+                                    Clear History
+                                </button>
+                            )}
+                        </div>
+                        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/50 max-h-[400px] overflow-y-auto">
+                            {searchHistory.length === 0 ? (
+                                <div className="p-8 text-center text-sm text-neutral-400">
+                                    No research sessions yet. Try a search above.
+                                </div>
+                            ) : (
+                                searchHistory.map((entry, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => { setQuery(entry.query); }}
+                                        className="w-full px-5 py-3.5 flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors text-left"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-neutral-100 dark:bg-neutral-700 rounded-lg">
+                                                <Globe className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate max-w-[350px]">
+                                                    {entry.query}
+                                                </div>
+                                                <div className="text-xs text-neutral-400">
+                                                    {new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 rounded-full">
+                                            {entry.type}
+                                        </span>
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-                <div className="w-full max-w-4xl mt-auto">
-                    <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">
-                        Recent Research Sessions
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {recentTopics.map((topic, i) => (
-                            <div key={i} className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors cursor-pointer group shadow-sm">
-                                <div className="flex items-center gap-2 mb-2">
-                                    {topic.type === "Web" ? <Globe className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-purple-500" />}
-                                    <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">{topic.type} Search</span>
+                {/* Knowledge Sources */}
+                <div>
+                    <div className="bg-white dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm overflow-hidden h-full">
+                        <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
+                            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                                <FileText className="h-4 w-4 text-neutral-500" />
+                                Knowledge Sources
+                            </h3>
+                        </div>
+                        <div className="divide-y divide-neutral-100 dark:divide-neutral-700/50 max-h-[400px] overflow-y-auto">
+                            {availableSources.length === 0 ? (
+                                <div className="p-6 text-center text-sm text-neutral-400">
+                                    No sources ingested yet.
                                 </div>
-                                <h4 className="text-neutral-900 dark:text-neutral-100 font-medium group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                                    {topic.title}
-                                </h4>
-                                <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-2">
-                                    {topic.date}
-                                </p>
-                            </div>
-                        ))}
+                            ) : (
+                                availableSources.map((source, i) => (
+                                    <div key={i} className="px-5 py-3 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <FileText className="h-3.5 w-3.5 text-neutral-400" />
+                                            <span className="text-sm text-neutral-700 dark:text-neutral-300 truncate max-w-[130px]">{source.name}</span>
+                                        </div>
+                                        <span className="text-xs text-neutral-400">{source.chunks} chunks</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
