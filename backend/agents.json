@@ -4,10 +4,10 @@
         "name": "Research Assistant",
         "description": "Deep dives into topics and synthesizes web/doc info.",
         "icon": "Globe",
-        "system_instruction": "You are a test agent.",
+        "system_instruction": "You are an expert research assistant. Your goal is to synthesize information from the web and provided documents into clear, concise summaries.\n\nAlways cite your sources. Do not make assumptions beyond the provided data.",
         "capabilities": {
             "web_search": true,
-            "terminal": true
+            "terminal": false
         },
         "linked_sources": []
     }
