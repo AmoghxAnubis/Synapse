@@ -13,14 +13,28 @@ class AgentStore:
                 json.dump([], f)
 
     def get_all_agents(self):
-        """Returns default agents + custom agents from disk."""
+        """Returns default agents + custom agents from disk, with overlay support."""
         try:
             with open(self.storage_path, "r") as f:
                 custom_agents = json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             custom_agents = []
-            
-        return DEFAULT_AGENTS + custom_agents
+        
+        # Build a map of custom agents by ID (overlays override defaults)
+        custom_by_id = {a["id"]: a for a in custom_agents}
+        
+        # Merge: use overlay if exists, otherwise use default
+        merged = []
+        for default in DEFAULT_AGENTS:
+            if default["id"] in custom_by_id:
+                merged.append(custom_by_id.pop(default["id"]))
+            else:
+                merged.append(default)
+        
+        # Add remaining custom agents (non-overlays)
+        merged.extend(custom_by_id.values())
+        
+        return merged
 
     def add_agent(self, agent_data):
         """Saves a new custom agent to disk."""
@@ -50,6 +64,47 @@ class AgentStore:
             
         self._save_custom_agents(new_custom_agents)
         return True
+
+    def update_agent(self, agent_id, updates):
+        """
+        Update fields on an agent. Works for both default and custom agents.
+        For defaults, we store an overlay in the custom agents file.
+        """
+        allowed_fields = {"system_instruction", "capabilities", "linked_sources", "name", "description", "icon"}
+        filtered = {k: v for k, v in updates.items() if k in allowed_fields}
+        
+        if not filtered:
+            return None
+        
+        # Check if it's a custom agent
+        custom_agents = self._get_only_custom_agents()
+        for agent in custom_agents:
+            if agent["id"] == agent_id:
+                agent.update(filtered)
+                self._save_custom_agents(custom_agents)
+                return agent
+        
+        # It's a default agent — store an overlay as a custom entry
+        default = next((a for a in DEFAULT_AGENTS if a["id"] == agent_id), None)
+        if default:
+            overlay = {**default, **filtered}
+            # Check if overlay already exists
+            for i, agent in enumerate(custom_agents):
+                if agent.get("id") == agent_id:
+                    custom_agents[i].update(filtered)
+                    self._save_custom_agents(custom_agents)
+                    return custom_agents[i]
+            # No overlay yet, create one
+            custom_agents.append(overlay)
+            self._save_custom_agents(custom_agents)
+            return overlay
+        
+        return None
+
+    def get_agent_by_id(self, agent_id):
+        """Get a single agent by ID."""
+        all_agents = self.get_all_agents()
+        return next((a for a in all_agents if a["id"] == agent_id), None)
 
     def _get_only_custom_agents(self):
         try:
