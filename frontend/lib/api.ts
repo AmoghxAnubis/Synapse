@@ -54,6 +54,7 @@ export interface Agent {
   system_instruction: string;
   capabilities: { web_search: boolean; terminal: boolean };
   linked_sources: string[];
+  integrations: string[];
 }
 
 // ── API Functions ───────────────────────────────────────
