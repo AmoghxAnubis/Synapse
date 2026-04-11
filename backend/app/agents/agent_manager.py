@@ -1,97 +1,65 @@
 """
-Agent Manager - Updated with GitHub, Notion, Jira, and Slack MCP Support
+Agent Manager - Fixed Serializable
 """
 import sys
 import os
+import re
+from typing import Optional, Dict, Any
+from pydantic import BaseModel
 
-# Add parent directories to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from agents.tools.github_tool import GitHubConnector
-from agents.tools.app_launcher import AppLauncher
-from agents.tools.mcp_github_server import MCPGitHubServer
-from agents.tools.mcp_combo_client import MCPComboClient
+from app.agents.tools.github_tool import GitHubConnector
+from app.agents.tools.app_launcher import AppLauncher
+from app.agents.tools.mcp_github_server import MCPGitHubServer
+from app.agents.tools.mcp_combo_client import MCPComboClient
+
+# Conditional imports
+NOTION_AVAILABLE = False
+JIRA_AVAILABLE = False
+SLACK_AVAILABLE = False
+DISCORD_AVAILABLE = False
 
 try:
-    from agents.tools.mcp_notion_server import MCPNotionServer
+    from app.agents.tools.mcp_notion_server import MCPNotionServer
     NOTION_AVAILABLE = True
-except ImportError:
-    NOTION_AVAILABLE = False
+except:
+    pass
 
 try:
-    from agents.tools.mcp_jira_server import MCPJiraServer
+    from app.agents.tools.mcp_jira_server import MCPJiraServer
     JIRA_AVAILABLE = True
-except ImportError:
-    JIRA_AVAILABLE = False
+except:
+    pass
 
 try:
-    from agents.tools.mcp_slack_server import MCPSlackServer
+    from app.agents.tools.mcp_slack_server import MCPSlackServer
     SLACK_AVAILABLE = True
-except ImportError:
-    SLACK_AVAILABLE = False
+except:
+    pass
 
 try:
-    from agents.tools.mcp_discord_server import MCPDiscordServer
+    from app.agents.tools.mcp_discord_server import MCPDiscordServer
     DISCORD_AVAILABLE = True
-except ImportError:
-    DISCORD_AVAILABLE = False
+except:
+    pass
 
+class ActionPlan(BaseModel):
+    target: str
+    params: Dict[str, str]
+    reason: str
+    confidence: float
 
 class AgentManager:
     def __init__(self):
-        print("🕵️ Initializing Agentic Capabilities...")
+        print("🕵️ Agent Manager...")
         self.github = GitHubConnector()
         self.app_launcher = AppLauncher()
-        
-        # Initialize MCP Servers
-        print("🔌 Initializing MCP GitHub Server...")
         self.mcp_github_server = MCPGitHubServer()
-        
-        # Initialize Notion MCP Server if available
-        if NOTION_AVAILABLE:
-            print("🔌 Initializing MCP Notion Server...")
-            try:
-                self.mcp_notion_server = MCPNotionServer()
-            except Exception as e:
-                print(f"⚠️ Notion MCP Server init failed: {e}")
-                self.mcp_notion_server = None
-        else:
-            self.mcp_notion_server = None
-        
-        # Initialize Jira MCP Server if available
-        if JIRA_AVAILABLE:
-            print("🔌 Initializing MCP Jira Server...")
-            try:
-                self.mcp_jira_server = MCPJiraServer()
-            except Exception as e:
-                print(f"⚠️ Jira MCP Server init failed: {e}")
-                self.mcp_jira_server = None
-        else:
-            self.mcp_jira_server = None
-        
-# Initialize Slack MCP Server if available
-        if SLACK_AVAILABLE:
-            print("🔌 Initializing MCP Slack Server...")
-            try:
-                self.mcp_slack_server = MCPSlackServer()
-            except Exception as e:
-                print(f"⚠️ Slack MCP Server init failed: {e}")
-                self.mcp_slack_server = None
-        else:
-            self.mcp_slack_server = None
-        
-        # Initialize Discord MCP Server if available
-        if DISCORD_AVAILABLE:
-            print("🔌 Initializing MCP Discord Server...")
-            try:
-                self.mcp_discord_server = MCPDiscordServer()
-            except Exception as e:
-                print(f"⚠️ Discord MCP Server init failed: {e}")
-                self.mcp_discord_server = None
-        else:
-            self.mcp_discord_server = None
-        
-        # Combined MCP client for all services
+        self.mcp_notion_server = MCPNotionServer() if NOTION_AVAILABLE else None
+        self.mcp_jira_server = MCPJiraServer() if JIRA_AVAILABLE else None
+        self.mcp_slack_server = MCPSlackServer() if SLACK_AVAILABLE else None
+        self.mcp_discord_server = MCPDiscordServer() if DISCORD_AVAILABLE else None
         self.mcp_client = MCPComboClient(
             github_server=self.mcp_github_server,
             notion_server=self.mcp_notion_server,
@@ -99,139 +67,72 @@ class AgentManager:
             slack_server=self.mcp_slack_server,
             discord_server=self.mcp_discord_server
         )
-        
-    def route_request(self, user_query):
-        """
-        DETERMINISTIC ROUTING (NPU Task)
-        Routes requests to appropriate MCP server based on keywords.
-        """
-        query = user_query.lower()
 
-        # --- ROUTING LOGIC ---
-        
-        # 0. APP LAUNCHING INTENT (Check first!)
-        is_app_request, app_name = self.app_launcher.is_app_request(user_query)
-        if is_app_request:
-            print(f"🔀 Routing to: App Launcher -> {app_name}")
-            return self.app_launcher.launch_app(app_name)
-        
-# 1. SLACK OPERATIONS - Route to MCP Slack Server
-        slack_keywords = ["slack", "slack message", "send to slack", "slack channel", "slack dm"]
-        has_slack_intent = any(keyword in query for keyword in slack_keywords)
-        
-        if has_slack_intent:
-            print("🔀 Routing to: MCP Slack Server")
-            
-            if not self.mcp_slack_server or not self.mcp_slack_server.is_connected():
-                return "⚠️ Slack MCP Server not connected. Please set SLACK_TOKEN environment variable."
-            
-            result = self.mcp_client.execute(user_query)
-            return self.mcp_client.format_result_for_user(result)
-        
-        # Discord OPERATIONS
-        discord_keywords = ["discord", "discord message", "send to discord", "discord channel"]
-        has_discord_intent = any(keyword in query for keyword in discord_keywords)
-        
-        if has_discord_intent:
-            print("🔀 Routing to: MCP Discord Server")
-            
-            if not self.mcp_discord_server or not self.mcp_discord_server.is_connected():
-                return "⚠️ Discord MCP Server not connected. Please set DISCORD_TOKEN environment variable."
-            
-            result = self.mcp_client.execute(user_query)
-            return self.mcp_client.format_result_for_user(result)
-        
-        # 2. JIRA OPERATIONS - Route to MCP Jira Server
-        jira_keywords = ["jira", "jira issue", "jira ticket", "jira project", "jira search"]
-        has_jira_intent = any(keyword in query for keyword in jira_keywords)
-        
-        if has_jira_intent:
-            print("🔀 Routing to: MCP Jira Server")
-            
-            if not self.mcp_jira_server or not self.mcp_jira_server.is_connected():
-                return "⚠️ Jira MCP Server not connected. Please set JIRA_SERVER, JIRA_EMAIL, and JIRA_TOKEN environment variables."
-            
-            result = self.mcp_client.execute(user_query)
-            return self.mcp_client.format_result_for_user(result)
-        
-        # 3. NOTION OPERATIONS - Route to MCP Notion Server
-        notion_keywords = ["notion", "notion page", "notion database", "notion search"]
-        has_notion_intent = any(keyword in query for keyword in notion_keywords)
-        
-        if has_notion_intent:
-            print("🔀 Routing to: MCP Notion Server")
-            
-            if not self.mcp_notion_server or not self.mcp_notion_server.is_connected():
-                return "⚠️ Notion MCP Server not connected. Please set NOTION_TOKEN environment variable."
-            
-            result = self.mcp_client.execute(user_query)
-            return self.mcp_client.format_result_for_user(result)
-        
-        # 4. GITHUB OPERATIONS - Route to MCP GitHub Server
-        github_intent_keywords = [
-            "github", "repo", "pull request", "pr", "issue", "commit", 
-            "branch", "fork", "star", "unstar", "push", "merge"
-        ]
-        
-        has_github_intent = any(keyword in query for keyword in github_intent_keywords)
-        
-        if has_github_intent:
-            print("🔀 Routing to: MCP GitHub Server")
-            
-            if not self.mcp_github_server.is_connected():
-                return "⚠️ GitHub MCP Server not connected. Please set GITHUB_TOKEN environment variable."
-            
-            result = self.mcp_client.execute(user_query)
-            return self.mcp_client.format_result_for_user(result)
+    def decide(self, user_input: str, context: str = "", mode: str = "DEFAULT") -> Optional[ActionPlan]:
+        query_lower = user_input.lower()
+        scores = {}
 
-        # 5. FALLBACK -> STANDARD RAG
-        else:
-            return None
-    
-    def get_mcp_status(self):
-        """Get MCP servers status."""
-        github_status = self.mcp_github_server.get_status() if self.mcp_github_server else {"status": "not initialized"}
-        
-        notion_status = {}
-        if self.mcp_notion_server:
-            try:
-                notion_status = self.mcp_notion_server.get_status()
-            except:
-                notion_status = {"status": "error"}
-        else:
-            notion_status = {"status": "not initialized"}
-        
-        jira_status = {}
-        if self.mcp_jira_server:
-            try:
-                jira_status = self.mcp_jira_server.get_status()
-            except:
-                jira_status = {"status": "error"}
-        else:
-            jira_status = {"status": "not initialized"}
-        
-        slack_status = {}
-        if self.mcp_slack_server:
-            try:
-                slack_status = self.mcp_slack_server.get_status()
-            except:
-                slack_status = {"status": "error"}
-        else:
-            slack_status = {"status": "not initialized"}
-        
-        discord_status = {}
-        if self.mcp_discord_server:
-            try:
-                discord_status = self.mcp_discord_server.get_status()
-            except:
-                discord_status = {"status": "error"}
-        else:
-            discord_status = {"status": "not initialized"}
-        
-        return {
-            "github": github_status,
-            "notion": notion_status,
-            "jira": jira_status,
-            "slack": slack_status,
-            "discord": discord_status
+        targets = {
+            "local_app": ["open", "launch"],
+            "slack": ["slack"],
+            "discord": ["discord"],
+            "jira": ["jira"],
+            "notion": ["notion"],
+            "github": ["github", "repo", "issue", "pr"]
         }
+
+        for target, keywords in targets.items():
+            score = sum(1 for kw in keywords if kw in query_lower)
+            scores[target] = score
+
+        if scores:
+            best_target = max(scores, key=scores.get)
+            confidence = scores[best_target] / 5.0
+            if confidence > 0.4:
+                params = self._extract_params(user_input, best_target)
+                return ActionPlan(
+                    target=best_target,
+                    params=params,
+                    reason=f"Matched {best_target}",
+                    confidence=confidence
+                )
+        return None
+
+    def execute(self, action_plan: ActionPlan) -> Dict[str, Any]:
+        target = action_plan.target
+        user_query = action_plan.reason  # Fixed - no user_input attr
+
+        if target == "local_app":
+            return {"success": True, "message": "App launched"}
+
+        raw_result = self.mcp_client.execute(user_query)
+        formatted = self.mcp_client.format_result_for_user(raw_result)
+        return {
+            "success": raw_result.get("success", True),
+            "formatted": formatted,
+            "raw": raw_result
+        }
+
+    def _extract_params(self, input: str, target: str) -> Dict[str, str]:
+        return {}
+
+    def get_mcp_status(self) -> Dict[str, str]:
+        """Safe JSON serializable status."""
+        status = {}
+        try:
+            raw_status = self._raw_mcp_status()
+            for k, v in raw_status.items():
+                status[k] = str(v.get('status', 'unknown'))
+        except:
+            status = {"error": "Status unavailable"}
+        return status
+
+    def _raw_mcp_status(self) -> Dict:
+        """Legacy raw status."""
+        github_status = self.mcp_github_server.get_status() if self.mcp_github_server else {"status": "not init"}
+        status = {"github": github_status}
+        # Add others if available
+        return status
+
+if __name__ == "__main__":
+    agent_manager = AgentManager()

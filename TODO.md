@@ -1,29 +1,69 @@
-# Discord MCP Integration TODO
+# Synapse AI Architecture Unification TODO
 
 ## Overview
-✅ Plan approved. Implementing Discord MCP server like existing (slack/notion/etc.).
+Implementing unified pipeline: Orchestrator → Memory → AgentManager → Tools → Memory → LLM.
+
+**Status: In Progress**
 
 ## Steps
-- [x] 1. Create `backend/app/agents/tools/mcp_discord_server.py` (Discord REST API for channels/messages/guilds)
-- [x] 2. Update `backend/app/agents/tools/mcp_combo_client.py` (add discord_server param, natural lang parsing, execute route)
-- [x] 3. Update `backend/app/agents/agent_manager.py` (import/init discord server, pass to combo client, keyword routing)
-- [x] 4. Update `frontend/app/settings/integrations/page.tsx` (add Discord to integrations list/states)
-- [x] 5. No new deps needed (uses requests)
-- [x] 6. No api.ts changes needed
 
-- [ ] 5. Add `discord.py` to `backend/requirements.txt`
-- [ ] 6. Verify/update `frontend/lib/api.ts` Platform type
-- [ ] 7. Test: pip install, set DISCORD_TOKEN, frontend connect/sync, agent "send discord message"
+### 1. ✅ Create this TODO.md [DONE]
 
-## Notes
-- Env: Add `DISCORD_TOKEN=your_bot_token` to backend/.env
-- Bot needs: Message Content Intent enabled in Discord Developer Portal
-- No design changes - reuse MessageSquare icon, indigo accent
+### 2. ✅ Enhance backend/app/core/orchestrator.py [DONE]
+- Add detect_mode(user_input) → {'mode': str, 'intent': str}
+- Integrate mode keywords (MEETING, RESEARCH, FOCUS, WORKFLOW)
+- Add get_context(mode)
 
-**Complete ✅ Discord MCP integrated!**
+### 3. ✅ Update backend/app/core/memory.py [DONE]
+- Add mode param to recall/memorize (metadata filter)
+- Test mode-based retrieval
 
-Test:
-1. Add DISCORD_TOKEN=your_bot_token to backend/.env (Bot with Message Content intent)
-2. Backend restart
-3. Frontend /settings/integrations -> Discord card -> Connect
-4. Agent: "send discord message to CHANNEL_ID Hello from Synapse"
+### 4. ✅ Enhance backend/app/core/llm.py [DONE]
+- Update generate_answer(user_input, context, mode, tool_result)
+- Richer system prompt with all inputs
+
+### 5. ✅ Update backend/app/agents/agent_manager.py [DONE]
+- Add decide(user_input, context, mode) → action_plan dict
+- Enhance execute(action_plan) using context/mode
+- Preserve existing route_request as fallback
+
+### 6. ✅ Refactor backend/app/main.py /ask endpoint [DONE]
+- Implement full pipeline sequence
+- Merge response types (action + reasoning)
+- Update health_check to show pipeline status
+
+### 7. Check dependencies
+
+
+### 3. Update backend/app/core/memory.py
+- Add mode param to recall/memorize (metadata filter)
+- Test mode-based retrieval
+
+### 4. Enhance backend/app/core/llm.py
+- Update generate_answer(user_input, context, mode, tool_result)
+- Richer system prompt with all inputs
+
+### 5. Update backend/app/agents/agent_manager.py
+- Add decide(user_input, context, mode) → action_plan dict
+- Enhance execute(action_plan) using context/mode
+- Preserve existing route_request as fallback
+
+### 6. Refactor backend/app/main.py /ask endpoint
+- Implement full pipeline sequence
+- Merge response types (action + reasoning)
+- Update health_check to show pipeline status
+
+### 7. Check dependencies
+- read_file backend/app/core/amd_bridge.py
+- Minor tool updates if needed (mcp_combo_client.py)
+
+### 8. Testing
+- execute_command uvicorn backend.app.main:app --reload
+- Test examples: meeting notes, Jira+Slack workflow, memory summary + GitHub action
+
+### 9. Frontend compatibility
+- Verify /ask response format
+- Optional: Enhance frontend to show mode/tool_result
+
+### 10. Completion
+- attempt_completion with demo commands

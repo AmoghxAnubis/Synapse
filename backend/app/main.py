@@ -1,27 +1,23 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
+from typing import Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv import load_dotenv
 import os
 import sys
 
-# Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Load environment variables from .env file
 load_dotenv()
 
-# --- INTERNAL MODULES ---
 from app.core.memory import MemoryBank
 from app.core.ingester import FileIngester
 from app.core.llm import LocalLLM
 from app.core.orchestrator import system_orchestrator
-from app.agents.agent_manager import AgentManager  # <--- NEW: The Tool Router
+from app.agents.agent_manager import AgentManager
 
-app = FastAPI(title="Synapse Backend", version="2.1")
+app = FastAPI(title="Synapse Backend", version="2.2-UNIFIED")
 
-# --- CORS POLICY ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,117 +26,139 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- INITIALIZATION ---
-print("🔌 Booting Synapse Core...")
-memory = MemoryBank()           # The Hippocampus (Database)
-llm = LocalLLM(model="llama3")  # The Prefrontal Cortex (Ollama)
-agent_manager = AgentManager()  # The Hands (Toolbelt)
+print("🔌 Booting Synapse...")
+memory = MemoryBank()
+llm = LocalLLM(model="llama3")
+agent_manager = AgentManager()
 
-# --- DATA MODELS ---
 class Query(BaseModel):
     text: str
+    use_context: bool = True
+
+class ToggleContextRequest(BaseModel):
+    use_context: bool
 
 class ModeRequest(BaseModel):
     mode: str
 
-# --- ROUTES ---
+class ListMemoryRequest(BaseModel):
+    limit: int = 50
+    offset: int = 0
+    query: Optional[str] = None
+
+class DeleteMemoryRequest(BaseModel):
+    ids: list[str]
+
+class MemoryItem(BaseModel):
+    id: str
+    document: str
+    metadata: dict
+    source: str
+
+class UnifiedResponse(BaseModel):
+    message: str
+    mode: str
+    used_context: bool
+    action_taken: Optional[str] = None
+    sources: List[str] = []
+    intent: str
 
 @app.get("/")
-def health_check():
+def health():
     return {
         "status": "Online",
-        "memory_engine": memory.brain.hardware_mode,
-        "generation_engine": "Ollama (Simulated GPU)",
-        "orchestrator": system_orchestrator.active_mode,
-        "agents_active": ["GitHub"] 
+        "orchestrator": system_orchestrator.get_active_mode(),
+        "memory": getattr(memory.brain, 'hardware_mode', 'NPU'),
+        "llm": llm.model,
+        "agents": ["github", "notion", "jira", "slack", "discord"],
+        "use_context": memory.use_context
     }
 
-# --- 1. THE EYES (File Ingestion) ---
-@app.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
-    """Reads a PDF/Text file and saves it to Vector Memory."""
-    try:
-        # A. Parse Text
-        raw_text = await FileIngester.parse_file(file)
-        
-        # B. Chunk Text
-        chunks = FileIngester.chunk_text(raw_text)
-        
-        # C. Memorize Each Chunk
-        saved_ids = []
-        for chunk in chunks:
-            doc_id = memory.memorize(chunk, metadata={"source": file.filename})
-            saved_ids.append(doc_id)
-            
-        return {
-            "status": "success", 
-            "filename": file.filename, 
-            "chunks_processed": len(saved_ids),
-            "hardware": memory.brain.hardware_mode
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# --- 2. THE VOICE & HANDS (Agentic Search) ---
-@app.post("/ask")
-def ask_synapse(query: Query):
-    """
-    Logic Flow:
-    1. Check Agent Manager (Does user want GitHub/Jira?) -> NPU Task
-    2. If Yes -> Run Tool -> Return Result
-    3. If No -> Search Memory -> Generate Answer (RAG) -> GPU Task
-    """
-    print(f"User asked: {query.text}")
-
-    # --- STEP 1: AGENTIC ROUTING (The Switchboard) ---
-    # We ask the Agent Manager if this looks like a tool request
-    agent_response = agent_manager.route_request(query.text)
+@app.post("/ask", response_model=UnifiedResponse)
+def ask(query: Query):
+    mode_data = system_orchestrator.detect_mode(query.text)
+    mode = mode_data["mode"]
+    intent = mode_data["intent"]
     
-    if agent_response:
-        print("🤖 Agent handled the request.")
-        return {
-            "answer": agent_response,
-            "sources": ["External API (GitHub/Tool)"],
-            "hardware_flow": "NPU_Router -> External_Tool"
-        }
-
-    # --- STEP 2: STANDARD RAG (The Memory) ---
-    print("🧠 No agent needed. Searching Memory...")
+    context_results = memory.recall(query.text, n_results=3, use_context=query.use_context, mode=mode)
+    retrieved_docs = context_results['documents'][0]
+    context_block = "\n".join(retrieved_docs) if retrieved_docs else "No context."
     
-    # A. Search local memory
-    results = memory.recall(query.text, n_results=3)
-    retrieved_docs = results['documents'][0]
+    action_plan = agent_manager.decide(query.text, context_block, mode)
+    tool_result = None
+    if action_plan:
+        tool_result = agent_manager.execute(action_plan)
+        memory.memorize(f"Action {action_plan.target}", mode=mode)
     
-    # B. Check if we found anything
-    if not retrieved_docs:
-        context_block = "No relevant memory found."
-    else:
-        context_block = "\n".join(retrieved_docs)
-
-    # C. Send to Llama 3 (Ollama)
-    ai_response = llm.generate_answer(context_block, query.text)
+    memory.memorize(query.text, mode=mode)
     
-    return {
-        "answer": ai_response,
-        "sources": retrieved_docs,
-        "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim"
-    }
+    response = llm.generate_answer(query.text, context_block, mode, tool_result)
+    
+    return UnifiedResponse(
+        message=response,
+        mode=mode,
+        used_context=bool(retrieved_docs),
+        action_taken=action_plan.target if action_plan else None,
+        sources=retrieved_docs or [],
+        intent=intent
+    )
 
-# --- 3. THE AUTONOMIC SYSTEM (Orchestrator) ---
+@app.post("/chat/toggle_context")
+def toggle_context(request: ToggleContextRequest):
+    memory.use_context = request.use_context
+    return {"status": "success"}
+
 @app.post("/set_mode")
-def change_workflow(request: ModeRequest):
-    """
-    Triggers the OS to rearrange windows/apps.
-    """
+def set_mode(request: ModeRequest):
+    return system_orchestrator.set_mode(request.mode)
+
+@app.post("/upload")
+async def upload(file: UploadFile = File(...)):
     try:
-        result = system_orchestrator.set_mode(request.mode)
-        return {
-            "status": "success",
-            "orchestrator_response": result,
-            "hardware_used": "Ryzen_AI_NPU (Simulated Classification)"
-        }
+        raw_text = await FileIngester.parse_file(file)
+        chunks = FileIngester.chunk_text(raw_text)
+        saved_ids = [memory.memorize(chunk, {"source": file.filename}) for chunk in chunks]
+        return {"status": "success", "chunks": len(saved_ids)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(500, str(e))
+
+@app.post("/memory/list", response_model=List[MemoryItem])
+def list_memory(request: ListMemoryRequest):
+    try:
+        where = {"source": {"$contains": request.query}} if request.query else None
+        results = memory.collection.get(limit=request.limit, offset=request.offset, where=where)
+        items = []
+        for i in range(len(results['ids'][0])):
+            md = results['metadatas'][0][i]
+            items.append(MemoryItem(id=results['ids'][0][i], document=results['documents'][0][i], metadata=md, source=md.get('source', 'unknown')))
+        return items
+    except:
+        return []
+
+@app.post("/memory/delete")
+def delete_memory(request: DeleteMemoryRequest):
+    try:
+        memory.collection.delete(ids=request.ids)
+        return {"status": "success"}
+    except:
+        raise HTTPException(500, "Failed")
+
+@app.post("/memory/clear")
+def clear_memory():
+    try:
+        memory.collection.delete_all()
+        return {"status": "success"}
+    except:
+        raise HTTPException(500, "Failed")
+
+@app.get("/mcp_status")
+def mcp_status():
+    try:
+        status = agent_manager.get_mcp_status()
+        return {"status": "success", "servers": list(status.keys())}
+    except:
+        return {"status": "error", "servers": []}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

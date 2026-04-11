@@ -18,10 +18,13 @@ import IntegrationCard, {
 import ConnectModal from "@/components/ConnectModal";
 import SyncLog, { type SyncLogEntry } from "@/components/SyncLog";
 import {
-    saveIntegrationKey,
-    triggerSync,
-    type Platform,
+    connectIntegration,
+    syncIntegration,
+    toggleIntegration,
+    getMCPStatus,
 } from "@/lib/api";
+
+type Platform = "github" | "slack" | "notion" | "jira" | "discord";
 
 /* ─── Integration definitions ─────────────────────────── */
 
@@ -90,6 +93,22 @@ export default function IntegrationsPage() {
         discord: "disconnected",
     });
 
+    const [mcpStatus, setMcpStatus] = useState<any>({});
+    const [polling, setPolling] = useState(false);
+
+    useEffect(() => {
+      const pollStatus = async () => {
+        try {
+          const status = await getMCPStatus();
+          setMcpStatus(status.mcp_servers || {});
+        } catch {}
+      };
+
+      pollStatus();
+      const interval = setInterval(pollStatus, 5000);
+      return () => clearInterval(interval);
+    }, []);
+
     const [activeToggles, setActiveToggles] = useState<
         Record<Platform, boolean>
     >({
@@ -150,9 +169,14 @@ export default function IntegrationsPage() {
         if (!modalPlatform) return;
         const pid = modalPlatform.id;
 
-        await saveIntegrationKey(pid, key);
-        setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
-        addLog(modalPlatform.name, "API key saved. Integration connected.", "success");
+        try {
+          await connectIntegration(pid, key);
+          setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
+          addLog(modalPlatform.name, "Token saved & integration ready.", "success");
+        } catch (error) {
+          addLog(modalPlatform.name, "Connect failed. Invalid token?", "error");
+        }
+        setModalOpen(false);
     };
 
     const handleSync = async (integration: Integration) => {
@@ -162,7 +186,7 @@ export default function IntegrationsPage() {
         addLog(integration.name, "Starting sync...", "info");
 
         try {
-            const result = await triggerSync(pid);
+            const result = await syncIntegration(pid);
             setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
 
             const now = new Date().toLocaleTimeString("en-US", {
@@ -174,19 +198,24 @@ export default function IntegrationsPage() {
 
             addLog(
                 integration.name,
-                `Ingested ${result.documents_ingested} documents → Chunked into ${result.chunks_created} vectors.`,
+                `Synced ${result.chunks} chunks to memory.`,
                 "success"
             );
         } catch {
-            setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
-            addLog(integration.name, "Sync failed. Backend unreachable.", "error");
+            setStatuses((prev) => ({ ...prev, [pid]: "error" }));
+            addLog(integration.name, "Sync failed.", "error");
         }
     };
 
-    const handleToggle = (pid: Platform, active: boolean) => {
-        setActiveToggles((prev) => ({ ...prev, [pid]: active }));
-        const name = integrations.find((i) => i.id === pid)?.name ?? pid;
-        addLog("System", `${name} integration ${active ? "enabled" : "disabled"}.`, "info");
+    const handleToggle = async (pid: Platform, active: boolean) => {
+        try {
+            await toggleIntegration(pid, active);
+            setActiveToggles((prev) => ({ ...prev, [pid]: active }));
+            const name = integrations.find((i) => i.id === pid)?.name ?? pid;
+            addLog("System", `${name} integration ${active ? "enabled" : "disabled"}.`, "info");
+        } catch (error) {
+            addLog("System", `Toggle failed for ${pid}.`, "error");
+        }
     };
 
     return (
@@ -264,6 +293,7 @@ export default function IntegrationsPage() {
                                 status={statuses[integration.id]}
                                 lastSynced={lastSynced[integration.id]}
                                 isActive={activeToggles[integration.id]}
+                                status={mcpStatus[integration.id]?.status === "connected" ? "connected" : statuses[integration.id] || "disconnected"}
                                 onConnect={() => handleConnect(integration)}
                                 onSync={() => handleSync(integration)}
                                 onToggle={(active) => handleToggle(integration.id, active)}

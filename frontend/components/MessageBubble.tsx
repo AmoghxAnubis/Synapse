@@ -15,8 +15,11 @@ export interface Message {
     id: string;
     role: "user" | "ai";
     content: string;
+    type?: "chat" | "rag" | "action" | "error";
     sources?: string[];
     hardwareFlow?: string;
+    targetIntegration?: string;
+    usedContext?: boolean;
     timestamp: Date;
 }
 
@@ -95,6 +98,13 @@ function MessageBubble({ msg }: MessageBubbleProps) {
                         </Accordion>
                     )}
 
+                    {/* Type badge */}
+                    {msg.type && msg.type !== "chat" && (
+                      <Badge variant="secondary" className="self-start text-[10px] h-5 px-1.5">
+                        {msg.type.toUpperCase()}
+                        {msg.targetIntegration && ` • ${msg.targetIntegration}`}
+                      </Badge>
+                    )}
                     {/* Hardware flow */}
                     {msg.hardwareFlow && (
                         <span className="px-2 text-[10px] text-zinc-400">

@@ -4,11 +4,40 @@ import { useState } from "react";
 import { Bot, Plus, Settings2, FileText, Globe, Code, BrainCircuit, Trash2, Search, TerminalSquare, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const mockAgents = [
-    { id: 1, name: "Research Assistant", description: "Deep dives into topics", icon: Globe, active: true },
-    { id: 2, name: "Code Wizard", description: "Helps with debugging", icon: Code, active: false },
-    { id: 3, name: "Document Analyzer", description: "Summarizes PDFs", icon: FileText, active: false },
-];
+import { getMCPStatus } from "@/lib/api";
+import { useEffect, useState } from "react";
+
+type Agent = {
+  id: string;
+  name: string;
+  description: string;
+  icon: any;
+  active: boolean;
+};
+
+const [agents, setAgents] = useState<Agent[]>([]);
+
+useEffect(() => {
+  const loadAgents = async () => {
+    try {
+      const status = await getMCPStatus();
+      const mcpAgents: Agent[] = Object.entries(status.mcp_servers).map(([id, data]: [string, any]) => ({
+        id,
+        name: id.charAt(0).toUpperCase() + id.slice(1),
+        description: `${id} MCP integration ready`,
+        icon: Globe,
+        active: data.status === "connected",
+      }));
+      setAgents(mcpAgents);
+    } catch {
+      setAgents([
+        { id: "github", name: "GitHub Agent", description: "Code & repos", icon: Code, active: false },
+        { id: "notion", name: "Notion Agent", description: "Docs & notes", icon: FileText, active: false },
+      ]);
+    }
+  };
+  loadAgents();
+}, []);
 
 export default function AgentsPage() {
     const [selectedAgentId, setSelectedAgentId] = useState(1);

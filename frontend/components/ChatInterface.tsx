@@ -7,12 +7,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { askSynapse } from "@/lib/api";
 import MessageBubble, { type Message } from "@/components/MessageBubble";
+import { Switch } from "@/components/ui/switch";
 import ChatInput from "./ChatInput";
 
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const scrollRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [useContext, setUseContext] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
@@ -35,16 +37,19 @@ export default function ChatInterface() {
         setIsLoading(true);
 
         try {
-            const response = await askSynapse(query);
-            const aiMsg: Message = {
-                id: crypto.randomUUID(),
-                role: "ai",
-                content: response.answer,
-                sources: response.sources,
-                hardwareFlow: response.hardware_flow,
-                timestamp: new Date(),
-            };
-            setMessages((prev) => [...prev, aiMsg]);
+        const response = await askSynapse(query, useContext);
+        const aiMsg: Message = {
+            id: crypto.randomUUID(),
+            role: "ai",
+            content: response.message,
+            type: response.type || "rag",
+            sources: response.sources || [],
+            hardwareFlow: response.hardware_flow,
+            targetIntegration: response.target_integration,
+            usedContext: response.used_context,
+            timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, aiMsg]);
         } catch {
             const errMsg: Message = {
                 id: crypto.randomUUID(),
@@ -63,9 +68,15 @@ export default function ChatInterface() {
             {/* Header */}
             <div className="flex items-center gap-2 px-1 pb-3">
                 <div className="h-2 w-2 rounded-full bg-purple-500" />
-                <h2 className="text-sm font-semibold tracking-wide text-zinc-800 uppercase">
-                    Synapse Chat
-                </h2>
+                <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-semibold tracking-wide text-zinc-800 uppercase">
+                        Synapse Chat
+                    </h2>
+                    <div className="flex items-center gap-1.5 text-xs">
+                        <span>RAG:</span>
+                        <Switch checked={useContext} onCheckedChange={setUseContext} />
+                    </div>
+                </div>
                 {messages.length > 0 && (
                     <Badge
                         variant="secondary"
