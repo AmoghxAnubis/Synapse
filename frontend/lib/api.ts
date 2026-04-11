@@ -58,7 +58,7 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
   formData.append("file", file);
 
   const { data } = await api.post<UploadResponse>("/upload", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": undefined }, // Let axios auto-set multipart boundary
   });
   return data;
 }

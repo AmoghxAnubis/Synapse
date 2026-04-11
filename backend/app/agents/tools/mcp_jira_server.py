@@ -276,13 +276,13 @@ class MCPJiraServer:
             return {"success": False, "error": "Not connected to Jira"}
         
         try:
-            jql = " ORDER BY created DESC"
-            
+            # Jira Cloud requires at least one restriction in JQL
             if project_key:
-                jql = f"project = {project_key}" + jql
-            if status:
-                separator = " AND " if project_key else ""
-                jql = f"{jql}{separator}status = '{status}'"
+                jql = f"project = {project_key} ORDER BY created DESC"
+            elif status:
+                jql = f"status = '{status}' ORDER BY created DESC"
+            else:
+                jql = "assignee = currentUser() ORDER BY created DESC"
             
             issues = self.client.search_issues(jql, maxResults=max_results)
             

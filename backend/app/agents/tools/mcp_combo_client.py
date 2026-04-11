@@ -67,8 +67,12 @@ class MCPComboClient:
         
         # ==================== JIRA COMMANDS ====================
         
+        # Jira projects — check FIRST (before list_issues to avoid regex collision)
+        if re.search(r'jira.*projects|list.*jira.*projects|show.*jira.*projects|my.*jira.*projects', user_input):
+            return {"service": "jira", "operation": "list_projects"}
+        
         # Create Jira issue
-        if re.search(r'jira.*issue|create.*jira.*ticket|new.*jira.*issue', user_input):
+        if re.search(r'create.*jira.*ticket|new.*jira.*issue|create.*jira.*issue', user_input):
             project_match = re.search(r'(?:project|proj)\s+["\']?(\w+)["\']?', original_input)
             title_match = re.search(r'(?:called|titled|named|title)\s+["\']?([^"\']+)["\']?', original_input)
             desc_match = re.search(r'(?:description|desc)\s+["\']([^"\']+)["\']', original_input)
@@ -82,7 +86,7 @@ class MCPComboClient:
             }
         
         # List Jira issues
-        if re.search(r'jira.*issues|list.*jira|show.*jira.*issues', user_input):
+        if re.search(r'jira.*issues|list.*jira.*issues|show.*jira.*issues', user_input):
             project_match = re.search(r'(?:project|proj)\s+["\']?(\w+)["\']?', original_input)
             return {
                 "service": "jira",
@@ -95,10 +99,6 @@ class MCPComboClient:
             query_match = re.search(r'for\s+["\']?([^"\']+)["\']?', original_input)
             query = query_match.group(1) if query_match else ""
             return {"service": "jira", "operation": "search_issues", "query": query}
-        
-        # Jira projects
-        if re.search(r'jira.*projects|list.*jira.*projects', user_input):
-            return {"service": "jira", "operation": "list_projects"}
         
         # Jira status
         if re.search(r'jira.*status|check.*jira|jira.*connected', user_input):
