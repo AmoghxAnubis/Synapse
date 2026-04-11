@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "id": 1,
+        "name": "Research Assistant",
+        "description": "Deep dives into topics and synthesizes web/doc info.",
+        "icon": "Globe",
+        "system_instruction": "You are a test agent.",
+        "capabilities": {
+            "web_search": true,
+            "terminal": true
+        },
+        "linked_sources": []
+    }
+]
