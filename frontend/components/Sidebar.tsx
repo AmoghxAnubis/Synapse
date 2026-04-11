@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"; // Assuming utils exists for classNames
 const sidebarItems = [
     {
         name: "Chat & Orchestrator",
-        href: "/dashboard",
+        href: "/dashboard/chat",
         icon: MessageSquare,
     },
     {
