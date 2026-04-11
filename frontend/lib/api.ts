@@ -29,6 +29,7 @@ export interface AskResponse {
   answer: string;
   sources: string[];
   hardware_flow: string;
+  capabilities_used?: string[];
 }
 
 export interface ModeResponse {
@@ -51,21 +52,17 @@ export interface Agent {
   description: string;
   icon: string;
   system_instruction: string;
+  capabilities: { web_search: boolean; terminal: boolean };
+  linked_sources: string[];
 }
 
 // ── API Functions ───────────────────────────────────────
 
-/**
- * Ping the backend health endpoint.
- */
 export async function checkHealth(): Promise<HealthResponse> {
   const { data } = await api.get<HealthResponse>("/");
   return data;
 }
 
-/**
- * Upload a document file (PDF/TXT) to Vector Memory.
- */
 export async function uploadDocument(file: File): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append("file", file);
@@ -76,9 +73,6 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
   return data;
 }
 
-/**
- * Send a query to the RAG pipeline.
- */
 export async function askSynapse(query: string, selectedSources: string[] = [], agentId: number | null = null): Promise<AskResponse> {
   const { data } = await api.post<AskResponse>("/ask", { 
     text: query,
@@ -88,64 +82,43 @@ export async function askSynapse(query: string, selectedSources: string[] = [], 
   return data;
 }
 
-/**
- * Fetch all available specialized agents/personas.
- */
 export async function fetchAgents(): Promise<Agent[]> {
   const { data } = await api.get<Agent[]>("/agents");
   return data;
 }
 
-/**
- * Create a new custom agent.
- */
 export async function createAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
   const { data } = await api.post<Agent>("/agents", agentData);
   return data;
 }
 
-/**
- * Delete a custom agent.
- */
+export async function updateAgent(agentId: number, updates: Partial<Agent>): Promise<Agent> {
+  const { data } = await api.patch<Agent>(`/agents/${agentId}`, updates);
+  return data;
+}
+
 export async function deleteAgent(agentId: number): Promise<{ status: string }> {
   const { data } = await api.delete<{ status: string }>(`/agents/${agentId}`);
   return data;
 }
 
-/**
- * Set the orchestrator mode (FOCUS / MEETING / RESEARCH).
- */
-export async function setOrchestratorMode(
-  mode: string
-): Promise<ModeResponse> {
+export async function setOrchestratorMode(mode: string): Promise<ModeResponse> {
   const { data } = await api.post<ModeResponse>("/set_mode", { mode });
   return data;
 }
 
-/**
- * Fetch all unique sources from memory.
- */
 export async function fetchSources(): Promise<Source[]> {
   const { data } = await api.get<Source[]>("/sources");
   return data;
 }
 
-/**
- * Delete a specific source from memory.
- */
 export async function deleteSource(sourceName: string): Promise<void> {
   await api.delete(`/sources/${encodeURIComponent(sourceName)}`);
 }
 
-// ── Integration Types ──────────────────────────────────
+// ── Integration Types & Functions ──────────────────────
 
-export type Platform = "github" | "slack" | "notion" | "jira";
-
-export interface IntegrationAuthResponse {
-  status: string;
-  platform: string;
-  connected: boolean;
-}
+export type Platform = "github" | "slack" | "notion" | "jira" | "discord";
 
 export interface SyncResponse {
   status: string;
@@ -156,76 +129,60 @@ export interface SyncResponse {
 }
 
 export interface IntegrationStatusEntry {
-  platform: Platform;
   connected: boolean;
-  lastSynced: string | null;
+  last_synced: string | null;
 }
 
-// ── Mock Integration API (frontend-only) ───────────────
-
-const STORAGE_KEY = "synapse_integrations";
-
-function getStoredKeys(): Record<string, string> {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-/**
- * Save an API key for a platform (stored locally).
- */
 export async function saveIntegrationKey(
   platform: Platform,
   key: string
-): Promise<IntegrationAuthResponse> {
-  // Simulate network delay
-  await new Promise((r) => setTimeout(r, 1200));
-
-  const stored = getStoredKeys();
-  stored[platform] = key;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
-
-  return {
-    status: "success",
-    platform,
-    connected: true,
-  };
+): Promise<{ status: string; platform: string; connected: boolean }> {
+  const { data } = await api.post(`/integrations/${platform}/connect`, { key });
+  return data;
 }
 
-/**
- * Trigger a sync for a platform (mock — generates fake results).
- */
-export async function triggerSync(
-  platform: Platform
-): Promise<SyncResponse> {
-  // Simulate longer sync
-  await new Promise((r) => setTimeout(r, 2000 + Math.random() * 1500));
-
-  const docs = Math.floor(Math.random() * 20) + 3;
-  const chunks = docs * (Math.floor(Math.random() * 5) + 2);
-
-  return {
-    status: "success",
-    platform,
-    documents_ingested: docs,
-    chunks_created: chunks,
-    hardware: "NPU",
-  };
+export async function triggerSync(platform: Platform): Promise<SyncResponse> {
+  const { data } = await api.post<SyncResponse>(`/integrations/${platform}/sync`);
+  return data;
 }
 
-/**
- * Get connection statuses for all platforms.
- */
-export function getIntegrationStatuses(): IntegrationStatusEntry[] {
-  const stored = getStoredKeys();
-  const platforms: Platform[] = ["github", "slack", "notion", "jira"];
+export async function fetchIntegrationStatuses(): Promise<Record<Platform, IntegrationStatusEntry>> {
+  const { data } = await api.get<Record<Platform, IntegrationStatusEntry>>("/integrations/status");
+  return data;
+}
 
-  return platforms.map((p) => ({
-    platform: p,
-    connected: !!stored[p],
-    lastSynced: stored[p] ? "Just now" : null,
-  }));
+// ── URL Ingestion ──────────────────────────────────────
+
+export async function ingestURL(url: string): Promise<{ status: string; url: string; chunks_processed: number }> {
+  const { data } = await api.post("/ingest/url", { url });
+  return data;
+}
+
+// ── Web Search & Terminal Tools ────────────────────────
+
+export async function webSearch(query: string): Promise<{ results: string }> {
+  const { data } = await api.post("/tools/web-search", { query });
+  return data;
+}
+
+export async function runTerminal(command: string): Promise<{ stdout: string; stderr: string; exit_code: number; blocked: boolean }> {
+  const { data } = await api.post("/tools/terminal", { command });
+  return data;
+}
+
+// ── Meetings Persistence ───────────────────────────────
+
+export interface MeetingsData {
+  notes: string;
+  tasks: { id: number; text: string; completed: boolean }[];
+}
+
+export async function fetchMeetings(): Promise<MeetingsData> {
+  const { data } = await api.get<MeetingsData>("/meetings");
+  return data;
+}
+
+export async function saveMeetings(data: MeetingsData): Promise<{ status: string }> {
+  const { data: resp } = await api.post<{ status: string }>("/meetings", data);
+  return resp;
 }
