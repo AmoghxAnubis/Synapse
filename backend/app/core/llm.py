@@ -6,12 +6,15 @@ class LocalLLM:
         self.model = model
         self.api_url = "http://localhost:11434/api/generate"
 
-    def generate_answer(self, context, question):
+    def generate_answer(self, context, question, system_prompt=None):
         """
         Uses the Local LLM (Simulating AMD ROCm) to answer.
         """
+        # If no custom system prompt is provided, use the default Synapse persona
+        base_system = system_prompt or "You are Synapse, an intelligent OS assistant."
+        
         prompt = f"""
-        You are Synapse, an intelligent OS assistant. 
+        {base_system}
         Use the following retrieved context to answer the user's question.
         
         CONTEXT:

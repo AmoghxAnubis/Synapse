@@ -40,6 +40,19 @@ export interface ModeResponse {
   hardware_used: string;
 }
 
+export interface Source {
+  name: string;
+  chunks: number;
+}
+
+export interface Agent {
+  id: number;
+  name: string;
+  description: string;
+  icon: string;
+  system_instruction: string;
+}
+
 // ── API Functions ───────────────────────────────────────
 
 /**
@@ -66,8 +79,36 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
 /**
  * Send a query to the RAG pipeline.
  */
-export async function askSynapse(query: string): Promise<AskResponse> {
-  const { data } = await api.post<AskResponse>("/ask", { text: query });
+export async function askSynapse(query: string, selectedSources: string[] = [], agentId: number | null = null): Promise<AskResponse> {
+  const { data } = await api.post<AskResponse>("/ask", { 
+    text: query,
+    selected_sources: selectedSources,
+    agent_id: agentId
+  });
+  return data;
+}
+
+/**
+ * Fetch all available specialized agents/personas.
+ */
+export async function fetchAgents(): Promise<Agent[]> {
+  const { data } = await api.get<Agent[]>("/agents");
+  return data;
+}
+
+/**
+ * Create a new custom agent.
+ */
+export async function createAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
+  const { data } = await api.post<Agent>("/agents", agentData);
+  return data;
+}
+
+/**
+ * Delete a custom agent.
+ */
+export async function deleteAgent(agentId: number): Promise<{ status: string }> {
+  const { data } = await api.delete<{ status: string }>(`/agents/${agentId}`);
   return data;
 }
 
@@ -79,6 +120,21 @@ export async function setOrchestratorMode(
 ): Promise<ModeResponse> {
   const { data } = await api.post<ModeResponse>("/set_mode", { mode });
   return data;
+}
+
+/**
+ * Fetch all unique sources from memory.
+ */
+export async function fetchSources(): Promise<Source[]> {
+  const { data } = await api.get<Source[]>("/sources");
+  return data;
+}
+
+/**
+ * Delete a specific source from memory.
+ */
+export async function deleteSource(sourceName: string): Promise<void> {
+  await api.delete(`/sources/${encodeURIComponent(sourceName)}`);
 }
 
 // ── Integration Types ──────────────────────────────────

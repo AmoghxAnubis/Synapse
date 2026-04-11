@@ -1,40 +1,62 @@
 "use client";
 
-import { useState } from "react";
-import { Bot, Plus, Settings2, FileText, Globe, Code, BrainCircuit, Trash2, Search, TerminalSquare, Database } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Bot, Plus, Settings2, FileText, Globe, Code, BrainCircuit, Trash2, Search, TerminalSquare, Database, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetchAgents, deleteAgent, type Agent } from "@/lib/api";
+import { toast } from "sonner";
 
-const mockAgents = [
-    { 
-        id: 1, 
-        name: "Research Assistant", 
-        description: "Deep dives into topics", 
-        icon: Globe, 
-        active: true,
-        systemInstruction: "You are an expert research assistant. Your goal is to synthesize information from the web and provided documents into clear, concise summaries.\n\nAlways cite your sources. Do not make assumptions beyond the provided data."
-    },
-    { 
-        id: 2, 
-        name: "Code Wizard", 
-        description: "Helps with debugging", 
-        icon: Code, 
-        active: false,
-        systemInstruction: "You are a senior software engineer and code wizard. Your primary function is to help debug issues, optimize logic, and write robust, clean, and well-documented code.\n\nAlways think step-by-step. Prioritize security, performance, and best practices."
-    },
-    { 
-        id: 3, 
-        name: "Document Analyzer", 
-        description: "Summarizes PDFs", 
-        icon: FileText, 
-        active: false,
-        systemInstruction: "You are a precise document analyzer. Your role is to read, extract, and summarize key insights from PDFs, docs, and text files.\n\nHighlight important metrics, dates, and conclusions. Avoid hallucinating details not explicitly present in the texts."
-    },
-];
+const agentIconsMap: Record<string, any> = {
+    Bot: Bot,
+    Globe: Globe,
+    Code: Code,
+    FileText: FileText,
+};
 
 export default function AgentsPage() {
-    const [selectedAgentId, setSelectedAgentId] = useState(1);
+    const [agents, setAgents] = useState<Agent[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
 
-    const selectedAgent = mockAgents.find((a) => a.id === selectedAgentId);
+    const loadAgents = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const data = await fetchAgents();
+            setAgents(data);
+            if (data.length > 0 && selectedAgentId === null) {
+                setSelectedAgentId(data[0].id);
+            }
+        } catch {
+            toast.error("Failed to load agents");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [selectedAgentId]);
+
+    useEffect(() => {
+        loadAgents();
+    }, []);
+
+    const handleDelete = async (e: React.MouseEvent, id: number) => {
+        e.stopPropagation();
+        if (id <= 3) return; // Prevent deleting defaults
+
+        try {
+            await deleteAgent(id);
+            toast.success("Agent deleted");
+            setAgents(prev => {
+                const updated = prev.filter(a => a.id !== id);
+                if (selectedAgentId === id) {
+                    setSelectedAgentId(updated[0]?.id || null);
+                }
+                return updated;
+            });
+        } catch {
+            toast.error("Failed to delete agent");
+        }
+    };
+
+    const selectedAgent = agents.find((a) => a.id === selectedAgentId);
 
     return (
         <div className="flex h-full w-full bg-white dark:bg-neutral-900">
@@ -65,26 +87,41 @@ export default function AgentsPage() {
 
                     <div className="space-y-1">
                         <div className="text-xs font-semibold text-neutral-500 mb-2 px-2 uppercase tracking-wider">Configured</div>
-                        {mockAgents.map((agent) => (
-                            <button
-                                key={agent.id}
-                                onClick={() => setSelectedAgentId(agent.id)}
-                                className={cn(
-                                    "w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left",
-                                    selectedAgentId === agent.id
-                                        ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-medium"
-                                        : "hover:bg-neutral-100 dark:hover:bg-neutral-800/50 text-neutral-600 dark:text-neutral-400"
-                                )}
-                            >
-                                <agent.icon className="h-4 w-4 shrink-0" />
-                                <div className="flex-1 truncate">
-                                    <div className="text-sm truncate">{agent.name}</div>
-                                </div>
-                                {agent.active && (
-                                    <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
-                                )}
-                            </button>
-                        ))}
+                        {isLoading ? (
+                            <div className="flex justify-center py-4">
+                                <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+                            </div>
+                        ) : (
+                            agents.map((agent) => (
+                                <button
+                                    key={agent.id}
+                                    onClick={() => setSelectedAgentId(agent.id)}
+                                    className={cn(
+                                        "w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left group",
+                                        selectedAgentId === agent.id
+                                            ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-medium"
+                                            : "hover:bg-neutral-100 dark:hover:bg-neutral-800/50 text-neutral-600 dark:text-neutral-400"
+                                    )}
+                                >
+                                    {(() => {
+                                        const Icon = agentIconsMap[agent.icon] || Bot;
+                                        return <Icon className="h-4 w-4 shrink-0" />;
+                                    })()}
+                                    <div className="flex-1 truncate">
+                                        <div className="text-sm truncate">{agent.name}</div>
+                                    </div>
+                                    {agent.id > 3 && (
+                                        <Trash2 
+                                            className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-500 transition-all" 
+                                            onClick={(e) => handleDelete(e, agent.id)}
+                                        />
+                                    )}
+                                    {agent.id <= 3 && (
+                                        <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+                                    )}
+                                </button>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
@@ -96,7 +133,10 @@ export default function AgentsPage() {
                         <header className="px-8 py-6 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-start">
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
-                                    <selectedAgent.icon className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
+                                    {(() => {
+                                        const Icon = agentIconsMap[selectedAgent.icon] || Bot;
+                                        return <Icon className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />;
+                                    })()}
                                     <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
                                         {selectedAgent.name}
                                     </h1>
@@ -127,8 +167,8 @@ export default function AgentsPage() {
                                 <textarea
                                     key={`agent-sys-inst-${selectedAgent.id}`}
                                     className="w-full h-40 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:text-neutral-200 resize-none font-mono"
-                                    defaultValue={selectedAgent.systemInstruction}
-                                    onChange={(e) => { selectedAgent.systemInstruction = e.target.value }}
+                                    defaultValue={selectedAgent.system_instruction}
+                                    readOnly={selectedAgent.id <= 3}
                                 />
                             </section>
 

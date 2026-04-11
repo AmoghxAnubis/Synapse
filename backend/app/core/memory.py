@@ -32,7 +32,7 @@ class MemoryBank:
         )
         return doc_id
 
-    def recall(self, query_text, n_results=3):
+    def recall(self, query_text, n_results=3, source_filters=None):
         """
         1. Turns query -> vector.
         2. Finds closest vectors in DB.
@@ -40,12 +40,43 @@ class MemoryBank:
         # Step 1: NPU Workload
         query_vector = self.brain.embed_text(query_text)
         
-        # Step 2: Retrieval
+        # Step 2: Retrieval with optional filtering
+        where_clause = None
+        if source_filters and len(source_filters) > 0:
+            if len(source_filters) == 1:
+                where_clause = {"source": source_filters[0]}
+            else:
+                where_clause = {"source": {"$in": source_filters}}
+
         results = self.collection.query(
             query_embeddings=[query_vector],
-            n_results=n_results
+            n_results=n_results,
+            where=where_clause
         )
         return results
+
+    def get_sources(self):
+        """
+        Retrieves all unique source names from metadata.
+        Returns a list of dictionaries: [{"name": "file.pdf", "chunks": 5}]
+        """
+        results = self.collection.get(include=['metadatas'])
+        metadatas = results.get('metadatas', [])
+        
+        source_counts = {}
+        for meta in metadatas:
+            source = meta.get('source', 'unknown')
+            # Skip internal tags if needed, but for now we show all
+            source_counts[source] = source_counts.get(source, 0) + 1
+            
+        return [{"name": name, "chunks": count} for name, count in source_counts.items()]
+
+    def delete_source(self, source_name):
+        """
+        Deletes all chunks associated with a specific source.
+        """
+        self.collection.delete(where={"source": source_name})
+        return True
 
 # TEST RUNNER
 if __name__ == "__main__":
