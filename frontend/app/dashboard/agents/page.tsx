@@ -45,7 +45,10 @@ export default function AgentsPage() {
                         <Bot className="h-5 w-5" />
                         My Agents
                     </h2>
-                    <button className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-500">
+                    <button 
+                        onClick={() => window.location.href = '/dashboard/agents/create'}
+                        className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-500 cursor-pointer"
+                    >
                         <Plus className="h-5 w-5" />
                     </button>
                 </div>
