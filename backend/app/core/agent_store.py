@@ -70,7 +70,7 @@ class AgentStore:
         Update fields on an agent. Works for both default and custom agents.
         For defaults, we store an overlay in the custom agents file.
         """
-        allowed_fields = {"system_instruction", "capabilities", "linked_sources", "name", "description", "icon"}
+        allowed_fields = {"system_instruction", "capabilities", "linked_sources", "integrations", "name", "description", "icon"}
         filtered = {k: v for k, v in updates.items() if k in allowed_fields}
         
         if not filtered:
