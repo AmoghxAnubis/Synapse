@@ -1,495 +1,460 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+"""Local-first API with explicit sessions, jobs, citations, and action approvals."""
+from contextlib import asynccontextmanager
+import json
+import logging
+import threading
+from pathlib import Path
+from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse, StreamingResponse
+from starlette.concurrency import run_in_threadpool
 from dotenv import load_dotenv
-import os
-import sys
-from typing import Optional
+from .core.config import BACKEND_DIR, DATA_DIR, MAX_UPLOAD_BYTES
+from .core.security import api_token, require_session
+from .core.storage import Storage
+from .core.agent_store import AgentStore
+from .core.ingester import FileIngester
+from .core.llm import LocalLLM
+from .core.integrations import IntegrationService
+from .core.actions import ActionService
+from .core.jobs import JobManager
+from .core.terminal_tool import terminal_tool
+from .schemas import (ActionPreview, AgentCreate, AgentUpdate, IntegrationConnect,
+                      Meetings, ModeRequest, Platform, Query, SearchRequest,
+                      Settings, TerminalRequest, URLIngest)
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+load_dotenv(BACKEND_DIR / ".env")
+logger = logging.getLogger("synapse")
 
-# Load environment variables from .env file
-load_dotenv()
 
-# --- INTERNAL MODULES ---
-from app.core.memory import MemoryBank
-from app.core.ingester import FileIngester
-from app.core.llm import LocalLLM
-from app.core.orchestrator import system_orchestrator
-from app.agents.agent_manager import AgentManager
-from app.core.agents import AGENTS  # Default agents
-from app.core.agent_store import agent_store  # Custom agents store
-from app.core.web_search import web_search_tool
-from app.core.terminal_tool import terminal_tool
+class Services:
+    def __init__(self, storage, memory_factory, llm_factory):
+        self.storage = storage
+        self.agents = AgentStore(storage)
+        self.integrations = IntegrationService(storage)
+        self.actions = ActionService(storage, self.integrations)
+        self.jobs = JobManager(storage)
+        self.memory_factory = memory_factory
+        self.llm_factory = llm_factory
+        self._memory = None
+        self.memory_lock = threading.Lock()
+        self.chat_lock = threading.Lock()
+        self.sync_lock = threading.Lock()
+        # Interrupted jobs must not remain falsely queued after restart.
+        with storage.connect() as db:
+            for row in db.execute("SELECT key,value FROM kv WHERE key LIKE 'job:%'").fetchall():
+                data = json.loads(row["value"])
+                if data["status"] in ("queued", "running"):
+                    data.update(status="failed", error="Backend restarted. Retry this import.")
+                    db.execute("UPDATE kv SET value=? WHERE key=?", (json.dumps(data), row["key"]))
+        if storage.get("meetings") is None:
+            legacy = BACKEND_DIR / "meetings_data.json"
+            data = json.loads(legacy.read_text(encoding="utf-8")) if legacy.exists() else {}
+            storage.set("meetings", Meetings.model_validate(data).model_dump())
 
-app = FastAPI(title="Synapse Backend", version="2.2")
+    @property
+    def memory(self):
+        with self.memory_lock:
+            if self._memory is None:
+                self._memory = self.memory_factory()
+            return self._memory
 
-# --- CORS POLICY ---
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    @property
+    def settings(self):
+        return Settings.model_validate(self.storage.get("settings", {}))
 
-# --- INITIALIZATION ---
-print("🔌 Booting Synapse Core...")
-memory = MemoryBank()           # The Hippocampus (Database)
-llm = LocalLLM(model="llama3")  # The Prefrontal Cortex (Ollama)
-agent_manager = AgentManager()  # The Hands (Toolbelt)
+    @property
+    def llm(self):
+        settings = self.settings
+        return self.llm_factory(model=settings.model, base_url=settings.ollama_url)
 
-# --- DATA MODELS ---
-class Query(BaseModel):
-    text: str
-    selected_sources: list[str] = []
-    agent_id: int | None = None
+    def network(self):
+        if not self.settings.network_enabled:
+            raise HTTPException(403, "Connected features are disabled. Enable network access in Settings.")
 
-class ModeRequest(BaseModel):
-    mode: str
+    def agent(self, identifier):
+        if identifier is None:
+            return None
+        agent = self.agents.get_agent_by_id(identifier)
+        if not agent:
+            raise HTTPException(404, "Agent not found")
+        return agent
 
-class WebSearchRequest(BaseModel):
-    query: str
-    max_results: int = 3
 
-class TerminalRequest(BaseModel):
-    command: str
+def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
+    if memory_factory is None:
+        def memory_factory():
+            from .core.memory import MemoryBank
+            return MemoryBank()
 
-class URLIngestRequest(BaseModel):
-    url: str
-
-class IntegrationConnectRequest(BaseModel):
-    key: str
-
-# --- ROUTES ---
-
-@app.get("/")
-def health_check():
-    return {
-        "status": "Online",
-        "memory_engine": memory.brain.hardware_mode,
-        "generation_engine": "Ollama (Simulated GPU)",
-        "orchestrator": system_orchestrator.active_mode,
-        "agents_active": [a["name"] for a in agent_store.get_all_agents()[:3]]
-    }
-
-# --- 1. THE EYES (File Ingestion) ---
-@app.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
-    """Reads a PDF/Text file and saves it to Vector Memory."""
-    try:
-        # A. Parse Text
-        raw_text = await FileIngester.parse_file(file)
-        
-        # B. Chunk Text
-        chunks = FileIngester.chunk_text(raw_text)
-        
-        # C. Memorize Each Chunk
-        saved_ids = []
-        for chunk in chunks:
-            doc_id = memory.memorize(chunk, metadata={"source": file.filename})
-            saved_ids.append(doc_id)
-            
-        return {
-            "status": "success", 
-            "filename": file.filename, 
-            "chunks_processed": len(saved_ids),
-            "hardware": memory.brain.hardware_mode
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# --- 2. THE VOICE & HANDS (Agentic Search) ---
-@app.post("/ask")
-def ask_synapse(query: Query):
-    """
-    Logic Flow:
-    1. Check Agent Manager (Does user want GitHub/Jira?) -> NPU Task
-    2. If Yes -> Run Tool -> Return Result
-    3. If No -> Check agent capabilities -> Enrich context -> Generate Answer
-    """
-    print(f"User asked: {query.text}")
-
-    # --- STEP 1: AGENTIC ROUTING (The Switchboard) ---
-    agent_response = agent_manager.route_request(query.text)
-    
-    if agent_response:
-        print("🤖 Agent handled the request.")
-        return {
-            "answer": agent_response,
-            "sources": ["External API (GitHub/Tool)"],
-            "hardware_flow": "NPU_Router -> External_Tool"
-        }
-
-    # --- STEP 2: LOAD AGENT CONFIG ---
-    agent = None
-    system_prompt = None
-    if query.agent_id:
-        agent = agent_store.get_agent_by_id(query.agent_id)
-        if agent:
-            system_prompt = agent.get("system_instruction")
-            print(f"🎭 Applying Persona: {agent['name']}")
-
-    # --- STEP 3: CAPABILITY-AWARE CONTEXT BUILDING ---
-    extra_context = ""
-    capabilities = agent.get("capabilities", {}) if agent else {}
-
-    # Web Search capability
-    if capabilities.get("web_search"):
-        print("🌐 Agent has web search — searching...")
+    @asynccontextmanager
+    async def lifespan(application):
+        api_token()
+        application.state.services = Services(storage or Storage(), memory_factory, llm_factory)
+        logger.info("Local API ready. Pairing token: %s", DATA_DIR / "api-token")
         try:
-            web_results = web_search_tool.search(query.text, max_results=3)
-            extra_context += f"\n\n--- WEB SEARCH RESULTS ---\n{web_results}\n"
-            print(f"🌐 Found web results")
-        except Exception as e:
-            print(f"⚠️ Web search failed: {e}")
+            yield
+        finally:
+            application.state.services.jobs.close()
 
-    # --- STEP 4: MEMORY SEARCH (source-scoped) ---
-    # Use agent's linked_sources if set, otherwise use user's selection
-    source_filters = query.selected_sources
-    if agent and agent.get("linked_sources"):
-        source_filters = agent["linked_sources"]
-        print(f"📚 Scoping to agent sources: {source_filters}")
+    application = FastAPI(title="Synapse Local API", version="0.2.0", lifespan=lifespan,
+                          docs_url=None, redoc_url=None, openapi_url=None)
+    router = APIRouter(dependencies=[Depends(require_session)])
 
-    results = memory.recall(
-        query.text, 
-        n_results=3, 
-        source_filters=source_filters
-    )
-    retrieved_docs = results['documents'][0]
-    
-    # Build context
-    if not retrieved_docs:
-        context_block = "No relevant memory found."
-    else:
-        context_block = "\n".join(retrieved_docs)
+    @application.exception_handler(ValueError)
+    async def invalid_request(request, exc):
+        return JSONResponse(status_code=400, content={"detail": str(exc)[:500]})
 
-    # Add web results to context
-    context_block += extra_context
+    @application.exception_handler(PermissionError)
+    async def forbidden(request, exc):
+        return JSONResponse(status_code=403, content={"detail": str(exc)})
 
-    # --- STEP 5: LLM GENERATION ---
-    try:
-        ai_response = llm.generate_answer(
-            context_block, 
-            query.text, 
-            system_prompt=system_prompt
-        )
-        
-        return {
-            "answer": ai_response,
-            "sources": retrieved_docs,
-            "hardware_flow": f"{memory.brain.hardware_mode} -> ROCm_Sim",
-            "capabilities_used": [k for k, v in capabilities.items() if v] if capabilities else []
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @application.exception_handler(RuntimeError)
+    async def unavailable(request, exc):
+        return JSONResponse(status_code=503, content={"detail": str(exc)[:500]})
 
-# --- 3. THE AUTONOMIC SYSTEM (Orchestrator) ---
-@app.post("/set_mode")
-def change_workflow(request: ModeRequest):
-    """Triggers the OS to rearrange windows/apps."""
-    try:
-        result = system_orchestrator.set_mode(request.mode)
-        return {
-            "status": "success",
-            "orchestrator_response": result,
-            "hardware_used": "Ryzen_AI_NPU (Simulated Classification)"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @application.exception_handler(KeyError)
+    async def missing(request, exc):
+        return JSONResponse(status_code=404, content={"detail": "Record not found"})
 
-# --- 4. THE MEMORY MANAGER (Source Control) ---
-@app.get("/sources")
-def list_sources():
-    """Returns all unique documentation sources currently in memory."""
-    try:
-        return memory.get_sources()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @application.get("/health/live")
+    def live():
+        return {"status": "alive"}
 
-@app.delete("/sources/{source_name}")
-def delete_source(source_name: str):
-    """Removes a source and all its associated vectors from memory."""
-    try:
-        memory.delete_source(source_name)
-        return {"status": "success", "message": f"Source {source_name} deleted."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    def services(request: Request):
+        return request.app.state.services
 
-# --- 5. AGENT MANAGEMENT ---
-@app.get("/agents")
-def list_agents():
-    """Returns all configured specialized personas (defaults + custom)."""
-    return agent_store.get_all_agents()
+    @router.get("/")
+    def health(s: Services = Depends(services)):
+        local = s.llm.status()
+        return {"status": "Online", "memory_engine": s._memory.brain.hardware_mode if s._memory else "Not loaded",
+                "generation_engine": "Ollama (local)", "orchestrator": s.storage.get("mode", "FOCUS"),
+                "agents_active": [a["name"] for a in s.agents.get_all_agents()[:3]],
+                "llm": local, "network_enabled": s.settings.network_enabled,
+                "embeddings_loaded": s._memory is not None}
 
-@app.get("/agents/{agent_id}")
-def get_agent(agent_id: int):
-    """Returns a single agent by ID."""
-    agent = agent_store.get_agent_by_id(agent_id)
-    if not agent:
-        raise HTTPException(status_code=404, detail="Agent not found")
-    return agent
+    @router.get("/health/ready")
+    def ready(s: Services = Depends(services)):
+        memory = s.memory
+        llm = s.llm.status()
+        return JSONResponse(status_code=200 if llm["ready"] else 503,
+                            content={"ready": llm["ready"], "memory_engine": memory.brain.hardware_mode, "llm": llm})
 
-@app.post("/agents")
-def create_agent(agent_data: dict):
-    """Saves a new custom agent."""
-    try:
-        # Ensure capabilities field exists
-        if "capabilities" not in agent_data:
-            agent_data["capabilities"] = {"web_search": False, "terminal": False}
-        if "linked_sources" not in agent_data:
-            agent_data["linked_sources"] = []
-        return agent_store.add_agent(agent_data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.get("/settings")
+    def get_settings(s: Services = Depends(services)):
+        return {**s.settings.model_dump(), "llm": s.llm.status()}
 
-@app.patch("/agents/{agent_id}")
-def update_agent(agent_id: int, updates: dict):
-    """Update system_instruction, capabilities, or linked sources."""
-    try:
-        result = agent_store.update_agent(agent_id, updates)
-        if result is None:
-            raise HTTPException(status_code=404, detail="Agent not found or no valid fields")
-        return result
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.put("/settings")
+    def save_settings(body: Settings, s: Services = Depends(services)):
+        s.storage.set("settings", body.model_dump())
+        s.storage.audit("settings", "updated")
+        return body.model_dump()
 
-@app.delete("/agents/{agent_id}")
-def delete_agent(agent_id: int):
-    """Removes a custom agent."""
-    try:
-        success = agent_store.delete_agent(agent_id)
-        if not success:
-            raise HTTPException(status_code=400, detail="Cannot delete default agent or agent not found")
+    def ingest(s, filename, content, event=None):
+        pages = FileIngester.parse_bytes(filename, content)
+        memory = s.memory
+        result = memory.ingest_document(filename, pages, cancel=event)
+        return {"status": "success", "filename": filename, **result, "hardware": memory.brain.hardware_mode}
+
+    async def read_upload(file):
+        name = Path((file.filename or "").replace("\\", "/")).name
+        try:
+            content = await file.read(MAX_UPLOAD_BYTES + 1)
+        finally:
+            await file.close()
+        if not name or len(content) > MAX_UPLOAD_BYTES:
+            raise HTTPException(413, "Provide a named file smaller than 20 MB.")
+        return name, content
+
+    @router.post("/upload")
+    async def upload(file: UploadFile = File(...), s: Services = Depends(services)):
+        name, content = await read_upload(file)
+        return await run_in_threadpool(ingest, s, name, content)
+
+    @router.post("/ingestion/jobs", status_code=202)
+    async def upload_job(file: UploadFile = File(...), s: Services = Depends(services)):
+        name, content = await read_upload(file)
+        return s.jobs.submit(lambda event: ingest(s, name, content, event))
+
+    @router.get("/jobs/{identifier}")
+    def get_job(identifier: str, s: Services = Depends(services)):
+        job = s.jobs.get(identifier)
+        if not job:
+            raise HTTPException(404, "Import not found")
+        return job
+
+    @router.delete("/jobs/{identifier}")
+    def cancel_job(identifier: str, s: Services = Depends(services)):
+        return {"cancelled": s.jobs.cancel(identifier)}
+
+    @router.get("/sources")
+    def sources(s: Services = Depends(services)):
+        return s.memory.get_sources()
+
+    @router.get("/source")
+    def source(name: str, s: Services = Depends(services)):
+        return s.memory.source_chunks(name)
+
+    @router.delete("/source")
+    def remove_source(name: str, s: Services = Depends(services)):
+        s.memory.delete_source(name)
+        s.storage.audit("source.delete", "completed")
         return {"status": "success"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
-# --- 6. AGENT CAPABILITY TOOLS ---
-@app.post("/tools/web-search")
-def web_search(body: WebSearchRequest):
-    """Standalone web search endpoint."""
-    try:
-        results = web_search_tool.search(body.query, body.max_results)
-        return {"status": "success", "results": results}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.delete("/sources/{source_name:path}")
+    def remove_source_legacy(source_name: str, s: Services = Depends(services)):
+        return remove_source(source_name, s)
 
-@app.post("/tools/terminal")
-def run_terminal(body: TerminalRequest):
-    """Execute a shell command (sandboxed with safety checks)."""
-    try:
-        result = terminal_tool.execute(body.command)
-        return {"status": "success", **result}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.get("/agents")
+    def agents(s: Services = Depends(services)):
+        return s.agents.get_all_agents()
 
-# --- 7. MCP STATUS ---
-@app.get("/mcp/status")
-def get_mcp_status():
-    """Returns the connection status of all external integrations."""
-    return agent_manager.get_mcp_status()
+    @router.get("/agents/{identifier}")
+    def agent(identifier: int, s: Services = Depends(services)):
+        return s.agent(identifier)
 
-# --- 8. INTEGRATION MANAGEMENT ---
-@app.post("/integrations/{platform}/connect")
-def connect_integration(platform: str, body: IntegrationConnectRequest):
-    """Store an API key and reinitialize the relevant MCP server."""
-    valid_platforms = ["github", "slack", "notion", "jira", "discord"]
-    if platform not in valid_platforms:
-        raise HTTPException(status_code=400, detail=f"Unknown platform: {platform}")
-    
-    try:
-        # Store the key in environment
-        env_map = {
-            "github": "GITHUB_TOKEN",
-            "slack": "SLACK_TOKEN",
-            "notion": "NOTION_TOKEN",
-            "jira": "JIRA_TOKEN",
-            "discord": "DISCORD_TOKEN",
-        }
-        os.environ[env_map[platform]] = body.key
-        
-        return {
-            "status": "success",
-            "platform": platform,
-            "connected": True,
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.post("/agents", status_code=201)
+    def create_agent(body: AgentCreate, s: Services = Depends(services)):
+        return s.agents.add_agent(body.model_dump())
 
-@app.post("/integrations/{platform}/sync")
-def sync_integration(platform: str):
-    """Pull data from the MCP server and ingest into ChromaDB."""
-    try:
-        server_map = {
-            "github": agent_manager.mcp_github_server,
-            "notion": getattr(agent_manager, 'mcp_notion_server', None),
-            "jira": getattr(agent_manager, 'mcp_jira_server', None),
-            "slack": getattr(agent_manager, 'mcp_slack_server', None),
-            "discord": getattr(agent_manager, 'mcp_discord_server', None),
-        }
-        
-        server = server_map.get(platform)
-        if not server:
-            raise HTTPException(status_code=400, detail=f"{platform} server not available")
-        
-        if not server.is_connected():
-            raise HTTPException(status_code=400, detail=f"{platform} not connected. Check API key.")
-        
-        # Try to get data from the server
-        documents = []
+    @router.patch("/agents/{identifier}")
+    def update_agent(identifier: int, body: AgentUpdate, s: Services = Depends(services)):
+        updates = body.model_dump(exclude_none=True, exclude_unset=True)
+        result = s.agents.update_agent(identifier, updates)
+        if not result:
+            raise HTTPException(404, "Agent not found")
+        return result
+
+    @router.delete("/agents/{identifier}")
+    def delete_agent(identifier: int, s: Services = Depends(services)):
+        if not s.agents.delete_agent(identifier):
+            raise HTTPException(400, "Default agents cannot be deleted, or agent does not exist.")
+        return {"status": "success"}
+
+    @router.get("/conversations")
+    def conversations(s: Services = Depends(services)):
+        return s.storage.conversations()
+
+    @router.post("/conversations", status_code=201)
+    def new_conversation(s: Services = Depends(services)):
+        return s.storage.new_conversation()
+
+    @router.get("/conversations/{identifier}")
+    def conversation(identifier: str, s: Services = Depends(services)):
+        return s.storage.messages(identifier)
+
+    @router.delete("/conversations/{identifier}")
+    def delete_conversation(identifier: str, s: Services = Depends(services)):
+        if not s.storage.delete_conversation(identifier):
+            raise HTTPException(404, "Conversation not found")
+        return {"status": "success"}
+
+    def prepare_answer(query, s):
+        agent = s.agent(query.agent_id)
+        capabilities = agent.get("capabilities", {}) if agent else {}
+        history = s.storage.messages(query.conversation_id) if query.conversation_id else []
+        chosen = query.selected_sources or None
+        restricted = agent.get("linked_sources") if agent else None
+        if restricted:
+            chosen = [source for source in restricted if chosen is None or source in chosen]
+        # Add the previous question for short referential follow-ups.
+        previous = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
+        retrieval_query = query.text + ("\n" + previous[:1000] if previous and len(query.text.split()) < 12 else "")
+        citations = s.memory.recall(retrieval_query, source_filters=chosen, max_distance=s.settings.retrieval_max_distance)
+        used = []
+        if query.allow_web:
+            s.network()
+            if not capabilities.get("web_search"):
+                raise HTTPException(403, "Select an agent with web search enabled.")
+            from ddgs import DDGS
+            results = list(DDGS(timeout=15).text(query.text, max_results=3))
+            citations.extend({"id": r["href"], "source": r["title"], "page": 1, "chunk": 1, "url": r["href"], "text": r["body"], "distance": 0} for r in results)
+            used.append("web_search")
+        context = "\n\n".join(f"[{i+1}] {c['source']} (page {c['page']})\n{c['text']}" for i, c in enumerate(citations))
+        return agent, history, citations, context, used
+
+    def answer_parts(query, s):
+        if not s.chat_lock.acquire(blocking=False):
+            raise HTTPException(409, "Another answer is in progress. Finish or cancel it first.")
         try:
-            if platform == "github":
-                # List repos and get their details
-                result = server.execute_command({"operation": "list_repos"})
-                if result.get("success") and result.get("repositories"):
-                    for repo in result["repositories"][:5]:
-                        documents.append(f"GitHub Repo: {repo['name']}\nDescription: {repo.get('description', 'N/A')}\nLanguage: {repo.get('language', 'N/A')}\nStars: {repo.get('stars', 0)}")
-                        
-            elif platform == "notion":
-                result = server.execute_command({"operation": "list_pages"})
-                if result.get("success") and result.get("pages"):
-                    for page in result["pages"][:10]:
-                        documents.append(f"Notion Page: {page.get('title', 'Untitled')}\nID: {page.get('id', 'N/A')}")
+            agent, history, citations, context, used = prepare_answer(query, s)
+        except BaseException:
+            s.chat_lock.release()
+            raise
 
-            elif platform == "jira":
-                result = server.execute_command({"operation": "list_projects"})
-                if result.get("success") and result.get("projects"):
-                    for proj in result["projects"][:5]:
-                        documents.append(f"Jira Project: {proj['name']}\nKey: {proj['key']}")
+        def tokens():
+            if not citations:
+                yield "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source."
+            else:
+                yield from s.llm.stream_answer(context, query.text, agent.get("system_instruction") if agent else None, history)
+        return citations, used, tokens()
 
-            elif platform == "slack":
-                result = server.execute_command({"operation": "list_channels"})
-                if result.get("success") and result.get("channels"):
-                    for ch in result["channels"][:10]:
-                        documents.append(f"Slack Channel: #{ch['name']}\nTopic: {ch.get('topic', 'N/A')}")
+    @router.post("/ask")
+    def ask(query: Query, s: Services = Depends(services)):
+        citations, used, tokens = answer_parts(query, s)
+        try:
+            answer = "".join(tokens)
+            if query.conversation_id:
+                s.storage.save_turn(query.conversation_id, query.text, answer, citations)
+            return {"answer": answer, "sources": [c["source"] for c in citations], "citations": citations, "capabilities_used": used, "hardware_flow": s.memory.brain.hardware_mode + " ? Ollama (local)"}
+        finally:
+            tokens.close()
+            s.chat_lock.release()
 
-            elif platform == "discord":
-                result = server.execute_command({"operation": "list_guilds"})
-                if result.get("success") and result.get("guilds"):
-                    for guild in result["guilds"][:5]:
-                        documents.append(f"Discord Server: {guild['name']}\nID: {guild.get('id', 'N/A')}")
+    @router.post("/ask/stream")
+    async def ask_stream(query: Query, request: Request, s: Services = Depends(services)):
+        citations, used, tokens = await run_in_threadpool(answer_parts, query, s)
+        def event(kind, value):
+            return "data: " + json.dumps({"type": kind, **value}) + "\n\n"
+        async def events():
+            parts = []
+            try:
+                yield event("sources", {"citations": citations})
+                while True:
+                    if await request.is_disconnected():
+                        return
+                    token = await run_in_threadpool(lambda: next(tokens, None))
+                    if token is None:
+                        break
+                    parts.append(token)
+                    yield event("token", {"text": token})
+                if query.conversation_id:
+                    await run_in_threadpool(s.storage.save_turn, query.conversation_id, query.text, "".join(parts), citations)
+                yield event("done", {"capabilities_used": used})
+            except Exception as exc:
+                yield event("error", {"detail": str(exc)[:500]})
+            finally:
+                tokens.close()
+                s.chat_lock.release()
+        return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
 
-        except Exception as e:
-            print(f"⚠️ Error fetching {platform} data: {e}")
-        
-        if not documents:
-            return {
-                "status": "success",
-                "platform": platform,
-                "documents_ingested": 0,
-                "chunks_created": 0,
-                "hardware": memory.brain.hardware_mode,
-                "message": f"Connected but no data found to sync from {platform}."
-            }
-        
-        # Ingest documents into memory
-        total_chunks = 0
-        for doc in documents:
-            chunks = FileIngester.chunk_text(doc, chunk_size=200)
-            for chunk in chunks:
-                memory.memorize(chunk, metadata={"source": f"{platform}_sync"})
-                total_chunks += 1
-        
-        return {
-            "status": "success",
-            "platform": platform,
-            "documents_ingested": len(documents),
-            "chunks_created": total_chunks,
-            "hardware": memory.brain.hardware_mode,
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    @router.post("/tools/terminal")
+    def diagnostic(body: TerminalRequest, s: Services = Depends(services)):
+        selected = s.agent(body.agent_id)
+        if not selected["capabilities"].get("terminal"):
+            raise HTTPException(403, "This agent does not allow diagnostics.")
+        result = terminal_tool.execute(body.command)
+        s.storage.audit("diagnostic:" + body.command, "blocked" if result["blocked"] else "completed")
+        return result
 
-@app.get("/integrations/status")
-def get_integration_statuses():
-    """Per-platform connection status."""
-    mcp_status = agent_manager.get_mcp_status()
-    result = {}
-    for platform, status in mcp_status.items():
-        connected = status.get("connected", False) if isinstance(status, dict) else False
-        result[platform] = {
-            "connected": connected,
-            "last_synced": None,  # Could track in a file later
-        }
-    return result
+    @router.post("/tools/web-search")
+    def search(body: SearchRequest, s: Services = Depends(services)):
+        s.network()
+        if not body.consent or not s.agent(body.agent_id)["capabilities"].get("web_search"):
+            raise HTTPException(403, "Web search requires consent and an enabled agent.")
+        from ddgs import DDGS
+        results = list(DDGS(timeout=15).text(body.query, max_results=body.max_results))
+        return {"results": results}
 
-# --- 9. URL INGESTION ---
-@app.post("/ingest/url")
-async def ingest_url(req: URLIngestRequest):
-    """Scrape a URL and ingest its text into vector memory."""
-    try:
-        import httpx
+    @router.post("/actions/preview")
+    def preview(body: ActionPreview, s: Services = Depends(services)):
+        if body.action != "open_app":
+            s.network()
+        return s.actions.preview(body.action, body.params, s.agent(body.agent_id))
+
+    @router.post("/actions/{identifier}/approve")
+    def approve(identifier: str, s: Services = Depends(services)):
+        return s.actions.approve(identifier, s.agents, s.settings.network_enabled)
+
+    @router.delete("/actions/{identifier}")
+    def cancel(identifier: str, s: Services = Depends(services)):
+        return {"cancelled": s.actions.cancel(identifier)}
+
+    @router.get("/audit")
+    def audit(s: Services = Depends(services)):
+        return s.storage.audit_log()
+
+    @router.post("/set_mode")
+    def set_mode(body: ModeRequest, s: Services = Depends(services)):
+        s.storage.set("mode", body.mode)
+        s.storage.audit("workflow:" + body.mode, "selected")
+        return {"status": "success", "orchestrator_response": {"status": "selected", "current_mode": body.mode}, "hardware_used": "User preference",
+                "message": "Workspace mode saved. Applications are opened through the Actions screen."}
+
+    @router.get("/integrations/status")
+    @router.get("/mcp/status")
+    def integration_status(s: Services = Depends(services)):
+        return s.integrations.status()
+
+    @router.post("/integrations/{platform}/connect")
+    def connect(platform: Platform, body: IntegrationConnect, s: Services = Depends(services)):
+        s.network()
+        result = s.integrations.connect(platform, **body.model_dump())
+        s.storage.audit("integration.connect:" + platform, "completed")
+        return {"status": "success", "platform": platform, **result}
+
+    @router.delete("/integrations/{platform}")
+    def disconnect(platform: Platform, s: Services = Depends(services)):
+        s.integrations.disconnect(platform)
+        s.storage.audit("integration.disconnect:" + platform, "completed")
+        return {"status": "success"}
+
+    def sync(s, platform, event):
+        s.network()
+        if not s.sync_lock.acquire(blocking=False):
+            raise ValueError("Another sync is running. Wait for it to finish.")
+        try:
+            documents = s.integrations.documents(platform, event)
+            memory = s.memory
+            seen, count, changed = set(), 0, 0
+            for document in documents:
+                s.network()
+                if event.is_set():
+                    raise InterruptedError()
+                seen.add(document["source"])
+                result = memory.ingest_document(document["source"], [{"page": 1, "text": document["text"]}], document["url"], platform, event)
+                count += result["chunks_processed"]
+                changed += not result["unchanged"]
+            # Reconcile deletion only after the complete scoped fetch succeeds.
+            for source in memory.get_sources():
+                if source.get("platform") == platform and source["name"] not in seen:
+                    memory.delete_source(source["name"])
+            s.integrations.mark_synced(platform)
+            s.storage.audit("integration.sync:" + platform, "completed")
+            return {"status": "success", "platform": platform, "documents_ingested": len(documents), "documents_changed": changed, "chunks_created": count, "hardware": memory.brain.hardware_mode}
+        finally:
+            s.sync_lock.release()
+
+    @router.post("/integrations/{platform}/sync", status_code=202)
+    def sync_job(platform: Platform, s: Services = Depends(services)):
+        s.network()
+        return s.jobs.submit(lambda event: sync(s, platform, event))
+
+    def ingest_link(s, url, event):
+        s.network()
+        from .core.url_fetch import fetch_public_url
         from bs4 import BeautifulSoup
-        
-        headers = {"User-Agent": "Mozilla/5.0 Synapse/1.0"}
-        async with httpx.AsyncClient(follow_redirects=True, timeout=15) as client:
-            resp = await client.get(req.url, headers=headers)
-        
-        soup = BeautifulSoup(resp.text, "html.parser")
-        
-        # Remove script and style elements
+        final_url, html = fetch_public_url(url)
+        soup = BeautifulSoup(html, "html.parser")
         for tag in soup(["script", "style", "nav", "footer", "header"]):
             tag.decompose()
-        
         text = soup.get_text(separator="\n", strip=True)
-        
-        if not text or len(text) < 50:
-            raise HTTPException(status_code=400, detail="Could not extract meaningful text from URL")
-        
-        # Chunk and memorize
-        chunks = FileIngester.chunk_text(text, chunk_size=400)
-        saved = 0
-        for chunk in chunks:
-            memory.memorize(chunk, metadata={"source": req.url})
-            saved += 1
-        
-        return {
-            "status": "success",
-            "url": req.url,
-            "chunks_processed": saved,
-            "hardware": memory.brain.hardware_mode,
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        if len(text) < 50:
+            raise ValueError("Could not extract meaningful text from this page.")
+        s.network()
+        memory = s.memory
+        result = memory.ingest_document(final_url, [{"page": 1, "text": text}], final_url, "web", event)
+        return {"status": "success", "url": final_url, **result, "hardware": memory.brain.hardware_mode}
 
-# --- 10. MEETINGS PERSISTENCE ---
-import json
+    @router.post("/ingest/url", status_code=202)
+    def ingest_url(body: URLIngest, s: Services = Depends(services)):
+        s.network()
+        return s.jobs.submit(lambda event: ingest_link(s, body.url, event))
 
-MEETINGS_FILE = "./meetings_data.json"
+    @router.get("/meetings")
+    def meetings(s: Services = Depends(services)):
+        return s.storage.get("meetings", Meetings().model_dump())
 
-def _load_meetings():
-    try:
-        with open(MEETINGS_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {"notes": "", "tasks": []}
+    @router.post("/meetings")
+    def save_meetings(body: Meetings, s: Services = Depends(services)):
+        s.storage.set("meetings", body.model_dump())
+        return {"status": "success"}
 
-def _save_meetings(data):
-    with open(MEETINGS_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    application.include_router(router)
+    return application
 
-@app.get("/meetings")
-def get_meetings():
-    """Get saved notes and tasks."""
-    return _load_meetings()
 
-@app.post("/meetings")
-def save_meetings(data: dict):
-    """Save notes and tasks."""
-    _save_meetings(data)
-    return {"status": "success"}
-
+app = create_app()
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import uvicorn
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000)
