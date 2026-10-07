@@ -2,6 +2,7 @@
 
 import { motion, MotionConfig, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import {
   Brain,
   Cpu,
@@ -84,16 +85,17 @@ function FadeIn({
    LANDING PAGE
    ══════════════════════════════════════════════════════════ */
 export default function LandingPage() {
+  const { resolvedTheme } = useTheme();
   const { scrollYProgress } = useScroll();
   const headerBg = useTransform(
     scrollYProgress,
     [0, 0.05],
-    ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"]
+    resolvedTheme === "dark" ? ["rgba(9,9,11,0)", "rgba(9,9,11,0.85)"] : ["rgba(255,255,255,0)", "rgba(255,255,255,0.85)"]
   );
   const headerBorder = useTransform(
     scrollYProgress,
     [0, 0.05],
-    ["rgba(0,0,0,0)", "rgba(0,0,0,0.06)"]
+    resolvedTheme === "dark" ? ["rgba(255,255,255,0)", "rgba(255,255,255,0.1)"] : ["rgba(0,0,0,0)", "rgba(0,0,0,0.06)"]
   );
 
 
@@ -112,7 +114,7 @@ export default function LandingPage() {
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
         }}
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 md:px-12"
+        aria-label="Main navigation" className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 md:px-12"
       >
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">

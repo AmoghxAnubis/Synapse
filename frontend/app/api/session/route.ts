@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { trustedRequest, validBackendURL } from "@/lib/server-security";
+import { trustedRequest, validBackendURL, readLimitedBody } from "@/lib/server-security";
 
 export const runtime = "nodejs";
 const attempts: number[] = [];
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   if (attempts.length >= 10) return NextResponse.json({ detail: "Too many attempts. Wait a minute." }, { status: 429 });
   attempts.push(now);
   try {
-    const body = await request.json();
+    const body = JSON.parse(new TextDecoder().decode(await readLimitedBody(request, 1024)));
     const token = typeof body.token === "string" ? body.token.trim() : "";
     if (token.length < 32 || token.length > 200) return NextResponse.json({ detail: "Enter your local pairing token." }, { status: 400 });
     const backend = await fetch(validBackendURL() + "/", { headers: { Authorization: "Bearer " + token }, cache: "no-store", signal: AbortSignal.timeout(10000) });
@@ -19,7 +19,9 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ paired: true });
     response.cookies.set("synapse-session", token, { httpOnly: true, sameSite: "strict", secure: new URL(request.url).protocol === "https:", path: "/", maxAge: 86400 });
     return response;
-  } catch {
+  } catch (error) {
+    if (error instanceof RangeError) return NextResponse.json({ detail: "Pairing request is too large." }, { status: 413 });
+    if (error instanceof SyntaxError) return NextResponse.json({ detail: "Invalid pairing request." }, { status: 400 });
     return NextResponse.json({ detail: "Start the local backend, then try pairing again." }, { status: 503 });
   }
 }
