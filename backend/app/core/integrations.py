@@ -66,6 +66,8 @@ class IntegrationService:
         self.storage.set("integration:" + platform, config)
 
     def request(self, platform, path, method="GET", params=None, body=None, key=None, config=None):
+        if not self.storage.get("settings", {}).get("network_enabled", False):
+            raise PermissionError("Connected features are disabled.")
         config = config or self.config(platform)
         key = key or self._credential(platform)
         if not key:
@@ -195,6 +197,8 @@ class IntegrationService:
                     before = batch[-1]["id"]
                 else:
                     raise ValueError("Channel exceeds the sync limit; select a smaller channel.")
+        if sum(len(d["text"]) for d in docs) > 2_000_000:
+            raise ValueError("Selected content exceeds the 2 million character import limit.")
         return docs
 
     @staticmethod

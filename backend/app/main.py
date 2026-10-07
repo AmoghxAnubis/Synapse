@@ -35,6 +35,12 @@ class Services:
         self.jobs = JobManager(storage)
         self.memory_factory = memory_factory
         self.llm_factory = llm_factory
+        if storage.get("settings") is None:
+            initial = Settings()
+            available = llm_factory(model=initial.model, base_url=initial.ollama_url).status().get("models", [])
+            if available and initial.model not in available and initial.model + ":latest" not in available:
+                initial.model = available[0]
+            storage.set("settings", initial.model_dump())
         self._memory = None
         self.memory_lock = threading.Lock()
         self.chat_lock = threading.Lock()

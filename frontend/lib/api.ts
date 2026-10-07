@@ -42,13 +42,17 @@ export interface ActionPreview { id: string; action: string; description: string
 
 export async function checkHealth(): Promise<HealthResponse> { return (await api.get("/")).data; }
 export async function waitForJob<T>(id: string, signal?: AbortSignal): Promise<T> {
-  for (;;) {
-    if (signal?.aborted) { await api.delete("/jobs/" + id); throw new DOMException("Cancelled", "AbortError"); }
-    const job: Job<T> = (await api.get("/jobs/" + id, { signal })).data;
-    if (job.status === "completed" && job.result) return job.result;
-    if (job.status === "failed") throw new Error(job.error || "Import failed.");
-    if (job.status === "cancelled") throw new Error("Import cancelled.");
-    await new Promise(resolve => setTimeout(resolve, 800));
+  try {
+    for (;;) {
+      if (signal?.aborted) throw new DOMException("Cancelled", "AbortError");
+      const job: Job<T> = (await api.get("/jobs/" + id, { signal })).data;
+      if (job.status === "completed" && job.result) return job.result;
+      if (job.status === "failed") throw new Error(job.error || "Import failed.");
+      if (job.status === "cancelled") throw new Error("Import cancelled.");
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+  } finally {
+    if (signal?.aborted) await api.delete("/jobs/" + id).catch(() => {});
   }
 }
 export async function uploadDocument(file: File, signal?: AbortSignal): Promise<UploadResponse> {
