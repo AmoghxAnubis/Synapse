@@ -74,7 +74,7 @@ class Storage:
                 raise KeyError("Conversation not found")
             now = time.time()
             for role, content, refs in [("user", question, []), ("ai", answer, citations)]:
-                db.execute("INSERT INTO messages VALUES (?,?,?,?,?,?,?)", (str(uuid.uuid4()), conversation_id, role, content, json.dumps(refs), now))
+                db.execute("INSERT INTO messages VALUES (?,?,?,?,?,?)", (str(uuid.uuid4()), conversation_id, role, content, json.dumps(refs), now))
             db.execute("UPDATE conversations SET updated=?, title=CASE WHEN title='New conversation' THEN ? ELSE title END WHERE id=?", (now, question[:100], conversation_id))
 
     def delete_conversation(self, conversation_id):

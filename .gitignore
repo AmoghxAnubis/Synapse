@@ -218,3 +218,13 @@ __marimo__/
 # Synapse Custom
 !frontend/lib/
 
+
+# Private runtime data, credentials, generated tooling
+.synapse/
+.tmp/
+**/synapse_memory_db/
+backend/agents.json
+backend/meetings_data.json
+frontend/.clerk/
+.env.*
+!.env.example

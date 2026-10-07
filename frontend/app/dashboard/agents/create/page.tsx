@@ -38,6 +38,7 @@ export default function CreateAgentPage() {
                 system_instruction: systemInstruction,
                 icon: ICONS[selectedIconIdx].iconName,
                 capabilities: { web_search: webSearchEnabled, terminal: terminalEnabled },
+                integrations: [],
                 linked_sources: []
             });
             toast.success("Agent created successfully!");

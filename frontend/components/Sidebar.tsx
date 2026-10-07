@@ -42,6 +42,7 @@ const sidebarItems = [
         href: "/dashboard/research",
         icon: Search,
     },
+    { name: "Actions", href: "/dashboard/actions", icon: Settings },
     {
         name: "Settings",
         href: "/dashboard/settings",
@@ -56,8 +57,8 @@ export default function Sidebar() {
     return (
         <aside
             className={cn(
-                "relative flex h-screen flex-col border-r border-[#E5E5E5] bg-[#F9F9F9] transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900/50",
-                isCollapsed ? "w-16" : "w-64"
+                "sticky top-0 flex h-screen flex-col border-r border-[#E5E5E5] bg-[#F9F9F9] transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900/50",
+                isCollapsed ? "w-16" : "w-48 lg:w-60"
             )}
         >
             {/* Header / Logo */}
@@ -71,7 +72,7 @@ export default function Sidebar() {
                     </div>
                 )}
                 <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    aria-label={isCollapsed ? "Expand navigation" : "Collapse navigation"} onClick={() => setIsCollapsed(!isCollapsed)}
                     className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-neutral-200/50 dark:hover:bg-neutral-800"
                 >
                     {isCollapsed ? (
@@ -85,11 +86,10 @@ export default function Sidebar() {
             {/* Quick Actions (Command / Search) */}
             {!isCollapsed && (
                 <div className="px-3 mt-4 mb-2">
-                    <button className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-neutral-500 hover:bg-neutral-200/50 dark:text-neutral-400 dark:hover:bg-neutral-800">
+                    <Link href="/dashboard/research" className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-neutral-500 hover:bg-neutral-200/50 dark:text-neutral-400 dark:hover:bg-neutral-800">
                         <Search className="h-4 w-4 shrink-0" />
                         <span>Search</span>
-                        <span className="ml-auto text-xs opacity-60">Ctrl+K</span>
-                    </button>
+                    </Link>
                 </div>
             )}
 
@@ -120,7 +120,7 @@ export default function Sidebar() {
             {/* Bottom Section (e.g., User Profile, Support) can go here */}
             {!isCollapsed && (
                 <div className="mb-4 mt-auto px-4 text-xs text-neutral-400">
-                    <p>Synapse v0.1.0</p>
+                    <p>Synapse v0.2.0</p>
                 </div>
             )}
         </aside>

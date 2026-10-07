@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { fetchAgents, deleteAgent, updateAgent, fetchSources, askSynapse, fetchIntegrationStatuses, type Agent, type Source, type Platform, type IntegrationStatusEntry } from "@/lib/api";
 import { toast } from "sonner";
 
-const agentIconsMap: Record<string, any> = {
+const agentIconsMap: Record<string, React.ComponentType<{ className?: string }>> = {
     Bot: Bot,
     Globe: Globe,
     Code: Code,
@@ -109,15 +109,13 @@ export default function AgentsPage() {
         try {
             const data = await fetchAgents();
             setAgents(data);
-            if (data.length > 0 && selectedAgentId === null) {
-                setSelectedAgentId(data[0].id);
-            }
+            setSelectedAgentId(current => current ?? data[0]?.id ?? null);
         } catch {
             toast.error("Failed to load agents");
         } finally {
             setIsLoading(false);
         }
-    }, [selectedAgentId]);
+    }, []);
 
     useEffect(() => {
         loadAgents();
@@ -127,7 +125,7 @@ export default function AgentsPage() {
         fetchIntegrationStatuses().then(data => {
             setIntegrationStatuses(data);
         }).catch(() => {});
-    }, []);
+    }, [loadAgents]);
 
     const selectedAgent = agents.find((a) => a.id === selectedAgentId);
 
@@ -138,7 +136,7 @@ export default function AgentsPage() {
             setEditedSources(selectedAgent.linked_sources || []);
             setEditedIntegrations(selectedAgent.integrations || []);
         }
-    }, [selectedAgentId, agents]);
+    }, [selectedAgent]);
 
     const handleDelete = async (e: React.MouseEvent, id: number) => {
         e.stopPropagation();

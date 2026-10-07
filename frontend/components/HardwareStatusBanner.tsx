@@ -20,7 +20,7 @@ const hardwareConfig: Record<string, { bg: string; text: string; ring: string; i
         ring: "ring-purple-200 dark:ring-purple-800",
         icon: <Cpu className="h-3 w-3" />,
     },
-    CPU_MOCK: {
+    CPU: {
         bg: "bg-blue-50 dark:bg-blue-950/50",
         text: "text-blue-700 dark:text-blue-400",
         ring: "ring-blue-200 dark:ring-blue-800",
@@ -50,8 +50,8 @@ export default function HardwareStatusBanner() {
         return () => clearInterval(interval);
     }, []);
 
-    const hw = health?.memory_engine ?? "CPU_MOCK";
-    const config = hardwareConfig[hw] ?? hardwareConfig.CPU_MOCK;
+    const hw = health?.memory_engine ?? "CPU";
+    const config = hardwareConfig[hw] ?? hardwareConfig.CPU;
 
     return (
         <>
