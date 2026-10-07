@@ -1,37 +1,9 @@
-"use client";
-
-import {
-  UserButton,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-} from "@clerk/nextjs";
+import Link from "next/link";
+import { Brain } from "lucide-react";
 
 export default function Navbar() {
-  return (
-    <div className="flex justify-between p-4 border-b">
-      <h1>Synapse</h1>
-
-      <div className="flex gap-4 items-center">
-        <SignedOut>
-          <SignInButton>
-            <button className="px-4 py-2 border rounded">
-              Sign In
-            </button>
-          </SignInButton>
-
-          <SignUpButton>
-            <button className="px-4 py-2 bg-black text-white rounded">
-              Sign Up
-            </button>
-          </SignUpButton>
-        </SignedOut>
-
-        <SignedIn>
-          <UserButton afterSignOutUrl="/" />
-        </SignedIn>
-      </div>
-    </div>
-  );
+  return <nav className="flex items-center justify-between p-6" aria-label="Main navigation">
+    <Link href="/" className="flex items-center gap-2 font-semibold"><Brain className="h-5 w-5" />Synapse</Link>
+    <Link href="/dashboard" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white">Open workspace</Link>
+  </nav>;
 }
