@@ -1,85 +1,26 @@
-"""
-Terminal Tool for Synapse Agents
-Executes shell commands in a sandboxed manner with safety checks.
-"""
-
+"""Bounded diagnostic commands. Never execute arbitrary shell text."""
 import subprocess
-import platform
-import re
+import sys
+from .config import BACKEND_DIR
 
-# Commands that are blocked for safety
-BLOCKED_PATTERNS = [
-    r"\brm\s+-rf\b",
-    r"\bformat\b",
-    r"\bdel\s+/[sS]\b",
-    r"\brmdir\s+/[sS]\b",
-    r"\bmkfs\b",
-    r"\bdd\s+if=",
-    r"\b:(){",
-    r"shutdown",
-    r"reboot",
-    r"taskkill\s+/f\s+/im\s+explorer",
-]
+COMMANDS = {
+    "python-version": [sys.executable, "--version"],
+    "git-version": ["git", "--version"],
+    "git-status": ["git", "--no-optional-locks", "status", "--short"],
+}
 
 
 class TerminalTool:
-    """Sandboxed terminal command execution."""
-
-    def __init__(self, timeout: int = 15):
-        self.timeout = timeout
-        self.is_windows = platform.system() == "Windows"
-
-    def execute(self, command: str) -> dict:
-        """
-        Run a shell command with timeout and safety checks.
-        Returns { stdout, stderr, exit_code, blocked }.
-        """
-        # Safety check
-        if self._is_dangerous(command):
-            return {
-                "stdout": "",
-                "stderr": f"⛔ Command blocked for safety: '{command}'",
-                "exit_code": -1,
-                "blocked": True,
-            }
-
+    def execute(self, command):
+        if command not in COMMANDS:
+            return {"stdout": "", "stderr": "Choose an allowed diagnostic: " + ", ".join(COMMANDS), "exit_code": -1, "blocked": True}
         try:
-            result = subprocess.run(
-                command,
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=self.timeout,
-                cwd=None,  # Runs in backend's working dir
-            )
-            return {
-                "stdout": result.stdout[:5000],  # Cap output size
-                "stderr": result.stderr[:2000],
-                "exit_code": result.returncode,
-                "blocked": False,
-            }
-        except subprocess.TimeoutExpired:
-            return {
-                "stdout": "",
-                "stderr": f"⏱️ Command timed out after {self.timeout}s",
-                "exit_code": -1,
-                "blocked": False,
-            }
-        except Exception as e:
-            return {
-                "stdout": "",
-                "stderr": f"Execution error: {str(e)}",
-                "exit_code": -1,
-                "blocked": False,
-            }
-
-    def _is_dangerous(self, command: str) -> bool:
-        """Check if command matches any blocked patterns."""
-        for pattern in BLOCKED_PATTERNS:
-            if re.search(pattern, command, re.IGNORECASE):
-                return True
-        return False
+            result = subprocess.run(COMMANDS[command], shell=False, cwd=BACKEND_DIR.parent,
+                                    capture_output=True, text=True, timeout=10,
+                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            return {"stdout": result.stdout[:5000], "stderr": result.stderr[:2000], "exit_code": result.returncode, "blocked": False}
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return {"stdout": "", "stderr": str(exc), "exit_code": -1, "blocked": False}
 
 
-# Global instance
 terminal_tool = TerminalTool()
