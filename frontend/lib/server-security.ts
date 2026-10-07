@@ -6,10 +6,11 @@ export function trustedRequest(request: NextRequest, mutation = false): boolean 
   const host = request.headers.get("host") || "";
   if (!/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host)) return false;
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) return false;
+  const expectedOrigin = new URL(request.url).protocol + "//" + host;
+  if (origin && origin !== expectedOrigin) return false;
   const site = request.headers.get("sec-fetch-site");
   if (site === "cross-site") return false;
-  return !mutation || origin === new URL(request.url).origin;
+  return !mutation || origin === expectedOrigin;
 }
 
 export function validBackendURL() {

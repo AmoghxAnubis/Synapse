@@ -1,8 +1,9 @@
 import axios from "axios";
+import { redirect } from "next/navigation";
 
 const api = axios.create({ baseURL: "/api/backend", timeout: 150000 });
 api.interceptors.response.use(response => response, error => {
-  if (error.response?.status === 401 && typeof window !== "undefined") window.location.assign("/sign-in");
+  if (error.response?.status === 401 && typeof window !== "undefined") redirect("/sign-in");
   return Promise.reject(error);
 });
 
@@ -70,7 +71,7 @@ export async function streamAnswer(
 ) {
   const response = await fetch("/api/backend/ask/stream", { method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text, selected_sources: selectedSources, agent_id: agentId, conversation_id: conversationId, allow_web: allowWeb }), signal });
-  if (response.status === 401) { window.location.assign("/sign-in"); throw new Error("Session expired."); }
+  if (response.status === 401) { redirect("/sign-in"); throw new Error("Session expired."); }
   if (!response.ok) { const data = await response.json(); throw new Error(data.detail || "Answer failed."); }
   if (!response.body) throw new Error("Streaming is unavailable.");
   const reader = response.body.getReader(); const decoder = new TextDecoder();

@@ -9,7 +9,7 @@ export default function KnowledgePage() {
   const [sources, setSources] = useState<Source[]>([]); const [url, setURL] = useState("");
   const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   const load = useCallback(async () => { try { setSources(await fetchSources()); setError(""); } catch (e) { setError(errorMessage(e)); } }, []);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { fetchSources().then(setSources).catch(e => setError(errorMessage(e))); }, []);
   return <section className="max-w-5xl mx-auto space-y-6">
     <header><h1 className="text-2xl font-semibold">Knowledge</h1><p className="mt-2 text-sm text-neutral-500">Import documents once, keep them searchable, and verify the passages used in answers.</p></header>
     {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
