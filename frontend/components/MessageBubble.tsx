@@ -1,110 +1,26 @@
 "use client";
-
 import React from "react";
-import { motion } from "framer-motion";
-import { User, Bot, FileText } from "lucide-react";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { Bot, User } from "lucide-react";
+import { type Citation } from "@/lib/api";
 
 export interface Message {
-    id: string;
-    role: "user" | "ai";
-    content: string;
-    sources?: string[];
-    hardwareFlow?: string;
-    timestamp: Date;
+  id: string; role: "user" | "ai"; content: string; sources?: string[];
+  citations?: Citation[]; hardwareFlow?: string; timestamp: Date;
 }
-
-interface MessageBubbleProps {
-    msg: Message;
-}
-
-function MessageBubble({ msg }: MessageBubbleProps) {
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-        >
-            <div
-                className={`flex max-w-[80%] gap-2.5 ${
-                    msg.role === "user" ? "flex-row-reverse" : "flex-row"
-                }`}
-            >
-                {/* Avatar */}
-                <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                        msg.role === "user"
-                            ? "bg-foreground"
-                            : "border border-zinc-200 bg-white"
-                    }`}
-                >
-                    {msg.role === "user" ? (
-                        <User className="h-3.5 w-3.5 text-white" />
-                    ) : (
-                        <Bot className="h-3.5 w-3.5 text-purple-600" />
-                    )}
-                </div>
-
-                {/* Bubble */}
-                <div className="flex flex-col gap-1.5">
-                    <div
-                        className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                            msg.role === "user"
-                                ? "bg-foreground text-white"
-                                : "border border-zinc-200 bg-white text-zinc-800 shadow-sm"
-                        }`}
-                    >
-                        {msg.content}
-                    </div>
-
-                    {/* Sources accordion */}
-                    {msg.sources && msg.sources.length > 0 && (
-                        <Accordion type="single" collapsible className="w-full">
-                            <AccordionItem value="sources" className="border-0">
-                                <AccordionTrigger className="py-1.5 px-2 text-[10px] font-medium uppercase tracking-wider text-zinc-500 hover:no-underline">
-                                    <span className="flex items-center gap-1.5">
-                                        <FileText className="h-3 w-3" />
-                                        {msg.sources.length} source
-                                        {msg.sources.length > 1 ? "s" : ""}
-                                    </span>
-                                </AccordionTrigger>
-                                <AccordionContent className="pb-1">
-                                    <div className="flex flex-wrap gap-1 px-2">
-                                        {msg.sources.map((src, i) => (
-                                            <Badge
-                                                key={i}
-                                                variant="secondary"
-                                                className="border border-zinc-200 bg-white text-[10px] font-normal text-zinc-600"
-                                            >
-                                                {src.length > 80
-                                                    ? src.slice(0, 80) + "…"
-                                                    : src}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    )}
-
-                    {/* Hardware flow */}
-                    {msg.hardwareFlow && (
-                        <span className="px-2 text-[10px] text-zinc-400">
-                            ⚡ {msg.hardwareFlow}
-                        </span>
-                    )}
-                </div>
-            </div>
-        </motion.div>
-    );
-}
-
-export default React.memo(MessageBubble);
+export default React.memo(function MessageBubble({ msg }: { msg: Message }) {
+  return <article className={"flex gap-3 " + (msg.role === "user" ? "flex-row-reverse" : "")}>
+    <div className="mt-1 rounded-full bg-neutral-100 dark:bg-neutral-800 p-2 h-fit">{msg.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4 text-indigo-500" />}</div>
+    <div className={"max-w-[90%] sm:max-w-[80%] rounded-2xl p-4 text-sm " + (msg.role === "user" ? "bg-indigo-600 text-white" : "border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900")}>
+      <p className="whitespace-pre-wrap leading-relaxed">{msg.content || "Preparing an answer?"}</p>
+      {!!msg.citations?.length && <details className="mt-4 border-t border-neutral-200 dark:border-neutral-800 pt-3">
+        <summary className="cursor-pointer text-xs text-neutral-500">Evidence ? {msg.citations.length} passages</summary>
+        <ol className="mt-3 space-y-3">{msg.citations.map((citation, i) => <li key={citation.id} className="text-xs">
+          <Link href={"/dashboard/knowledge/source?name=" + encodeURIComponent(citation.source)} className="font-medium text-indigo-500">[{i+1}] {citation.source} ? page {citation.page}</Link>
+          {citation.url && /^https?:\/\//.test(citation.url) && <a href={citation.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-500 underline">Open original</a>}
+          <p className="mt-1 whitespace-pre-wrap text-neutral-500">{citation.text}</p>
+        </li>)}</ol>
+      </details>}
+    </div>
+  </article>;
+});

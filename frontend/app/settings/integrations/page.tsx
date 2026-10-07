@@ -1,333 +1,53 @@
 "use client";
-
-import { useState, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-    ArrowLeft,
-    Brain,
-    GitPullRequest,
-    MessageSquare,
-    BookOpen,
-    LayoutGrid,
-    Settings,
-} from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import IntegrationCard, {
-    type IntegrationStatus,
-} from "@/components/IntegrationCard";
+import { Plug } from "lucide-react";
+import { toast } from "sonner";
 import ConnectModal from "@/components/ConnectModal";
-import SyncLog, { type SyncLogEntry } from "@/components/SyncLog";
-import {
-    saveIntegrationKey,
-    triggerSync,
-    fetchIntegrationStatuses,
-    type Platform,
-} from "@/lib/api";
+import { fetchIntegrationStatuses, saveIntegrationKey, disconnectIntegration, triggerSync, errorMessage, type Platform, type IntegrationStatusEntry } from "@/lib/api";
 
-/* ─── Integration definitions ─────────────────────────── */
-
-interface Integration {
-    id: Platform;
-    name: string;
-    description: string;
-    icon: React.ReactNode;
-    accentColor: string;
-}
-
-const integrations: Integration[] = [
-    {
-        id: "github",
-        name: "GitHub",
-        description:
-            "Sync repositories & pull requests. Ingest code reviews, issues, and commit history into local memory.",
-        icon: <GitPullRequest className="h-5 w-5" />,
-        accentColor: "purple",
-    },
-    {
-        id: "slack",
-        name: "Slack",
-        description:
-            "Sync saved messages & channel context. Pull important conversations and threads into Synapse's brain.",
-        icon: <MessageSquare className="h-5 w-5" />,
-        accentColor: "orange",
-    },
-    {
-        id: "notion",
-        name: "Notion",
-        description:
-            "Sync workspace docs & notes. Ingest pages, databases, and meeting notes for contextual RAG.",
-        icon: <BookOpen className="h-5 w-5" />,
-        accentColor: "blue",
-    },
-    {
-        id: "jira",
-        name: "Jira",
-        description:
-            "Sync active sprint tickets. Pull epics, stories, and bug reports into your local knowledge base.",
-        icon: <LayoutGrid className="h-5 w-5" />,
-        accentColor: "blue",
-    },
-    {
-        id: "discord",
-        name: "Discord",
-        description:
-            "Sync Discord servers, channels & conversations. Pull messages and context from your communities.",
-        icon: <MessageSquare className="h-5 w-5" />,
-        accentColor: "indigo",
-    },
+const platforms: { id: Platform; name: string; description: string }[] = [
+  { id: "github", name: "GitHub", description: "Selected repositories: README, issue and PR descriptions, and comments." },
+  { id: "notion", name: "Notion", description: "Selected pages and nested text blocks shared with your integration." },
+  { id: "jira", name: "Jira", description: "Selected Jira Cloud projects: issue descriptions, status, and available comments." },
+  { id: "slack", name: "Slack", description: "Message history in the channels your bot can access." },
+  { id: "discord", name: "Discord", description: "Message content in selected channels your bot can access." },
 ];
-
-/* ─── Page component ─────────────────────────────────── */
-
 export default function IntegrationsPage() {
-    // State: connection + toggle per platform
-    const [statuses, setStatuses] = useState<
-        Record<Platform, IntegrationStatus>
-    >({
-        github: "disconnected",
-        slack: "disconnected",
-        notion: "disconnected",
-        jira: "disconnected",
-        discord: "disconnected",
-    });
-
-    const [activeToggles, setActiveToggles] = useState<
-        Record<Platform, boolean>
-    >({
-        github: true,
-        slack: true,
-        notion: true,
-        jira: true,
-        discord: true,
-    });
-
-    const [lastSynced, setLastSynced] = useState<
-        Record<Platform, string | undefined>
-    >({
-        github: undefined,
-        slack: undefined,
-        notion: undefined,
-        jira: undefined,
-        discord: undefined,
-    });
-
-    // Modal state
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalPlatform, setModalPlatform] = useState<Integration | null>(null);
-
-    // Sync log
-    const [logs, setLogs] = useState<SyncLogEntry[]>([]);
-
-    // Load real statuses from backend on mount
-    useEffect(() => {
-        fetchIntegrationStatuses().then((data) => {
-            const newStatuses: Record<Platform, IntegrationStatus> = {
-                github: "disconnected",
-                slack: "disconnected",
-                notion: "disconnected",
-                jira: "disconnected",
-                discord: "disconnected",
-            };
-            for (const [key, val] of Object.entries(data)) {
-                if (val.connected) {
-                    newStatuses[key as Platform] = "connected";
-                }
-            }
-            setStatuses(newStatuses);
-        }).catch(() => {
-            // Backend unreachable, keep defaults
-        });
-    }, []);
-
-    const addLog = useCallback(
-        (platform: string, message: string, type: SyncLogEntry["type"] = "info") => {
-            const now = new Date();
-            const ts = now.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false,
-            });
-            setLogs((prev) => [
-                ...prev,
-                {
-                    id: crypto.randomUUID(),
-                    timestamp: ts,
-                    platform,
-                    message,
-                    type,
-                },
-            ]);
-        },
-        []
-    );
-
-    // Handlers
-    const handleConnect = (integration: Integration) => {
-        setModalPlatform(integration);
-        setModalOpen(true);
-    };
-
-    const handleKeySubmit = async (key: string) => {
-        if (!modalPlatform) return;
-        const pid = modalPlatform.id;
-
-        await saveIntegrationKey(pid, key);
-        setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
-        addLog(modalPlatform.name, "API key saved. Integration connected.", "success");
-    };
-
-    const handleSync = async (integration: Integration) => {
-        const pid = integration.id;
-
-        setStatuses((prev) => ({ ...prev, [pid]: "syncing" }));
-        addLog(integration.name, "Starting sync...", "info");
-
-        try {
-            const result = await triggerSync(pid);
-            setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
-
-            const now = new Date().toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-            });
-            setLastSynced((prev) => ({ ...prev, [pid]: now }));
-
-            addLog(
-                integration.name,
-                `Ingested ${result.documents_ingested} documents → Chunked into ${result.chunks_created} vectors.`,
-                "success"
-            );
-        } catch {
-            setStatuses((prev) => ({ ...prev, [pid]: "connected" }));
-            addLog(integration.name, "Sync failed. Backend unreachable.", "error");
-        }
-    };
-
-    const handleToggle = (pid: Platform, active: boolean) => {
-        setActiveToggles((prev) => ({ ...prev, [pid]: active }));
-        const name = integrations.find((i) => i.id === pid)?.name ?? pid;
-        addLog("System", `${name} integration ${active ? "enabled" : "disabled"}.`, "info");
-    };
-
-    return (
-        <div className="relative min-h-screen bg-white">
-            {/* Subtle grid bg */}
-            <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)",
-                    backgroundSize: "64px 64px",
-                }}
-            />
-
-            {/* Top bar */}
-            <header className="sticky top-0 z-50 flex items-center justify-between border-b border-zinc-200 bg-white/80 px-6 py-3 backdrop-blur-xl">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href="/dashboard"
-                        className="flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition hover:text-foreground"
-                    >
-                        <ArrowLeft className="h-3.5 w-3.5" />
-                        Dashboard
-                    </Link>
-                    <div className="h-4 w-px bg-zinc-200" />
-                    <div className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground">
-                            <Settings className="h-3.5 w-3.5 text-white" />
-                        </div>
-                        <span className="text-sm font-bold tracking-tight">
-                            Integrations
-                        </span>
-                    </div>
-                </div>
-            </header>
-
-            {/* Content */}
-            <main className="relative mx-auto max-w-5xl px-6 py-10">
-                {/* Hero */}
-                <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="mb-10"
-                >
-                    <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-                        Connected Brains
-                    </h1>
-                    <p className="mt-2 max-w-lg text-sm leading-relaxed text-zinc-500">
-                        Sync your external workspaces into Synapse's local memory. All data
-                        is pulled down and processed by your local NPU — nothing leaves your
-                        machine.
-                    </p>
-                </motion.div>
-
-                {/* Integration Cards Grid */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.4, delay: 0.15 }}
-                    className="grid grid-cols-1 gap-5 sm:grid-cols-2"
-                >
-                    {integrations.map((integration, i) => (
-                        <motion.div
-                            key={integration.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-                        >
-                            <IntegrationCard
-                                name={integration.name}
-                                description={integration.description}
-                                icon={integration.icon}
-                                accentColor={integration.accentColor}
-                                status={statuses[integration.id]}
-                                lastSynced={lastSynced[integration.id]}
-                                isActive={activeToggles[integration.id]}
-                                onConnect={() => handleConnect(integration)}
-                                onSync={() => handleSync(integration)}
-                                onToggle={(active) => handleToggle(integration.id, active)}
-                            />
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* Sync Log */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.5 }}
-                    className="mt-10"
-                >
-                    <SyncLog entries={logs} />
-                </motion.div>
-
-                {/* Privacy footer */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="mt-8 text-center"
-                >
-                    <p className="text-xs text-zinc-400">
-                        🔒 Zero cloud leakage — all synced data is stored exclusively in
-                        your local ChromaDB vector store.
-                    </p>
-                </motion.div>
-            </main>
-
-            {/* Connect Modal */}
-            {modalPlatform && (
-                <ConnectModal
-                    open={modalOpen}
-                    onOpenChange={setModalOpen}
-                    platformName={modalPlatform.name}
-                    platformIcon={modalPlatform.icon}
-                    onSubmit={handleKeySubmit}
-                />
-            )}
-        </div>
-    );
+  const [statuses, setStatuses] = useState<Partial<Record<Platform, IntegrationStatusEntry>>>({});
+  const [selected, setSelected] = useState<typeof platforms[number] | null>(null);
+  const [busy, setBusy] = useState<Platform | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  useEffect(() => { fetchIntegrationStatuses().then(setStatuses).catch(e => setError(errorMessage(e))); }, []);
+  return <section className="max-w-5xl mx-auto p-6 space-y-6">
+    <Link href="/dashboard/settings" className="text-sm text-indigo-500">? Workspace settings</Link>
+    <header><h1 className="text-2xl font-semibold">Connected sources</h1><p className="text-sm text-neutral-500 mt-2">Enable connected features in Settings, then choose exactly what to import. Model inference remains local.</p></header>
+    {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
+    <div className="grid sm:grid-cols-2 gap-4">{platforms.map(p => <article key={p.id} className="rounded-xl border p-6 space-y-4">
+      <h2 className="font-semibold flex items-center gap-2"><Plug className="h-4 w-4" />{p.name}</h2><p className="text-sm text-neutral-500">{p.description}</p>
+      <p className="text-xs">{statuses[p.id]?.connected ? "Connected" : "Disconnected"}{statuses[p.id]?.last_synced ? " ? Synced " + new Date(statuses[p.id]!.last_synced!).toLocaleString() : ""}</p>
+      {!!statuses[p.id]?.resources?.length && <p className="text-xs text-neutral-500 break-all">{statuses[p.id]?.resources?.join(", ")}</p>}
+      <div className="flex flex-wrap gap-3 text-sm">
+        <button disabled={!!busy} onClick={() => setSelected(p)} className="rounded-lg border px-3 py-2">{statuses[p.id]?.connected ? "Edit connection" : "Connect"}</button>
+        {statuses[p.id]?.connected && <>
+          <button disabled={!!busy} className="rounded-lg bg-indigo-600 text-white px-3 py-2 disabled:opacity-50" onClick={async () => {
+            setBusy(p.id); setError("");
+            try { const result = await triggerSync(p.id); setLogs(prev => [p.name + ": " + result.documents_ingested + " documents checked, " + result.documents_changed + " updated.", ...prev].slice(0, 30)); setStatuses(await fetchIntegrationStatuses()); }
+            catch (e) { setError(errorMessage(e)); } finally { setBusy(null); }
+          }}>{busy === p.id ? "Importing?" : "Sync now"}</button>
+          <button disabled={!!busy} className="text-neutral-500" onClick={async () => {
+            if (!confirm("Disconnect " + p.name + "? Imported documents will remain in Knowledge until you delete them.")) return;
+            try { await disconnectIntegration(p.id); setStatuses(await fetchIntegrationStatuses()); toast.success("Disconnected."); } catch (e) { setError(errorMessage(e)); }
+          }}>Disconnect</button>
+        </>}
+      </div>
+    </article>)}</div>
+    <p className="text-xs text-neutral-500">Imports have explicit size limits. A limit or permission failure is reported; it is never treated as an empty successful sync. Message threads, attachments, and binary files are outside the current import scope.</p>
+    {!!logs.length && <div className="rounded-xl border p-5 text-sm space-y-2" role="log">{logs.map((line, i) => <p key={i}>{line}</p>)}</div>}
+    {selected && <ConnectModal key={selected.id} open={true} onOpenChange={open => { if (!open) setSelected(null); }} platformName={selected.name} platformIcon={<Plug />} onSubmit={async (key, resources, server, email) => {
+      await saveIntegrationKey(selected.id, key, resources, server, email);
+      setStatuses(await fetchIntegrationStatuses()); toast.success(selected.name + " connected.");
+    }} />}
+  </section>;
 }

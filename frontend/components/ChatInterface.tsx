@@ -1,219 +1,88 @@
 "use client";
-
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Loader2 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { askSynapse, fetchSources, fetchAgents, type Source, type Agent } from "@/lib/api";
-import MessageBubble, { type Message } from "@/components/MessageBubble";
+import { useState, useEffect, useRef } from "react";
+import { Plus, Square, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
+import { fetchSources, fetchAgents, fetchConversations, fetchConversation, newConversation, deleteConversation, streamAnswer, errorMessage, type Source, type Agent, type Conversation } from "@/lib/api";
+import MessageBubble, { type Message } from "./MessageBubble";
 import ChatInput from "./ChatInput";
-import { X, Globe, Code, FileText, Bot } from "lucide-react";
-
-// Mapping string icon names to Lucide components
-const agentIcons: Record<string, any> = {
-    Globe: Globe,
-    Code: Code,
-    FileText: FileText,
-    Bot: Bot,
-};
 
 export default function ChatInterface() {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedSources, setSelectedSources] = useState<string[]>([]);
-    const [availableSources, setAvailableSources] = useState<Source[]>([]);
-    const [activeAgent, setActiveAgent] = useState<Agent | null>(null);
-    const [availableAgents, setAvailableAgents] = useState<Agent[]>([]);
-    const scrollRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [sources, setSources] = useState<Source[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [agentId, setAgentId] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [allowWeb, setAllowWeb] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [error, setError] = useState("");
+  const controller = useRef<AbortController | null>(null);
+  const bottom = useRef<HTMLDivElement>(null);
+  const selectedAgent = agents.find(a => a.id === agentId);
 
-    // Fetch sources and agents for @ and / commands
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const [sourcesData, agentsData] = await Promise.all([
-                    fetchSources(),
-                    fetchAgents()
-                ]);
+  useEffect(() => {
+    let active = true;
+    Promise.all([fetchSources().catch(() => []), fetchAgents(), fetchConversations()])
+      .then(([s, a, c]) => { if (active) { setSources(s); setAgents(a); setConversations(c); } })
+      .catch(e => { if (active) setError(errorMessage(e)); });
+    return () => { active = false; controller.current?.abort(); };
+  }, []);
+  useEffect(() => { bottom.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-                const filteredSources = sourcesData.filter(s => s.name !== 'user_input' && s.name !== 'web_ui');
-                setAvailableSources(filteredSources);
-                setAvailableAgents(agentsData);
-            } catch (err) {
-                console.error("Failed to load context for chat", err);
-            }
-        };
-        load();
-    }, []);
-
-    // Auto-scroll to bottom on new messages
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages]);
-
-    const handleSend = async (query: string) => {
-        if (!query || isLoading) return;
-
-        const userMsg: Message = {
-            id: crypto.randomUUID(),
-            role: "user",
-            content: query,
-            timestamp: new Date(),
-        };
-
-        setMessages((prev) => [...prev, userMsg]);
-        setIsLoading(true);
-
-        try {
-            const response = await askSynapse(query, selectedSources, activeAgent?.id);
-            const aiMsg: Message = {
-                id: crypto.randomUUID(),
-                role: "ai",
-                content: response.answer,
-                sources: response.sources,
-                hardwareFlow: response.hardware_flow,
-                timestamp: new Date(),
-            };
-            setMessages((prev) => [...prev, aiMsg]);
-        } catch {
-            const errMsg: Message = {
-                id: crypto.randomUUID(),
-                role: "ai",
-                content: "⚠️ Connection failed. Is the Synapse backend running?",
-                timestamp: new Date(),
-            };
-            setMessages((prev) => [...prev, errMsg]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex h-full flex-col">
-            {/* Header */}
-            <div className="flex items-center gap-2 px-1 pb-3">
-                <div className="h-2 w-2 rounded-full bg-purple-500" />
-                <h2 className="text-sm font-semibold tracking-wide text-zinc-800 uppercase">
-                    Synapse Chat
-                </h2>
-                {messages.length > 0 && (
-                    <Badge
-                        variant="secondary"
-                        className="ml-auto border border-zinc-200 bg-zinc-50 text-[10px] text-zinc-600"
-                    >
-                        {messages.length} messages
-                    </Badge>
-                )}
-            </div>
-
-            {/* Messages */}
-            <div className="relative flex-1 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50/50">
-                <ScrollArea className="h-full">
-                    <div ref={scrollRef} className="flex flex-col gap-3 p-5">
-                        {messages.length === 0 && (
-                            <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
-                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100">
-                                    <Bot className="h-7 w-7 text-zinc-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium text-zinc-600">
-                                        Ask Synapse anything
-                                    </p>
-                                    <p className="mt-1 text-xs text-zinc-500">
-                                        Queries are answered using your ingested memory + local LLM
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        <AnimatePresence initial={false}>
-                            {messages.map((msg) => (
-                                <MessageBubble key={msg.id} msg={msg} />
-                            ))}
-                        </AnimatePresence>
-
-                        {/* Typing indicator */}
-                        {isLoading && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="flex items-center gap-2"
-                            >
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white">
-                                    <Bot className="h-3.5 w-3.5 text-purple-600" />
-                                </div>
-                                <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-2.5 shadow-sm">
-                                    <div className="flex items-center gap-1.5">
-                                        <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-600" />
-                                        <span className="text-xs text-zinc-500">Thinking...</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </div>
-                </ScrollArea>
-            </div>
-
-            {/* Context chips (Agents and Sources) */}
-            <div className="flex flex-wrap gap-2 px-1 mb-2">
-                {/* Active Agent Chip */}
-                {activeAgent && (
-                    <Badge
-                        variant="secondary"
-                        className="bg-emerald-50 text-emerald-700 border-emerald-200 pl-2 pr-1 py-1 rounded-lg flex items-center gap-1 animate-in fade-in slide-in-from-bottom-1"
-                    >
-                        {(() => {
-                            const Icon = agentIcons[activeAgent.icon] || Bot;
-                            return <Icon className="h-3 w-3" />;
-                        })()}
-                        <span className="font-semibold">{activeAgent.name}</span>
-                        <button
-                            onClick={() => setActiveAgent(null)}
-                            className="p-0.5 hover:bg-emerald-200 rounded-md transition-colors"
-                        >
-                            <X className="h-3 w-3" />
-                        </button>
-                    </Badge>
-                )}
-
-                {/* Source selection chips */}
-                {selectedSources.map((source) => (
-                    <Badge
-                        key={source}
-                        variant="secondary"
-                        className="bg-purple-50 text-purple-700 border-purple-200 pl-2 pr-1 py-1 rounded-lg flex items-center gap-1 animate-in fade-in slide-in-from-bottom-1"
-                    >
-                        <span className="truncate max-w-[150px]">{source}</span>
-                        <button
-                            onClick={() => setSelectedSources(prev => prev.filter(s => s !== source))}
-                            className="p-0.5 hover:bg-purple-200 rounded-md transition-colors"
-                        >
-                            <X className="h-3 w-3" />
-                        </button>
-                    </Badge>
-                ))}
-            </div>
-
-            {/* Input bar */}
-            <ChatInput
-                onSend={handleSend}
-                isLoading={isLoading}
-                availableSources={availableSources.map(s => s.name)}
-                selectedSources={selectedSources}
-                onAddSource={(name) => {
-                    if (!selectedSources.includes(name)) {
-                        setSelectedSources(prev => [...prev, name]);
-                    }
-                }}
-                availableAgents={availableAgents}
-                activeAgentId={activeAgent?.id || null}
-                onSelectAgent={(agentId) => {
-                    const agent = availableAgents.find(a => a.id === agentId);
-                    if (agent) setActiveAgent(agent);
-                }}
-            />
-        </div>
-    );
+  async function open(id: string) {
+    if (busy) return;
+    setLoadingHistory(true); setError("");
+    try {
+      const saved = await fetchConversation(id);
+      setMessages(saved.map(m => ({ id: m.id, role: m.role, content: m.content, citations: m.citations, timestamp: new Date(m.created * 1000) })));
+      setConversationId(id);
+    } catch (e) { setError(errorMessage(e)); }
+    finally { setLoadingHistory(false); }
+  }
+  async function send(text: string) {
+    if (busy || loadingHistory) return;
+    setBusy(true); setError("");
+    const abort = new AbortController(); controller.current = abort;
+    const assistantId = crypto.randomUUID();
+    try {
+      let id = conversationId;
+      if (!id) { const created = await newConversation(); id = created.id; setConversationId(id); }
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "user", content: text, timestamp: new Date() }, { id: assistantId, role: "ai", content: "", timestamp: new Date() }]);
+      await streamAnswer(text, selectedSources, agentId, id, allowWeb && !!selectedAgent?.capabilities.web_search, abort.signal, event => {
+        setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: m.content + (event.text || ""), citations: event.citations || m.citations } : m));
+      });
+      setConversations(await fetchConversations());
+    } catch (e) {
+      if (abort.signal.aborted) { toast.info("Answer stopped. Partial answers are not saved."); }
+      else setError(errorMessage(e));
+    } finally { controller.current = null; setBusy(false); }
+  }
+  return <section className="flex flex-col h-full min-h-[70vh]">
+    <header className="mb-5 flex flex-wrap gap-3 items-center">
+      <div className="flex-1"><h1 className="text-2xl font-semibold">Your local memory</h1><p className="mt-1 text-sm text-neutral-500">Ask about imported documents. Open the evidence to verify an answer.</p></div>
+      <select aria-label="Conversation" disabled={busy || loadingHistory} value={conversationId || ""} onChange={e => { if (e.target.value) void open(e.target.value); }} className="max-w-56 rounded-lg border bg-transparent p-2 text-sm">
+        <option value="">New conversation</option>{conversations.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+      </select>
+      <button aria-label="New conversation" disabled={busy || loadingHistory} onClick={() => { setConversationId(null); setMessages([]); setError(""); }} className="rounded-lg border p-2"><Plus className="h-4 w-4" /></button>
+      {conversationId && <button aria-label="Delete conversation" disabled={busy || loadingHistory} onClick={async () => {
+        if (!confirm("Delete this conversation?")) return;
+        try { await deleteConversation(conversationId); setConversationId(null); setMessages([]); setConversations(await fetchConversations()); } catch (e) { toast.error(errorMessage(e)); }
+      }} className="rounded-lg border p-2"><Trash2 className="h-4 w-4" /></button>}
+    </header>
+    <div className="flex-1 min-h-0 overflow-y-auto space-y-5 p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-950">
+      {!messages.length && <div className="py-16 text-center text-neutral-500"><p>Start with a document in Knowledge.</p><p className="mt-2 text-sm">Then ask a question here, or select a source with @.</p></div>}
+      {loadingHistory && <p role="status">Loading conversation?</p>}
+      {messages.map(m => <MessageBubble key={m.id} msg={m} />)}<div ref={bottom} />
+    </div>
+    {error && <p role="alert" className="mt-3 text-sm text-red-500">{error}</p>}
+    <div className="mt-3 flex flex-wrap gap-2">
+      {selectedAgent && <button onClick={() => setAgentId(null)} className="flex gap-1 items-center rounded-full bg-indigo-50 dark:bg-indigo-950 px-3 py-1 text-xs">{selectedAgent.name}<X className="h-3 w-3" /></button>}
+      {selectedSources.map(s => <button key={s} onClick={() => setSelectedSources(prev => prev.filter(v => v !== s))} className="flex gap-1 items-center rounded-full border px-3 py-1 text-xs">{s}<X className="h-3 w-3" /></button>)}
+    </div>
+    {selectedAgent?.capabilities.web_search && <label className="mt-3 text-xs text-neutral-500 flex gap-2"><input type="checkbox" checked={allowWeb} onChange={e => setAllowWeb(e.target.checked)} />Include web search: sends this question to a search provider. Enable connected features in Settings first.</label>}
+    {busy && <button onClick={() => controller.current?.abort()} className="self-start flex items-center gap-2 text-sm mt-3 text-indigo-500"><Square className="h-3 w-3" />Stop answer</button>}
+    <ChatInput onSend={send} isLoading={busy || loadingHistory} availableSources={sources.map(s => s.name)} selectedSources={selectedSources} onAddSource={s => setSelectedSources(prev => [...prev, s])} availableAgents={agents} activeAgentId={agentId} onSelectAgent={setAgentId} />
+  </section>;
 }
