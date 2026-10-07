@@ -20,7 +20,7 @@ Updated 7 October 2026. This records the implementation following [the baseline 
 
 ## Verification evidence
 
-- Backend: **49 tests passed**, including real provisioned CPU ONNX embeddings, with the remaining tests isolated from user data and live services. One dependency deprecation warning remains.
+- Backend: **56 tests passed**, including real provisioned CPU ONNX embeddings, with the remaining tests isolated from user data and live services. One dependency deprecation warning remains.
 - Backend dependency consistency: `pip check` passed.
 - Frontend: strict lint with zero warnings and production build passed.
 - Dependency audit: full `npm audit` reported **zero vulnerabilities** at verification time. This is a time-specific result, not a permanent security guarantee.
@@ -29,7 +29,7 @@ Updated 7 October 2026. This records the implementation following [the baseline 
 - Production HTTP checks: pairing produces an HttpOnly SameSite=Strict cookie; unpaired and cross-origin requests are blocked; workspace routes return successfully; logout removes API access. This caught and fixed a localhost/127.0.0.1 origin mismatch.
 - Both original vector stores were backed up and their text migrated. A portable archive was created and restored into a new directory successfully.
 - Current tracked runtime-file and common credential-pattern scans found no matching files/secrets. This is not a full history or credential audit.
-- The host has Python 3.12.10 for the backend and Node 22.12.0. Frontend tooling completed here with an engine warning; documented and CI Node support starts at 22.13.
+- The host has Python 3.12.10 and system Node 22.12.0. Final clean installation and checks used an isolated supported Node 22.13.1 invoked explicitly, plus a fresh Python 3.12 environment. System Node was not replaced.
 
 No connected browser was available for visual inspection. No live GitHub/Notion/Jira/Slack/Discord credentials were exercised. No real messages or issues were created by the verification suite. GPU/NPU acceleration was not claimed or benchmarked.
 
@@ -58,3 +58,13 @@ No repository license has been selected. Existing historical runtime content has
 7. **Commercial readiness:** choose a license and dependency/model license policy, complete historical privacy review, define support and deletion/export expectations, evaluate encryption needs, and establish beta feedback and willingness-to-pay evidence. Hosted accounts/billing should follow a clear product requirement and security design.
 
 The confirmed baseline defects have substantial repairs and regression coverage. This is a working foundation for a beta, not a claim that every original feature or commercial release gate is complete.
+
+## Baseline follow-up and landing restoration
+
+The original landing composition was restored from cc596f4, retaining the user-selected hero, illustrations, sections and footer. Targeted changes correct claims/CTAs and improve anchors, animation cleanup, reduced-motion behavior and theme contrast. The replacement page is retained at docs/reference/implementation-landing.tsx. Exact deployed revision and visual parity remain unverified; no browser surface was available.
+
+Fixed configuration initialization so backend .env loads before data-path resolution and relative paths anchor to backend. Retired five unused prototype execution constructors so unsafe routing/shell/demo workflows cannot be accidentally reconnected. Added bounded frontend request-body reads, including chunked requests, and useful malformed-pairing errors.
+
+Final verification: 56 tests and pip check passed in a fresh locked Python environment; clean npm ci, strict lint, build and full audit JSON passed under isolated Node 22.13.1. The install-time audit summary and a subsequent audit initially differed; the final explicit-runtime JSON returned zero vulnerabilities, and no cause for the earlier discrepancy was established.
+
+The tracked scripts/verify_local.py --with-inference passed production session/origin/body-limit checks, restored landing headline/anchors, real cited answer, saved follow-up and deduplication. The final answer sample took 17.65 seconds; synthetic source/conversation were removed. See DEVELOPER_HANDOVER.md for complete continuation context and PROJECT_TRACKER.md for current task status.

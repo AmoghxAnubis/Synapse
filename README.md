@@ -122,3 +122,5 @@ Tests never send real messages or create GitHub issues. The real embedding test 
 See [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for completed changes, validation evidence, and remaining release work.
 
 Use [PROJECT_TRACKER.md](PROJECT_TRACKER.md) for the current task list, progress, priorities, time estimates, and activity log.
+
+Start with [DEVELOPER_HANDOVER.md](DEVELOPER_HANDOVER.md) for complete developer continuation context and verified limitations.

@@ -2,7 +2,7 @@
 
 Last updated: 7 October 2026.
 Owner: project developer with user review for product decisions.
-Development is paused for planning; no landing-page restoration or hosting migration has been performed in this planning session.
+Current focus: baseline follow-up repairs, original landing-page restoration, and developer handover. Hosting migration has not started.
 
 ## Product direction
 
@@ -14,8 +14,8 @@ Public hosting and local inference are separate concerns. Cloudflare hosting mus
 
 ## Progress and accounting
 
-- Checklist: **11 of 41 tasks complete = 27%**. One additional task is in progress.
-- Baseline repairs: approximately **85%** complete.
+- Checklist: **18 of 46 tasks complete = 39%**. Visual acceptance tasks remain waiting.
+- Baseline repairs: approximately **95%** complete; remaining acceptance is not a claim of unimplemented core repairs.
 - Small local beta readiness: approximately **65%**.
 - Paid release readiness: approximately **30%**.
 - Cloudflare migration implementation: **0%**.
@@ -26,7 +26,7 @@ Statuses: DONE / IN PROGRESS / TODO / WAITING / DEFERRED.
 Priorities: P0 = next release gate; P1 = beta work; P2 = post-beta expansion.
 A task becomes DONE only when its completion criterion is verified. Estimates are focused person-hours for one developer, including implementation and relevant checks. They exclude credential/account access, user feedback, domain propagation, recruiting testers and other external waits.
 
-## Completed foundation ? 11/11 (100%)
+## Completed foundation - 15/15 (100% of implemented foundation tasks)
 
 | ID | Status | Repair | Evidence |
 | --- | --- | --- | --- |
@@ -41,80 +41,84 @@ A task becomes DONE only when its completion criterion is verified. Estimates ar
 | B09 | DONE | Persisted, streamed local conversations | Real Ollama answer/follow-up, saved-turn and streaming tests |
 | B10 | DONE | Implement truthful scoped connector pipeline | Credential validation/keyring, actual content readers, bounded pagination/jobs, mocked tests; live acceptance is tracked separately |
 | B11 | DONE | Add readiness, explicit network consent, safe URL imports and honest feature states | Health/settings/privacy flows, unsafe-URL checks, job failure/cancel tests |
+| B12 | DONE | Load dotenv before configuration; anchor relative data paths | Two new regression tests verify precedence and launch-directory independence |
+| B13 | DONE | Retire five unsafe/overlapping prototype entry points | Five fail-closed constructor tests; history retained in Git |
+| B14 | DONE | Bound frontend request reads without Content-Length | Pairing 1 KB and proxy 21 MB limits; production chunked-body rejection passed |
+| B15 | DONE | Clean lockfile installation verification | Fresh Python environment: 56 tests/pip check; explicit Node 22.13.1 npm ci/lint/build/full audit |
 
-Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The backend suite contains 49 passing tests; GPU/NPU and live provider behavior are not verified.
+Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The backend suite contains 56 passing tests; GPU/NPU and live provider behavior are not verified.
 
-## Phase 1 ? original landing page, 8?16 hours
-
-| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
-| --- | --- | --- | --- | --- | --- |
-| L01 | P0 | IN PROGRESS | 1?2 | ? | Compare deployed page with Git: content read and baseline located; finish visual inventory and identify deployed revision or record uncertainty |
-| L02 | P0 | TODO | 4?8 | L01 | Restore original landing-page composition/assets on an isolated branch; retain implementation page as a reference without duplicating runtime secrets |
-| L03 | P0 | TODO | 1?2 | L02 | Correct only unsupported claims and onboarding links; label upcoming features and conditional hardware support accurately |
-| L04 | P0 | TODO | 2?4 | L02, L03 | Verify mobile/desktop, light/dark, animations, accessibility basics and build; obtain user review of a concrete preview |
-
-## Phase 2 ? Cloudflare public-site migration, 6?12 hours
+## Phase 1 - original landing page, 8-16 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| H01 | P0 | TODO | 1?2 | L01 | Inventory public routes, server dependencies, domain and build; choose static Pages versus Workers using current compatibility evidence |
-| H02 | P0 | TODO | 3?6 | H01, L02 | Configure a reproducible Cloudflare preview; keep public marketing separate from local pairing/API routes |
-| H03 | P0 | TODO | 1?2 | H02, L04 | Verify assets, navigation, metadata, security headers, theme behavior, performance and rollback on preview |
-| H04 | P0 | TODO | 1?2 | H03 | Perform authorized domain cutover, verify production and document rollback; preserve Vercel until acceptance |
+| L01 | P0 | WAITING | 0.5-1 | Connected browser | Deployment HTML inventory and baseline source recovered; restored from cc596f4. Exact deployed revision/pixel match remain unverified; finish visual comparison |
+| L02 | P0 | DONE | 0 remaining | L01 source inventory | Original composition restored from cc596f4; replacement retained at docs/reference/implementation-landing.tsx; build and production HTML checks pass |
+| L03 | P0 | DONE | 0 remaining | L02 | Targeted copy/CTA corrections, truthful branded intro, local pairing preserved, anchor and motion cleanup; unsupported hardware/privacy/action claims removed |
+| L04 | P0 | WAITING | 2-4 | Connected browser/user review | Build, lint, landing HTML/anchors and production routes verified. Review http://127.0.0.1:3000 for mobile/desktop, dark/light, animation, canvas and keyboard behavior |
+
+## Phase 2 - Cloudflare public-site migration, 6-12 hours
+
+| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
+| --- | --- | --- | --- | --- | --- |
+| H01 | P0 | TODO | 1-2 | L01 | Inventory public routes, server dependencies, domain and build; choose static Pages versus Workers using current compatibility evidence |
+| H02 | P0 | TODO | 3-6 | H01, L02 | Configure a reproducible Cloudflare preview; keep public marketing separate from local pairing/API routes |
+| H03 | P0 | TODO | 1-2 | H02, L04 | Verify assets, navigation, metadata, security headers, theme behavior, performance and rollback on preview |
+| H04 | P0 | TODO | 1-2 | H03 | Perform authorized domain cutover, verify production and document rollback; preserve Vercel until acceptance |
 
 Current official references: [Cloudflare Next.js overview](https://developers.cloudflare.com/pages/framework-guides/nextjs/) and [Workers Next.js guidance](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/). Adapter/runtime compatibility must be tested against this project's version before selecting a full-stack migration. No account or DNS changes have occurred.
 
-## Phase 3 ? dashboard alignment and usability, 10?20 hours
+## Phase 3 - dashboard alignment and usability, 10-20 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| V01 | P1 | TODO | 3?6 | Browser access | Visually exercise pairing, imports, citations, chat cancellation, source/agent scope, settings, failures and narrow screens; record reproducible defects |
-| V02 | P1 | TODO | 4?8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
-| V03 | P1 | TODO | 3?6 | V01, V02 | Fix acceptance defects and verify a first-time import-to-answer journey without developer assistance |
+| V01 | P1 | TODO | 3-6 | Browser access | Visually exercise pairing, imports, citations, chat cancellation, source/agent scope, settings, failures and narrow screens; record reproducible defects |
+| V02 | P1 | TODO | 4-8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
+| V03 | P1 | TODO | 3-6 | V01, V02 | Fix acceptance defects and verify a first-time import-to-answer journey without developer assistance |
 
-## Phase 4 ? answer quality and performance, 12?24 hours
+## Phase 4 - answer quality and performance, 12-24 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | TODO | 4?8 | Representative documents | Version a supported/unsupported/follow-up corpus; measure retrieval hits, citation support, wrong answers and abstention; agree release thresholds |
-| Q02 | P1 | TODO | 4?8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
-| Q03 | P1 | TODO | 4?8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
+| Q01 | P1 | TODO | 4-8 | Representative documents | Version a supported/unsupported/follow-up corpus; measure retrieval hits, citation support, wrong answers and abstention; agree release thresholds |
+| Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
+| Q03 | P1 | TODO | 4-8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
-## Phase 5 ? live connector acceptance, 15?30 hours
+## Phase 5 - live connector acceptance, 15-30 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| I01 | P1 | TODO | 3?6 | Test GitHub repo/credentials | Verify reads, pagination, dedup, removals, permission failures, disconnect and explicitly authorized issue writes |
-| I02 | P1 | TODO | 3?6 | Test Notion pages/credentials | Verify nested content, source links, permission failures, dedup/removals and disconnect |
-| I03 | P1 | TODO | 3?6 | Test Jira Cloud project/credentials | Verify configured scope, content/comments, pagination, failures and disconnect |
-| I04 | P1 | TODO | 3?6 | Test Slack channel/credentials | Verify history, rate limits, failures, disconnect and explicitly authorized message writes |
-| I05 | P1 | TODO | 3?6 | Test Discord channel/credentials | Verify accessible history, permissions, rate limits, disconnect and explicitly authorized message writes |
+| I01 | P1 | TODO | 3-6 | Test GitHub repo/credentials | Verify reads, pagination, dedup, removals, permission failures, disconnect and explicitly authorized issue writes |
+| I02 | P1 | TODO | 3-6 | Test Notion pages/credentials | Verify nested content, source links, permission failures, dedup/removals and disconnect |
+| I03 | P1 | TODO | 3-6 | Test Jira Cloud project/credentials | Verify configured scope, content/comments, pagination, failures and disconnect |
+| I04 | P1 | TODO | 3-6 | Test Slack channel/credentials | Verify history, rate limits, failures, disconnect and explicitly authorized message writes |
+| I05 | P1 | TODO | 3-6 | Test Discord channel/credentials | Verify accessible history, permissions, rate limits, disconnect and explicitly authorized message writes |
 
 Never put credentials in this tracker. Use dedicated resources; acceptance tests must not create issues/messages without explicit authorization. Large vendor-specific compatibility fixes may increase estimates.
 
-## Phase 6 ? installation and recovery, 16?32 hours
+## Phase 6 - installation and recovery, 16-32 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| D01 | P1 | TODO | 3?6 | Second Windows machine | Verify fresh checkout on supported Node/Python, model provisioning, restart, offline core use and actionable missing-model errors |
-| D02 | P1 | TODO | 8?16 | D01, V03 | Choose packaging approach; prototype installer/service lifecycle, model onboarding and per-user data outside checkout |
-| D03 | P1 | TODO | 5?10 | D02 | Verify installed-app restart, backup/restore, data preservation and update/rollback path; identify signing/distribution requirements |
+| D01 | P1 | TODO | 2-4 | Second Windows machine | Fresh lockfile installation verified here on Python 3.12 and isolated Node 22.13.1; finish cross-machine setup/model/restart/offline acceptance |
+| D02 | P1 | TODO | 8-16 | D01, V03 | Choose packaging approach; prototype installer/service lifecycle, model onboarding and per-user data outside checkout |
+| D03 | P1 | TODO | 5-10 | D02 | Verify installed-app restart, backup/restore, data preservation and update/rollback path; identify signing/distribution requirements |
 
 This estimate covers a beta distribution prototype. A fully signed, production auto-update system may require additional work after the packaging choice.
 
-## Phase 7 ? commercial groundwork and beta, 6?12 hours plus external feedback
+## Phase 7 - commercial groundwork and beta, 6-12 hours plus external feedback
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| C01 | P1 | TODO | 2?4 | Owner decisions | Inventory dependency/model licensing and historical privacy risks; record required decisions and any specialist review |
-| C02 | P1 | TODO | 2?4 | C01, D02 | Define privacy, export/deletion, support and encryption expectations; verify process-level outbound traffic for the supported local workflow |
-| C03 | P1 | TODO | 2?4 | V03, Q03, D03 | Prepare a small beta protocol, feedback tracker and value/pricing questions; report observed usage and willingness to pay after feedback |
+| C01 | P1 | TODO | 2-4 | Owner decisions | Inventory dependency/model licensing and historical privacy risks; record required decisions and any specialist review |
+| C02 | P1 | TODO | 2-4 | C01, D02 | Define privacy, export/deletion, support and encryption expectations; verify process-level outbound traffic for the supported local workflow |
+| C03 | P1 | TODO | 2-4 | V03, Q03, D03 | Prepare a small beta protocol, feedback tracker and value/pricing questions; report observed usage and willingness to pay after feedback |
 
 Accounts, hosted multi-user isolation and billing are not assumed requirements. Decide them from the product model and beta findings.
 
-## Post-beta original vision ? estimates pending design
+## Post-beta original vision - estimates pending design
 
 | ID | Priority | Status | Estimate | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -126,11 +130,17 @@ Accounts, hosted multi-user isolation and billing are not assumed requirements. 
 
 These are deliberately outside the initial beta estimate; their designs and target-platform constraints are not sufficiently known for credible dates.
 
+## Developer handover
+
+| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
+| --- | --- | --- | --- | --- | --- |
+| T01 | P0 | DONE | 0 remaining | Baseline/landing implementation | DEVELOPER_HANDOVER.md covers purpose, history, architecture, setup, data, test evidence, design decisions, limits and next steps; README links it |
+
 ## Estimated sequence
 
-- Original landing page plus Cloudflare preview/cutover: **14?28 focused hours**, approximately **2?4 working days**, excluding access/review waits.
-- All listed beta/commercial-groundwork phases: **73?146 focused hours**, approximately **10?19 eight-hour working days**.
-- Allow roughly **3?5 calendar weeks** with account access, review, second-machine testing and beta feedback. External delays can extend this.
+- Remaining landing acceptance plus Cloudflare preview/cutover: roughly **8.5-17 focused hours**, excluding browser/account access and review waits. Restoration and copy implementation are complete.
+- Original all-phase beta estimate was **73-146 focused hours**. With landing implementation and same-machine setup checks complete, remaining listed beta work is roughly **67-137 hours**; re-estimate after browser acceptance and live account access.
+- Allow roughly **3-5 calendar weeks** with account access, review, second-machine testing and beta feedback. External delays can extend this.
 - Original-vision expansion and a complete paid launch are not included. Re-estimate after measured beta results.
 
 These are planning ranges, not a promise of uninterrupted background work or a release date. Work proceeds in active sessions. Resolve uncertain items early and revise estimates when evidence changes.
@@ -153,3 +163,6 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-07 | User selected original landing page as product design reference | Preserve original design; replacement page remains an implementation reference |
 | 2026-10-07 | Shared deployment content accessible | Original headline/navigation confirmed in HTML; visual inventory and deployed revision verification remain under L01 |
 | 2026-10-07 | Canonical tracker and estimates created | No development or hosting changes in this planning session; next task L01, then L02/H01 |
+
+| 2026-10-07 | Baseline follow-up and original landing restored | B12-B15, L02-L03 complete; 56 fresh-environment tests, supported Node install/build/lint/audit, production body-limit/anchor checks; L01/L04 waiting for browser acceptance |
+| 2026-10-07 | Reproducible smoke and handover complete | scripts/verify_local.py --with-inference passed; final sample 17.65s; synthetic data removed; DEVELOPER_HANDOVER.md written; no hosting/DNS changes |
