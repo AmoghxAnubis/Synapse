@@ -3,80 +3,50 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const BOOT_HOOKS = [
-    "Bypassing the cloud...",
-    "Initializing local memory...",
-    "Connecting hardware acceleration...",
-    "Securing private context...",
-    "Synapse Core Online.",
-];
+const INTRO_LINES = ["Your context.", "Your computer.", "Synapse."];
 
 export default function IntroPreloader() {
-    const [index, setIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+  const [index, setIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Handle the sequence of text hooks
-    useEffect(() => {
-        // Prevent body scroll while preloader is active
-        document.body.style.overflow = "hidden";
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const previous = document.body.style.overflow;
+    if (!reduced) document.body.style.overflow = "hidden";
+    const advance = window.setInterval(() => setIndex((value) => Math.min(value + 1, INTRO_LINES.length - 1)), 600);
+    const finish = window.setTimeout(() => setIsLoading(false), reduced ? 0 : 2000);
+    const skip = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsLoading(false);
+    };
+    window.addEventListener("keydown", skip);
+    return () => {
+      window.clearInterval(advance);
+      window.clearTimeout(finish);
+      window.removeEventListener("keydown", skip);
+      document.body.style.overflow = previous;
+    };
+  }, []);
 
-        const interval = setInterval(() => {
-            setIndex((prev) => {
-                if (prev >= BOOT_HOOKS.length - 1) {
-                    clearInterval(interval);
-                    // Wait slightly longer on the final "Online" message
-                    setTimeout(() => {
-                        setIsLoading(false);
-                    }, 1000);
-                    return prev;
-                }
-                return prev + 1;
-            });
-        }, 800);
+  useEffect(() => {
+    if (!isLoading) document.body.style.overflow = "";
+  }, [isLoading]);
 
-        return () => {
-            clearInterval(interval);
-            // Restore scroll if component unmounts unexpectedly
-            document.body.style.overflow = "";
-        };
-    }, []);
-
-    // Removed immediate scroll restore to prevent layout shift during exit animation.
-    // Scroll restore will happen in AnimatePresence onExitComplete instead.
-
-    return (
-        <AnimatePresence onExitComplete={() => {
-            // Restore scroll only AFTER the exit animation finishes
-            document.body.style.overflow = "";
-        }}>
-            {isLoading && (
-                <motion.div
-                    // The main overlay background
-                    className="fixed inset-0 z-[999] flex items-center justify-center bg-[#09090B] text-zinc-100"
-
-                    // Exit animation: Ultra-smooth fade out with slight blur
-                    exit={{ opacity: 0, filter: "blur(10px)" }}
-                    transition={{
-                        duration: 1.2,
-                        ease: "easeOut",
-                    }}
-                >
-                    <AnimatePresence mode="wait">
-                        <motion.h1
-                            key={index}
-                            className="absolute text-2xl md:text-5xl font-medium tracking-tighter"
-
-                            // Sleek micro-bounce for text enter/exit
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            {BOOT_HOOKS[index]}
-                        </motion.h1>
-                    </AnimatePresence>
-                </motion.div>
-            )}
-        </AnimatePresence>
-    );
+  return <AnimatePresence>
+    {isLoading && <motion.div
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-[#09090B] text-zinc-100"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.p key={index} className="absolute text-2xl md:text-5xl font-medium tracking-tighter"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}>
+          {INTRO_LINES[index]}
+        </motion.p>
+      </AnimatePresence>
+      <button onClick={() => setIsLoading(false)} className="absolute bottom-10 rounded-full border border-white/20 px-5 py-2 text-sm hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4">
+        Skip intro
+      </button>
+    </motion.div>}
+  </AnimatePresence>;
 }

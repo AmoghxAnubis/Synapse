@@ -7,7 +7,6 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.concurrency import run_in_threadpool
-from dotenv import load_dotenv
 from .core.config import BACKEND_DIR, DATA_DIR, MAX_UPLOAD_BYTES
 from .core.security import api_token, require_session
 from .core.storage import Storage
@@ -22,7 +21,6 @@ from .schemas import (ActionPreview, AgentCreate, AgentUpdate, IntegrationConnec
                       Meetings, ModeRequest, Platform, Query, SearchRequest,
                       Settings, TerminalRequest, URLIngest)
 
-load_dotenv(BACKEND_DIR / ".env")
 logger = logging.getLogger("synapse")
 
 

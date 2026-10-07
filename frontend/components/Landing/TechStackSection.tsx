@@ -6,9 +6,9 @@ import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 const stackCards = [
     {
         num: "01",
-        title: "High-Speed API Engine",
+        title: "Local API Engine",
         subtitle: "Backend",
-        desc: "Async Python backend handling concurrent requests at blazing speed — zero blocking, maximum throughput.",
+        desc: "FastAPI serves authenticated local requests, with bounded background jobs for document imports.",
     },
     {
         num: "02",
@@ -20,13 +20,13 @@ const stackCards = [
         num: "03",
         title: "Local Language Model",
         subtitle: "Inference",
-        desc: "On-device inference — your prompts never leave the machine. Complete privacy by default.",
+        desc: "Ollama generates answers on your device. Web search and connected features require explicit choices.",
     },
     {
         num: "04",
-        title: "Neural Processing Unit",
+        title: "Local Embedding Runtime",
         subtitle: "Hardware",
-        desc: "Hardware-accelerated AI inference via dedicated NPU silicon — zero GPU dependency, instant response.",
+        desc: "ONNX embeddings run on CPU today. Compatible GPU/NPU providers require installation and testing.",
     },
 ] as const;
 
@@ -126,7 +126,7 @@ export default function TechStackSection() {
                     <div className="flex items-center gap-3">
                         <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
                         <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
-                            Fully local · Zero cloud · Your hardware
+                            Local inference · Optional connections · Your hardware
                         </p>
                         <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
                     </div>

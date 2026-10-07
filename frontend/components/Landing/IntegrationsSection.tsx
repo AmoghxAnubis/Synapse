@@ -35,30 +35,30 @@ const integrations = [
     {
         icon: GitPullRequest,
         name: "GitHub",
-        desc: "Sync repositories, pull requests, issues, and code reviews into local memory.",
+        desc: "Import selected repository READMEs, issue and PR descriptions, and conversation comments.",
         tag: "Code & Reviews",
-        syncText: "Pulling commits...",
+        syncText: "README & issue content",
     },
     {
         icon: MessageSquare,
         name: "Slack",
-        desc: "Pull saved messages, channel threads, and team conversations for contextual answers.",
-        tag: "Messages & Threads",
-        syncText: "Ingesting messages...",
+        desc: "Import message history from selected channels accessible to your bot.",
+        tag: "Channel History",
+        syncText: "Selected channel history",
     },
     {
         icon: BookOpen,
         name: "Notion",
-        desc: "Ingest workspace docs, databases, meeting notes, and wikis for deep RAG queries.",
-        tag: "Docs & Databases",
-        syncText: "Indexing pages...",
+        desc: "Import selected shared pages and their nested text blocks into local memory.",
+        tag: "Pages & Text",
+        syncText: "Shared page content",
     },
     {
         icon: LayoutGrid,
         name: "Jira",
-        desc: "Sync active sprint tickets, epics, stories, and bug reports into your knowledge base.",
-        tag: "Sprints & Tickets",
-        syncText: "Syncing tickets...",
+        desc: "Import issue descriptions, status and available comments from selected Jira Cloud projects.",
+        tag: "Projects & Issues",
+        syncText: "Selected project issues",
     },
 ];
 
@@ -189,8 +189,8 @@ export default function IntegrationsSection() {
                         Pull your world into Synapse
                     </h2>
                     <p className="mt-5 max-w-lg text-sm text-zinc-500 sm:text-base dark:text-zinc-400">
-                        Connect your platforms and let Synapse ingest PRs, messages,
-                        docs, and tickets into local ChromaDB — zero cloud leakage.
+                        Choose the repositories, pages, projects, or channels to import.
+                        Sync contacts the provider; imported context is stored locally.
                     </p>
                 </FadeIn>
 
@@ -217,7 +217,7 @@ export default function IntegrationsSection() {
                     </Link>
                     <div className="mt-6 flex items-center gap-2 rounded-full border border-zinc-200/80 bg-white/50 px-4 py-2 text-xs text-zinc-500 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
                         <Shield className="h-3.5 w-3.5 text-zinc-400" />
-                        API keys stay on your machine. Data is pulled, never pushed.
+                        Credentials stay in your OS credential store. External writes require approval.
                     </div>
                 </FadeIn>
             </div>

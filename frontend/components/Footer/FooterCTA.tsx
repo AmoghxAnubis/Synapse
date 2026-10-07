@@ -18,8 +18,8 @@ export default function FooterCTA() {
                     Ready to deploy your local AI?
                 </h2>
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-                    Start the backend, open the dashboard, and let Synapse orchestrate
-                    your workflow — entirely on your machine.
+                    Start the local services, pair your browser, and import a document.
+                    Inspect the evidence behind your first answer.
                 </p>
 
                 {/* CTA button */}
@@ -38,8 +38,7 @@ export default function FooterCTA() {
                 {/* Command snippet */}
                 <div className="pointer-events-auto mt-8 rounded-xl border border-white/80 bg-white/60 px-5 py-3 font-mono text-sm text-zinc-600 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
                     <Terminal className="mr-2 inline h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" />
-                    <span className="text-zinc-900 dark:text-zinc-100">$</span> cd backend && python -m
-                    uvicorn app.main:app --reload
+                    <span className="text-zinc-900 dark:text-zinc-100">backend:</span> ./venv/Scripts/python.exe -m app.main
                 </div>
             </div>
         </div>

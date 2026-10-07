@@ -249,3 +249,12 @@
     border: 1px solid rgba(16, 185, 129, 0.2);
   }
 }
+/* Landing navigation and motion preferences */
+section[id] { scroll-margin-top: 6rem; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

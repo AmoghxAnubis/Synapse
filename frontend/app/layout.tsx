@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Synapse ? Your local AI workspace",
+  title: "Synapse — Your personal AI operating system",
   description: "Private document memory, cited answers, and controlled actions with local inference.",
 };
 

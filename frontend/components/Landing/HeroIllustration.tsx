@@ -13,7 +13,8 @@ export default function HeroIllustration() {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const isDark = resolvedTheme === "dark";
-        const ctx = canvas.getContext("2d")!;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
 
         // ── helpers ──────────────────────────────────────────────
         const dpr = () => window.devicePixelRatio || 1;
@@ -148,7 +149,9 @@ export default function HeroIllustration() {
             ctx.fillStyle = botFade;
             ctx.fillRect(0, 0, cw, ch);
 
-            rafRef.current = requestAnimationFrame(draw);
+            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                rafRef.current = requestAnimationFrame(draw);
+            }
         };
 
         // ── intersection observer ────────────────────────────────
@@ -169,6 +172,9 @@ export default function HeroIllustration() {
 
         // Initial start (optimistic)
         isVisibleRef.current = true;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            isVisibleRef.current = false;
+        }
         draw();
 
         return () => {

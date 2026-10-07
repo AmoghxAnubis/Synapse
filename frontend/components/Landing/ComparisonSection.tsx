@@ -22,26 +22,26 @@ const comparisonData: {
         {
             title: "Data Privacy",
             icon: Shield,
-            bad: "Sends private context to public cloud servers. Local OS search is shallow and disconnected.",
-            good: "Zero-Knowledge Local RAG. Your data never leaves the device — ever.",
+            bad: "Cloud assistants can require sending context to a service. Filename search may miss meaning inside a document.",
+            good: "Local embeddings and generation. Connected sources and web search are optional and disclose their network use.",
         },
         {
             title: "Context Depth",
             icon: BrainCircuit,
-            bad: "Great reasoning, but blind to local files. OS search matches filenames, not meaning.",
-            good: "Full Semantic Memory. Understands your PDFs, code, and docs at a deep level.",
+            bad: "Files spread across apps can require manual copying or repeated searches.",
+            good: "Search imported documents by meaning, then inspect supporting passages and source references.",
         },
         {
             title: "Latency & Speed",
             icon: Cpu,
-            bad: "Dependent on internet and server load. Complex queries stall behind queues.",
-            good: "Hardware Accelerated. Instant response via local NPU/GPU — zero network round-trip.",
+            bad: "Cloud response times depend on connectivity and service load.",
+            good: "Local inference avoids a cloud generation round trip. Speed depends on your model and hardware.",
         },
         {
             title: "OS Action",
             icon: Layers,
-            bad: "A passive chatbot that can't touch your system. OS search opens apps, nothing more.",
-            good: "Active Orchestrator. Switches modes, manages windows & launches tools on your behalf.",
+            bad: "Actions often require moving between separate apps and tools.",
+            good: "Preview and approve supported app launches, messages and issues. Advanced desktop workflows are planned.",
         },
     ];
 
@@ -163,7 +163,7 @@ export default function ComparisonSection() {
                         className="gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 text-xs font-medium text-zinc-500 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-400"
                     >
                         <Shield className="h-3.5 w-3.5 text-emerald-500" />
-                        100% local inference · zero cloud leakage · your hardware, your data
+                        Local inference · optional connections · actions you approve
                     </Badge>
                 </motion.div>
             </div>
