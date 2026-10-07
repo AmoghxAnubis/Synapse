@@ -54,7 +54,7 @@ npm run start
 
 Both services bind to loopback through the supplied scripts. Open http://localhost:3000, copy the local pairing token from `backend/.synapse/api-token`, and pair your browser. The token is a secret; do not share it or paste it into public logs. A paired browser receives an HttpOnly, SameSite=Strict cookie with a one-day lifetime.
 
-In Settings, select the Ollama model you pulled. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Knowledge requires the embedding model.
+When no model setting has been saved, Synapse selects an available installed Ollama model if the default is absent. In Settings, confirm or change that selection. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Knowledge requires the embedding model.
 
 For development, use `npm run dev`. Environment examples contain only non-secret placeholders.
 
@@ -114,9 +114,11 @@ backend/venv/Scripts/python.exe -m pip check
 cd frontend
 npm run lint -- --max-warnings=0
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=high
 ~~~
 
 Tests never send real messages or create GitHub issues. The real embedding test runs only when its local model is already provisioned; CI skips it without downloading assets. Existing import-time live mutation scripts were retired.
 
 See [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for completed changes, validation evidence, and remaining release work.
+
+Use [PROJECT_TRACKER.md](PROJECT_TRACKER.md) for the current task list, progress, priorities, time estimates, and activity log.

@@ -25,7 +25,7 @@ Updated 7 October 2026. This records the implementation following [the baseline 
 - Frontend: strict lint with zero warnings and production build passed.
 - Dependency audit: full `npm audit` reported **zero vulnerabilities** at verification time. This is a time-specific result, not a permanent security guarantee.
 - Actual document-to-answer smoke test: imported a synthetic source, retrieved it, generated the correct budget answer with a citation through installed Ollama `llama3:latest`, persisted a follow-up, confirmed unchanged reimport deduplication, and removed the synthetic source/conversation afterwards.
-- The first cold real answer took **50.79 seconds** on this machine. Streaming is implemented, but first-token latency, warm latency, peak RAM, and long-session performance have not yet been systematically benchmarked.
+- The first cold real answer took **50.79 seconds** on this machine. A final repeat after the connection/context changes completed correctly in **11.57 seconds**, including successful follow-up and deduplication checks. These single samples are not a controlled performance comparison. Streaming is implemented, but first-token latency, cold/warm distributions, peak RAM, and long-session performance have not yet been systematically benchmarked.
 - Production HTTP checks: pairing produces an HttpOnly SameSite=Strict cookie; unpaired and cross-origin requests are blocked; workspace routes return successfully; logout removes API access. This caught and fixed a localhost/127.0.0.1 origin mismatch.
 - Both original vector stores were backed up and their text migrated. A portable archive was created and restored into a new directory successfully.
 - Current tracked runtime-file and common credential-pattern scans found no matching files/secrets. This is not a full history or credential audit.
@@ -43,7 +43,7 @@ Local databases are not encrypted by Synapse. OS account and disk security remai
 
 ## GitHub status
 
-The baseline main branch was verified against live GitHub with no open PRs/issues and no unresolved index conflicts. During implementation another process advanced and published repository commits; this coding session did not issue commit or push commands. Do not assume a quiet working tree proves that nothing changed. Final branch alignment and conflict checks should be read alongside the current Git log.
+The baseline main branch was verified against live GitHub with no open PRs/issues and no unresolved index conflicts. During implementation another process advanced and published repository commits; this coding session did not issue commit or push commands. Do not assume a quiet working tree proves that nothing changed. The final live remote check matched local HEAD to GitHub main at b8150828fc3088e6f1c220d7625815655831c7de, with no unresolved index conflicts or diff whitespace errors. Subsequent report commits may advance that revision; read this alongside the current Git log.
 
 No repository license has been selected. Existing historical runtime content has not been rewritten or purged; assess it before deciding whether a coordinated history rewrite or credential rotation is necessary.
 
