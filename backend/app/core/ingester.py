@@ -1,4 +1,5 @@
 import io
+import zipfile
 from pathlib import Path
 from .config import MAX_TEXT_CHARS, MAX_UPLOAD_BYTES
 
@@ -18,8 +19,21 @@ class FileIngester:
             reader = PdfReader(io.BytesIO(content))
             if reader.is_encrypted:
                 raise ValueError("Unlock the PDF before uploading it.")
-            pages = [{"page": i + 1, "text": page.extract_text() or ""} for i, page in enumerate(reader.pages)]
+            if len(reader.pages) > 1000:
+                raise ValueError("PDFs must contain at most 1,000 pages; split the file.")
+            pages = []
+            total = 0
+            for i, page in enumerate(reader.pages):
+                text = page.extract_text() or ""
+                total += len(text)
+                if total > MAX_TEXT_CHARS:
+                    raise ValueError("Document text is too large; split the file.")
+                pages.append({"page": i + 1, "text": text})
         elif suffix == ".docx":
+            with zipfile.ZipFile(io.BytesIO(content)) as archive:
+                entries = archive.infolist()
+                if len(entries) > 2000 or sum(entry.file_size for entry in entries) > MAX_UPLOAD_BYTES:
+                    raise ValueError("DOCX expanded content is too large; split the file.")
             from docx import Document
             document = Document(io.BytesIO(content))
             parts = [p.text for p in document.paragraphs]
