@@ -172,9 +172,6 @@ export default function HeroIllustration() {
 
         // Initial start (optimistic)
         isVisibleRef.current = true;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            isVisibleRef.current = false;
-        }
         draw();
 
         return () => {
