@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2, RefreshCw, Link2, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";

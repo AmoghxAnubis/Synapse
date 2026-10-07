@@ -42,7 +42,7 @@ class ActionService:
             resource = params["repository"] if service == "github" else params["channel"]
             if resource not in self.integrations.config(service)["resources"]:
                 raise PermissionError("The destination is outside the selected sources.")
-            description = f"Create issue in {resource}: {params['title']}" if service == "github" else f"Send to {service} channel {resource}: {params['text']}"
+            description = f"Create issue in {resource}: {params['title']}\n\n{params.get('body', '')}" if service == "github" else f"Send to {service} channel {resource}: {params['text']}"
         identifier = str(uuid.uuid4())
         record = {"id": identifier, "action": action, "params": dict(params), "agent_id": agent["id"], "description": description, "expires": time.time() + 300}
         with self.lock:

@@ -20,8 +20,8 @@ export default function ActionsPage() {
     {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
     <form className="rounded-xl border p-6 space-y-5" onSubmit={async e => {
       e.preventDefault(); setBusy(true); setError("");
-      const params = action === "open_app" ? { app: destination } : action === "github.create_issue" ? { repository: destination, title, body } : { channel: destination, text: body };
-      try { setPreview(await previewAction(action, params as Record<string, string>, agentId)); } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
+      const params: Record<string, string> = action === "open_app" ? { app: destination } : action === "github.create_issue" ? { repository: destination, title, body } : { channel: destination, text: body };
+      try { setPreview(await previewAction(action, params, agentId)); } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); }
     }}>
       <label className="block text-sm">Agent<select value={agentId} onChange={e => setAgentId(Number(e.target.value))} className={field}>{agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label>
       <label className="block text-sm">Action<select value={action} onChange={e => { setAction(e.target.value); setDestination(e.target.value === "open_app" ? "notepad" : ""); setPreview(null); }} className={field}>

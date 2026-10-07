@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { GitPullRequest, MessageSquare, BookOpen, LayoutGrid, Plug, ArrowRight, Shield } from "lucide-react";
 import Link from "next/link";

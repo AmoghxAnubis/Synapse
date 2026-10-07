@@ -38,7 +38,10 @@ class LLM:
 
 @pytest.fixture
 def storage(tmp_path):
-    return Storage(tmp_path / "metadata.sqlite3")
+    store = Storage(tmp_path / "metadata.sqlite3")
+    store.set("agents", [])
+    store.set("meetings", {"notes": "", "tasks": []})
+    return store
 
 
 @pytest.fixture
