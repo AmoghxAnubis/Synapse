@@ -6,10 +6,12 @@ class LocalLLM:
     def __init__(self, model="llama3.2:3b", base_url="http://127.0.0.1:11434"):
         self.model = model
         self.base_url = base_url.rstrip("/")
+        self.session = requests.Session()
+        self.session.trust_env = False
 
     def status(self):
         try:
-            response = requests.get(self.base_url + "/api/tags", timeout=3)
+            response = self.session.get(self.base_url + "/api/tags", timeout=3)
             response.raise_for_status()
             models = [m["name"] for m in response.json().get("models", [])]
             ready = self.model in models or self.model + ":latest" in models
@@ -35,7 +37,7 @@ class LocalLLM:
         messages.extend(reversed(recent))
         messages.append({"role": "user", "content": f"Evidence:\n{context[:24000]}\n\nQuestion:\n{question}"})
         try:
-            with requests.post(self.base_url + "/api/chat", json={"model": self.model, "messages": messages, "stream": True, "options": {"temperature": 0.1, "num_predict": 2048}}, timeout=(5, 120), stream=True) as response:
+            with self.session.post(self.base_url + "/api/chat", json={"model": self.model, "messages": messages, "stream": True, "options": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 8192}}, timeout=(5, 120), stream=True) as response:
                 response.raise_for_status()
                 for line in response.iter_lines():
                     if line:

@@ -49,7 +49,7 @@ export default function AgentsPage() {
     {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
     <div className="grid lg:grid-cols-3 gap-6"><nav aria-label="Agents" className="space-y-3">{agents.map(a => <div key={a.id} className={"rounded-xl border p-4 " + (selected === a.id ? "border-indigo-500" : "")}>
       <button onClick={() => setSelected(a.id)} className="text-left w-full"><span className="font-medium text-sm">{a.name}</span><p className="mt-2 text-xs text-neutral-500">{a.description}</p></button>
-      {a.id >= 100 && <button className="mt-3 text-xs text-red-500" onClick={async () => {
+      {![1, 2, 3].includes(a.id) && <button className="mt-3 text-xs text-red-500" onClick={async () => {
         if (!confirm("Delete " + a.name + "?")) return;
         try { await deleteAgent(a.id); setAgents(prev => prev.filter(v => v.id !== a.id)); if (selected === a.id) setSelected(null); } catch (e) { setError(errorMessage(e)); }
       }}>Delete</button>}

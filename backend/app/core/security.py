@@ -35,5 +35,5 @@ def api_token():
 
 def require_session(request: Request):
     supplied = request.headers.get("authorization", "")
-    if not supplied.startswith("Bearer ") or not hmac.compare_digest(supplied[7:], api_token()):
+    if not supplied.startswith("Bearer ") or not hmac.compare_digest(supplied[7:].encode("utf-8"), api_token().encode("utf-8")):
         raise HTTPException(401, "Pair this browser with your local Synapse backend.")

@@ -2,6 +2,7 @@
 import json
 import re
 import time
+import threading
 from datetime import datetime, timezone
 import keyring
 import httpx
@@ -18,6 +19,7 @@ BASE_URLS = {
 class IntegrationService:
     def __init__(self, storage):
         self.storage = storage
+        self.scope = threading.local()
 
     def _credential(self, platform):
         backend = keyring.get_keyring()
@@ -83,6 +85,14 @@ class IntegrationService:
             headers.pop("Authorization")
             auth = (config["email"], key)
         for attempt in range(3):
+            if not self.storage.get("settings", {}).get("network_enabled", False):
+                raise PermissionError("Connected features are disabled.")
+            if getattr(self.scope, "cancel", None) is not None and self.scope.cancel.is_set():
+                raise InterruptedError("Sync cancelled")
+            if getattr(self.scope, "budget", None) is not None:
+                if self.scope.budget <= 0:
+                    raise ValueError("Sync request limit reached. Narrow the selected sources.")
+                self.scope.budget -= 1
             try:
                 response = httpx.request(method, base + path, headers=headers, auth=auth, params=params, json=body, timeout=20, follow_redirects=False, trust_env=False)
             except httpx.RequestError as exc:
@@ -116,6 +126,15 @@ class IntegrationService:
         raise ValueError("Source exceeds 1,000 records. Narrow the selected source before syncing.")
 
     def documents(self, platform, cancel=None):
+        self.scope.cancel = cancel
+        self.scope.budget = 200
+        try:
+            return self._documents(platform, cancel)
+        finally:
+            self.scope.cancel = None
+            self.scope.budget = None
+
+    def _documents(self, platform, cancel=None):
         config = self.config(platform)
         if not config.get("connected"):
             raise ValueError("Connect the integration first.")

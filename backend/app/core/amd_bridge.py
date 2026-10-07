@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 import numpy as np
 import onnxruntime as ort
+os.environ.setdefault("USE_TORCH", "0")
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("USE_FLAX", "0")
 from transformers import AutoTokenizer
 from .config import DATA_DIR
 
