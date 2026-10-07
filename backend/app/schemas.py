@@ -53,7 +53,7 @@ class Query(StrictModel):
 
 class Settings(StrictModel):
     ollama_url: str = "http://127.0.0.1:11434"
-    model: str = Field(default="llama3", min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_.:/-]+$")
+    model: str = Field(default="llama3.2:3b", min_length=1, max_length=100, pattern=r"^[A-Za-z0-9_.:/-]+$")
     network_enabled: bool = False
     retrieval_max_distance: float = Field(default=0.65, ge=0, le=2)
 

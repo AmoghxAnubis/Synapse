@@ -1,76 +1,122 @@
-# 🧠 Synapse OS Integrations 
+# Synapse
 
-Synapse is a local-first, privacy-centric AI OS assistant. Built to run primarily on local neural processing hardware (AMD Ryzen AI NPUs / simulated GPU clusters via Ollama), Synapse acts as "The Eyes, Voice, and Hands" of your machine.
+A local AI workspace for document memory, cited answers, persistent conversations, selected workspace sources, and explicitly approved actions.
 
-This repository encompasses both the **Next.js Frontend UI** and the **FastAPI + ChromaDB Backend Core**, forming a complete RAG-powered, agentic desktop companion.
+Synapse uses Next.js, FastAPI, local ONNX embeddings, Chroma vectors, transactional SQLite metadata, and Ollama. CPU execution is supported. GPU/NPU use requires an installed compatible provider and is reported from the actual runtime.
 
-## 🚀 Core Philosophy & Features
+## Supported product scope
 
-The overarching architecture is governed by a strict **"Pull Down to Local"** philosophy.
+- PDF, TXT, MD, PY, and DOCX imports, with size validation, background jobs, cancellation, overlapping token-aware chunks, page provenance, and deduplicated replacement.
+- Local, streamed, evidence-grounded chat with persisted conversations and source restrictions.
+- Optional selected GitHub repositories, Notion pages, Jira Cloud projects, Slack channels, and Discord channels. API credentials stay in the OS credential store.
+- Explicit approval for local app launching, GitHub issue creation, and Slack/Discord messages. Chat cannot execute actions.
+- Local meeting notes and tasks. Live audio capture/transcription, window tiling, notification suppression, and interoperable MCP transport are not implemented.
 
-*   **Zero Cloud Leakage:** All document processing, vector embeddings, and language generation (via Llama 3) happen completely disconnected from the cloud. Your data never leaves your OS.
-*   **The Brain (Local Memory):** Utilizes `ChromaDB` for persistent semantic vector storage of documents, logs, and external workspace context.
-*   **The Eyes (Ingestion):** Drag-and-drop document parsers (PDF, text) combined with an expanding suite of external SaaS connections (GitHub, Slack, Notion, Jira) to constantly feed the memory bank.
-*   **The Voice (RAG Chat):** A sleek "Evalis-inspired" interaction interface built on Next.js, Framer Motion, and Tailwind CSS.
-*   **The Hands (Orchestrator):** Autonomic agents capable of executing local OS-level commands (like window tiling, opening apps, or silencing notifications) mapped to specific workflow mental states (Focus, Meeting, Research).
+This is a single-user local application, not a multi-user hosted service. Model quality and hardware performance require evaluation before commercial release.
 
-## 🛠 Tech Stack
+## Setup on Windows
 
-**Frontend (`/frontend`)**
-*   **Framework:** Next.js 16 (React 19) w/ App Router 
-*   **Styling:** Tailwind CSS v4 + `shadcn/ui`
-*   **Animations:** Framer Motion & `tw-animate-css`
-*   **Visuals:** Native aesthetic, glassmorphism arrays, dark/light high-contrast modes
+Use stable Python **3.12** and Node **22.13 or newer**. Prerelease Python 3.15 is not supported by ONNX Runtime.
 
-**Backend (`/backend`)**
-*   **Runtime:** Python 3.11+
-*   **Framework:** FastAPI
-*   **AI Models:** Ollama (Llama 3 generation), HuggingFace embeddings (`all-MiniLM-L6-v2`)
-*   **Database:** Local ChromaDB instance
+From the project root:
 
-## ⚙️ Getting Started
-
-To run Synapse locally, you must spin up both the frontend and the backend services.
-
-### 1. Start the Backend API (FastAPI)
-
-Ensure you have a local instance of [Ollama](https://ollama.com/) running and that you have pulled the required model:
-```bash
-ollama run llama3
-```
-
-Navigate to the `backend` folder, install requirements, and start the Uvicorn server:
-```bash
+~~~powershell
+py -3.12 -m venv backend/venv
+backend/venv/Scripts/python.exe -m pip install -r backend/requirements.lock.txt
 cd backend
-python -m venv venv
-# Windows
-.\venv\Scripts\activate 
-# macOS/Linux
-source venv/bin/activate
+./venv/Scripts/python.exe -m app.provision
+cd ../frontend
+npm ci
+npm run build
+~~~
 
-pip install -r requirements.txt
-python -m app.main
-```
-The Backend API will spool up at `http://localhost:8000`.
+Model provisioning is the explicit network step; it downloads a pinned snapshot into the local data directory. Installation also downloads dependencies.
 
-### 2. Start the Frontend UI (Next.js)
+Install and start [Ollama for Windows](https://docs.ollama.com/windows). Choose a model appropriate for your hardware. The [Llama 3.2 model page](https://ollama.com/library/llama3.2) lists its supported sizes; the 3B variant is about 2 GB.
 
-Open a new terminal, navigate to the `frontend` folder, install packages, and boot the dev server.
-```bash
+~~~powershell
+ollama pull llama3.2:3b
+~~~
+
+Start the backend in one terminal:
+
+~~~powershell
+cd backend
+./venv/Scripts/python.exe -m app.main
+~~~
+
+Start the frontend in another:
+
+~~~powershell
 cd frontend
-npm install
-npm run dev
-```
-The Synapse Dashboard will be accessible at `http://localhost:3000`.
+npm run start
+~~~
 
-## 🔋 Connecting External "Brains"
+Both services bind to loopback through the supplied scripts. Open http://localhost:3000, copy the local pairing token from `backend/.synapse/api-token`, and pair your browser. The token is a secret; do not share it or paste it into public logs. A paired browser receives an HttpOnly, SameSite=Strict cookie with a one-day lifetime.
 
-Synapse supports an *External Integrations Module* that allows you to sync contextual data directly into your ChromaDB vector cache.
+In Settings, select the Ollama model you pulled. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Knowledge requires the embedding model.
 
-Navigate to **Settings -> Integrations** (`/settings/integrations`) in the UI to connect:
-*   **GitHub:** Sync Repositories & Pull Requests
-*   **Slack:** Sync Saved Messages & Channel Context
-*   **Notion:** Sync Workspace Docs & Notes
-*   **Jira:** Sync Active Sprint Tickets
+For development, use `npm run dev`. Environment examples contain only non-secret placeholders.
 
-*(See `/context.md` and `/frontend/design.md` for extended architectural details).*
+## Privacy and connected features
+
+Core embedding and generation calls use local models. Authentication requires no cloud account. Connected features default to **off**. Enable them in Settings only when needed.
+
+- Integration sync contacts the selected provider and pulls selected content into local memory.
+- Web search sends the current question to a search provider and requires an additional chat checkbox.
+- URL import contacts the specified public site; private/loopback destinations and unsafe redirects are blocked.
+- External writes display their destination and content and require explicit, single-use approval.
+- Disconnect removes the credential; imported content remains until you delete its sources.
+
+Local data is not encrypted by Synapse at rest. Protect your OS account, disk, browser profile, pairing token, and backups. Embedding telemetry is disabled. No model downloads occur during ordinary startup or retrieval.
+
+## Integrations
+
+Enable connected features, open Connected Sources, enter a token and explicit source IDs, then validate and sync:
+
+| Platform | Selected sources | Imported content |
+| --- | --- | --- |
+| GitHub | owner/repository | README, issue/PR titles and descriptions, issue conversation comments |
+| Notion | Shared page IDs | Page title and nested text blocks |
+| Jira Cloud | Project keys, workspace URL, account email | Issue summary, description, status, available comments |
+| Slack | Channel IDs accessible to the bot | Channel message history |
+| Discord | Channel IDs accessible to the bot | Message text available to the bot |
+
+The connector checks have mocked API coverage; live account permissions and full vendor behavior still require acceptance testing. Channel threads, attachments, binary files, inline code-review comments, and very large workspaces are outside this initial scope. Limits produce errors instead of silently incomplete success. Bot scopes/intents and workspace policies must permit reads. Sync compares content hashes and reconciles removed sources only after the complete scoped fetch succeeds.
+
+## Data preservation, migration, and backups
+
+Paths are independent of the launch directory. The default is `backend/.synapse`; override `SYNAPSE_DATA_DIR` in backend/.env to choose another location. Runtime data is excluded from Git. Original legacy stores are preserved.
+
+Stop the backend before migration or backup. To preserve both original memory databases and re-embed their text into the stable store:
+
+~~~powershell
+cd backend
+./venv/Scripts/python.exe -m app.migrate
+~~~
+
+Agent and meeting JSON metadata are imported into SQLite on first startup. Vector migration prefixes original source identities to preserve collisions between the two old databases. Migration cannot reconstruct missing historical page references.
+
+Create a portable backup and restore into a **new** directory:
+
+~~~powershell
+./venv/Scripts/python.exe -m app.backup create E:/SynapseBackup.zip
+./venv/Scripts/python.exe -m app.backup restore E:/SynapseBackup.zip --target E:/SynapseRestored
+~~~
+
+Backups contain private document text, vectors, conversations, settings, and metadata. They exclude credential-store secrets, pairing tokens, and model binaries. Restore resets integrations to disconnected. Point SYNAPSE_DATA_DIR at the restored directory and provision the embedding model there before use. Keep the original data until the restored copy is verified.
+
+## Verification
+
+~~~powershell
+backend/venv/Scripts/python.exe -m pytest -c backend/pytest.ini backend/tests
+backend/venv/Scripts/python.exe -m pip check
+cd frontend
+npm run lint -- --max-warnings=0
+npm run build
+npm audit --omit=dev --audit-level=high
+~~~
+
+Tests never send real messages or create GitHub issues. The real embedding test runs only when its local model is already provisioned; CI skips it without downloading assets. Existing import-time live mutation scripts were retired.
+
+See [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for completed changes, validation evidence, and remaining release work.
