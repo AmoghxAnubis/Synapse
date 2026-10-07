@@ -1,90 +1,40 @@
-import onnxruntime as ort
-import numpy as np
-from huggingface_hub import hf_hub_download
-from transformers import AutoTokenizer
+"""Offline ONNX embeddings; model acquisition is an explicit setup step."""
 import os
+from pathlib import Path
+import numpy as np
+import onnxruntime as ort
+from transformers import AutoTokenizer
+from .config import DATA_DIR
+
 
 class AMDBridge:
-    def __init__(self):
-        print("\n--- 🧠 SYNAPSE HARDWARE CHECK ---")
-        self.providers = ort.get_available_providers()
-        
-        # 1. Hardware Detection Logic
-        if 'VitisAIExecutionProvider' in self.providers:
-            print("✅ SUCCESS: AMD Ryzen AI (NPU) Detected.")
-            self.execution_providers = ['VitisAIExecutionProvider']
-            self.hardware_mode = "NPU"
-        elif 'ROCMExecutionProvider' in self.providers:
-            print("✅ SUCCESS: AMD ROCm (GPU) Detected.")
-            self.execution_providers = ['ROCMExecutionProvider']
-            self.hardware_mode = "GPU"
-        else:
-            print("⚠️ AMD Hardware not found.")
-            print("🔄 ACTIVATE: Compatibility Mode (CPU Fallback).")
-            self.execution_providers = ['CPUExecutionProvider']
-            self.hardware_mode = "CPU_MOCK"
-
-        # 2. Load the Model (ONNX)
-        self.model_name = "optimum/all-MiniLM-L6-v2"
-        self.model_path = self._get_model()
-        self.session = ort.InferenceSession(self.model_path, providers=self.execution_providers)
-        
-        # 3. Load the Tokenizer
-        print("📖 Loading Tokenizer...")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-
-    def _get_model(self):
-        return hf_hub_download(repo_id=self.model_name, filename="model.onnx")
+    def __init__(self, model_dir=None):
+        directory = Path(model_dir or os.getenv("SYNAPSE_EMBEDDING_DIR", str(DATA_DIR / "models" / "minilm")))
+        model_path = directory / "model.onnx"
+        if not model_path.exists():
+            model_path = directory / "onnx" / "model.onnx"
+        if not model_path.exists():
+            raise RuntimeError("Embedding model is not installed. Run: python -m app.provision")
+        available = ort.get_available_providers()
+        requested = os.getenv("SYNAPSE_ONNX_PROVIDER", "CPUExecutionProvider")
+        if requested not in available:
+            raise RuntimeError(f"Requested ONNX provider {requested} is unavailable. Available: {available}")
+        self.session = ort.InferenceSession(str(model_path), providers=[requested, "CPUExecutionProvider"] if requested != "CPUExecutionProvider" else [requested])
+        self.providers = self.session.get_providers()
+        self.hardware_mode = {"CPUExecutionProvider": "CPU", "ROCMExecutionProvider": "GPU", "VitisAIExecutionProvider": "NPU", "DmlExecutionProvider": "GPU"}.get(self.providers[0], self.providers[0])
+        self.tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True)
 
     def embed_text(self, text):
-        """
-        Real vectorization logic with robust input handling.
-        """
-        # A. Tokenize the text
-        inputs = self.tokenizer(text, return_tensors="np", padding=True, truncation=True)
-        
-        # B. PREPARE INPUTS (The Fix: Handle missing token_type_ids)
-        # Some tokenizers don't return token_type_ids for single sentences, 
-        # but the ONNX model expects them. We create them manually if missing.
-        
-        input_ids = inputs['input_ids'].astype(np.int64)
-        attention_mask = inputs['attention_mask'].astype(np.int64)
-        
-        if 'token_type_ids' in inputs:
-            token_type_ids = inputs['token_type_ids'].astype(np.int64)
+        inputs = self.tokenizer(text, return_tensors="np", padding=True, truncation=True, max_length=256)
+        if "token_type_ids" not in inputs:
+            inputs["token_type_ids"] = np.zeros_like(inputs["input_ids"])
+        feed = {spec.name: inputs[spec.name].astype(np.int64) for spec in self.session.get_inputs()}
+        outputs = self.session.run(None, feed)
+        hidden = outputs[0]
+        if hidden.ndim == 3:
+            mask = inputs["attention_mask"][..., None]
+            vector = (hidden * mask).sum(axis=1) / np.clip(mask.sum(axis=1), 1e-9, None)
         else:
-            # Create a matrix of zeros with the same shape as input_ids
-            token_type_ids = np.zeros_like(input_ids).astype(np.int64)
-
-        ort_inputs = {
-            'input_ids': input_ids,
-            'attention_mask': attention_mask,
-            'token_type_ids': token_type_ids
-        }
-        
-        # C. Run Inference
-        outputs = self.session.run(None, ort_inputs)
-        
-        # D. Mean Pooling
-        last_hidden_state = outputs[0]
-        embedding = self._mean_pooling(last_hidden_state, attention_mask)
-        
-        return embedding[0].tolist()
-
-    def _mean_pooling(self, model_output, attention_mask):
-        token_embeddings = model_output
-        input_mask_expanded = np.expand_dims(attention_mask, -1)
-        input_mask_expanded = np.broadcast_to(input_mask_expanded, token_embeddings.shape)
-        sum_embeddings = np.sum(token_embeddings * input_mask_expanded, axis=1)
-        sum_mask = np.clip(input_mask_expanded.sum(axis=1), a_min=1e-9, a_max=None)
-        return sum_embeddings / sum_mask
-
-# TEST RUNNER
-if __name__ == "__main__":
-    bridge = AMDBridge()
-    test_sentence = "AMD Ryzen AI is powerful."
-    vector = bridge.embed_text(test_sentence)
-    
-    print(f"\n🧪 TEST: Text converted to vector successfully.")
-    print(f"📏 Vector Dimensions: {len(vector)}") # Should be 384
-    print(f"🔢 First 5 numbers: {vector[:5]}")
+            vector = hidden
+        normalized = vector / np.clip(np.linalg.norm(vector, axis=1, keepdims=True), 1e-9, None)
+        return normalized[0].tolist()

@@ -1,94 +1,81 @@
-import chromadb
-import uuid
-from app.core.amd_bridge import AMDBridge
+"""Deterministic document replacement with provenance and cosine retrieval."""
+import hashlib
+import threading
+from .config import DATA_DIR
+from .ingester import FileIngester
+
 
 class MemoryBank:
-    def __init__(self):
-        print("💾 Initializing Synapse Memory (ChromaDB)...")
-        # Initialize the AMD Bridge for embeddings
-        self.brain = AMDBridge()
-        
-        # Initialize Local Database (Persistent)
-        self.client = chromadb.PersistentClient(path="./synapse_memory_db")
-        
-        # Create or Get the collection (Like a folder for memories)
-        self.collection = self.client.get_or_create_collection(name="project_alpha")
+    def __init__(self, brain=None, client=None):
+        if brain is None:
+            from .amd_bridge import AMDBridge
+            brain = AMDBridge()
+        if client is None:
+            import chromadb
+            from chromadb.config import Settings
+            client = chromadb.PersistentClient(path=str(DATA_DIR / "vectors"), settings=Settings(anonymized_telemetry=False))
+        self.brain = brain
+        self.client = client
+        self.collection = client.get_or_create_collection(name="synapse_v1", metadata={"hnsw:space": "cosine"})
+        self.lock = threading.RLock()
 
-    def memorize(self, text, metadata={"source": "user_input"}):
-        """
-        1. Uses AMD Bridge to turn text -> vector.
-        2. Saves text + vector to ChromaDB.
-        """
-        # Step 1: NPU Workload (Embedding)
-        vector = self.brain.embed_text(text)
-        
-        # Step 2: Storage
-        doc_id = str(uuid.uuid4())
-        self.collection.add(
-            ids=[doc_id],
-            documents=[text],
-            embeddings=[vector],
-            metadatas=[metadata]
-        )
-        return doc_id
+    def ingest_document(self, source, pages, url="", platform="local", cancel=None):
+        document_id = hashlib.sha256(source.encode()).hexdigest()
+        text_hash = hashlib.sha256("\n".join(p["text"] for p in pages).encode()).hexdigest()
+        with self.lock:
+            existing = self.collection.get(where={"document_id": document_id}, include=["metadatas"])
+            if existing["ids"] and all(m.get("content_hash") == text_hash for m in existing["metadatas"]):
+                return {"chunks_processed": len(existing["ids"]), "unchanged": True}
+            texts, metadata, ids, vectors = [], [], [], []
+            for page in pages:
+                for chunk in FileIngester.chunk_text(page["text"], tokenizer=self.brain.tokenizer):
+                    if cancel and cancel.is_set():
+                        raise InterruptedError("Import cancelled")
+                    index = len(ids)
+                    ids.append(f"{document_id}:{index}")
+                    texts.append(chunk)
+                    metadata.append({"source": source, "document_id": document_id, "page": page.get("page", 1), "chunk": index + 1, "url": url, "platform": platform, "content_hash": text_hash})
+                    vectors.append(self.brain.embed_text(chunk))
+            if not ids:
+                raise ValueError("Document has no readable text")
+            if cancel and cancel.is_set():
+                raise InterruptedError("Import cancelled")
+            # Prepare every vector before replacing existing records.
+            for start in range(0, len(ids), 100):
+                self.collection.upsert(ids=ids[start:start+100], documents=texts[start:start+100], embeddings=vectors[start:start+100], metadatas=metadata[start:start+100])
+            stale = list(set(existing["ids"]) - set(ids))
+            if stale:
+                self.collection.delete(ids=stale)
+            return {"chunks_processed": len(ids), "unchanged": False}
 
-    def recall(self, query_text, n_results=3, source_filters=None):
-        """
-        1. Turns query -> vector.
-        2. Finds closest vectors in DB.
-        """
-        # Step 1: NPU Workload
-        query_vector = self.brain.embed_text(query_text)
-        
-        # Step 2: Retrieval with optional filtering
-        where_clause = None
-        if source_filters and len(source_filters) > 0:
-            if len(source_filters) == 1:
-                where_clause = {"source": source_filters[0]}
-            else:
-                where_clause = {"source": {"$in": source_filters}}
-
-        results = self.collection.query(
-            query_embeddings=[query_vector],
-            n_results=n_results,
-            where=where_clause
-        )
-        return results
+    def recall(self, query_text, n_results=5, source_filters=None, max_distance=0.65):
+        with self.lock:
+            count = self.collection.count()
+            if not count or source_filters == []:
+                return []
+            where = {"source": {"$in": source_filters}} if source_filters else None
+            results = self.collection.query(query_embeddings=[self.brain.embed_text(query_text)], n_results=min(n_results, count), where=where, include=["documents", "metadatas", "distances"])
+            records = []
+            for text, meta, distance, identifier in zip(results["documents"][0], results["metadatas"][0], results["distances"][0], results["ids"][0]):
+                if distance <= max_distance:
+                    records.append({"id": identifier, "source": meta["source"], "page": meta.get("page", 1), "chunk": meta.get("chunk", 1), "url": meta.get("url", ""), "text": text, "distance": round(distance, 4)})
+            return records
 
     def get_sources(self):
-        """
-        Retrieves all unique source names from metadata.
-        Returns a list of dictionaries: [{"name": "file.pdf", "chunks": 5}]
-        """
-        results = self.collection.get(include=['metadatas'])
-        metadatas = results.get('metadatas', [])
-        
-        source_counts = {}
-        for meta in metadatas:
-            source = meta.get('source', 'unknown')
-            # Skip internal tags if needed, but for now we show all
-            source_counts[source] = source_counts.get(source, 0) + 1
-            
-        return [{"name": name, "chunks": count} for name, count in source_counts.items()]
+        with self.lock:
+            results = self.collection.get(include=["metadatas"])
+        records = {}
+        for meta in results["metadatas"]:
+            name = meta["source"]
+            records.setdefault(name, {"name": name, "chunks": 0, "url": meta.get("url", ""), "platform": meta.get("platform", "local")})
+            records[name]["chunks"] += 1
+        return sorted(records.values(), key=lambda row: row["name"])
 
-    def delete_source(self, source_name):
-        """
-        Deletes all chunks associated with a specific source.
-        """
-        self.collection.delete(where={"source": source_name})
-        return True
+    def source_chunks(self, source):
+        with self.lock:
+            results = self.collection.get(where={"source": source}, include=["documents", "metadatas"])
+        return [{"id": identifier, "text": text, **meta} for identifier, text, meta in zip(results["ids"], results["documents"], results["metadatas"])]
 
-# TEST RUNNER
-if __name__ == "__main__":
-    mem = MemoryBank()
-    
-    # Teach it something
-    print("\n📝 Learning...")
-    mem.memorize("The hackathon project is called Synapse.")
-    mem.memorize("Synapse uses AMD Ryzen AI for embeddings.")
-    
-    # Ask it something
-    print("🕵️ Searching for 'AMD'...")
-    results = mem.recall("What does Synapse use?")
-    
-    print(f"✅ Found: {results['documents'][0][0]}")
+    def delete_source(self, source):
+        with self.lock:
+            self.collection.delete(where={"source": source})
