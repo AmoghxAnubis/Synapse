@@ -14,7 +14,7 @@ Public hosting and local inference are separate concerns. Cloudflare hosting mus
 
 ## Progress and accounting
 
-- Checklist: **18 of 46 tasks complete = 39%**. Visual acceptance tasks remain waiting.
+- Checklist: **19 of 47 tasks complete = 40%**. A01 adds the agreed framework integration; visual acceptance tasks remain waiting. Readiness assessments are unchanged pending acceptance.
 - Baseline repairs: approximately **95%** complete; remaining acceptance is not a claim of unimplemented core repairs.
 - Small local beta readiness: approximately **65%**.
 - Paid release readiness: approximately **30%**.
@@ -74,6 +74,14 @@ Completion above means the implemented repair passed its stated checks. Broader 
 | Q03 | P1 | TODO | 4-8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
+
+## Framework integration agreed 8 October 2026
+
+| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
+| --- | --- | --- | --- | --- | --- |
+| A01 | P1 | DONE | 0 remaining for initial integration | Existing RAG API | LangChain ChatOllama adapter and deterministic LangGraph scoped RAG are active behind both chat endpoints. API, SSE, source restrictions, history, abstention, cancellation, failure cleanup and tracing suppression verified: 71 tests passed, 1 real-embedding test skipped; dependency consistency passed. Real llama3.2:latest produced/persisted a cited answer and factual follow-up, but omitted the follow-up citation. That Q01 quality diagnostic remains unresolved; full ONNX/model acceptance requires provisioned assets. |
+
+Kafka and durable action/checkpoint workflows are outside A01. Do not treat framework adoption as completing Q01-Q03 or beta acceptance.
 
 ## Phase 4 - live connector acceptance, 15-30 hours
 
@@ -156,6 +164,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 5. Mark WAITING with the exact external dependency when appropriate. Never mark tested-by-mocks work as live accepted.
 6. Add newly agreed work with a stable ID. Do not silently expand scope or replace the user's approved design.
 7. Report completed work, next tasks, blockers and revised estimate in each development handover. Updates are session-based, not an unattended monitoring service.
+8. Per the user on 8 October 2026, update relevant Markdown files as work progresses and commit completed, verified work on `ayush_lang`. Do not commit development work on `main`. Pushing requires separate authorization.
 
 ## Activity log
 
@@ -172,3 +181,5 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-08 | Q01 started while browser acceptance waits | evaluations/corpus.json and scripts/evaluate_retrieval.py added; disposable synthetic storage; generation metrics pending |
 | 2026-10-08 | Synthetic retrieval baseline verified | 8/8 evidence/top-one hits, 4/4 scope checks, 3/3 unrelated questions returned no evidence. Windows temp cleanup isolated in child process; 58 backend tests passed. Q01 remains IN PROGRESS; generation and representative acceptance pending |
 | 2026-10-08 | Q01 real-answer baseline reviewed | 16 cases completed on isolated real API/Ollama; 9/9 fact/evidence checks, 7/7 abstentions after lexical scorer fix, real follow-up and scope/persistence passed. Original and rescored artifacts preserved; 61 backend tests passed. Q01 remains IN PROGRESS; Cloudflare deferred |
+| 2026-10-08 | A01 initial LangChain/LangGraph integration complete | On ayush_lang: local ChatOllama adapter, scoped RAG graph, unchanged chat API/SSE and existing SQLite turn persistence. 71 tests passed/1 skipped in isolated Python 3.12.13; uv pip check passed; existing locked package versions retained. Tracked synthetic-retrieval/real-Ollama smoke verifies API and persistence but exits 1 on omitted follow-up [1]. Q01 still open; Kafka/checkpointed actions not implemented. No commit/push performed. |
+| 2026-10-08 | Completed-work branch commits authorized | Keep Markdown context/status updated and commit completed work on ayush_lang, never main. A01 implementation, tests and reports are the first completed-work commit; see Git history for its revision. No push requested. |

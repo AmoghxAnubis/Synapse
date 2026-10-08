@@ -1,5 +1,17 @@
 # Synapse implementation status
 
+## LangChain/LangGraph continuation — 8 October 2026
+
+The initial framework integration is implemented on `ayush_lang`. `LocalLLM` now uses LangChain's `ChatOllama`; `app/ai/prompts.py` retains the existing bounded evidence-only prompt/history and `app/ai/retriever.py` converts existing memory records to LangChain Documents. `app/workflows/chat.py` runs agent/source scope, follow-up retrieval, optional explicitly consented web context, and generation/abstention through LangGraph. Both API endpoints retain existing response/SSE contracts and save completed conversation turns through existing SQLite storage.
+
+Existing ONNX embeddings, Chroma identity/thresholds, imports, credentials, action approvals and frontend remain in place. There are no chat action nodes, execution checkpoints or Kafka services. Cloud LangSmith tracing is explicitly suppressed for graph and model calls even when inherited environment settings enable it. Ollama remains constrained to loopback with proxy inheritance/redirects disabled and bounded connect/read timeouts. Cancellation signals the generation node before closing the graph; the model iterator and synchronous client are closed. Cancellation remains cooperative during an active Ollama read.
+
+Verification in a fresh isolated Python **3.12.13** environment installed from the resolved lock: **71 passed, 1 skipped**. The skipped check requires provisioned ONNX assets absent in this checkout. `uv pip check` passed for 133 packages. Existing locked versions were preserved while adding framework dependencies. Tests cover real ChatOllama serialization through a mocked HTTP transport, evidence role isolation, prompt bounds, provider failures/redirect policy, tracing suppression, graph failure cleanup, cancellation, scoped retrieval and persisted streaming. Frontend files were not changed; frontend checks were not rerun.
+
+`scripts/verify_chat_workflow.py --model llama3.2:latest` used temporary synthetic retrieval/SQLite with the installed real Ollama model. Streaming returned the correct 4200 USD answer with [1], source provenance and a saved turn. A factual follow-up also persisted, but its generated text omitted [1]. The tracked smoke correctly exits **1** for that citation diagnostic. This is an unresolved Q01 quality issue, not a passing citation acceptance gate. Single stream-answer samples were 44.11 seconds initially and 1.29 seconds on a later run; neither is a controlled benchmark or a first-token measurement. Full real-embedding evaluation remains pending provisioning; no model download or user-data migration occurred.
+
+See A01 in PROJECT_TRACKER.md. Initial integration is complete; Q01-Q03 and beta acceptance remain open. The user authorized completed-work commits on `ayush_lang`; keep Markdown reports current and use that branch, never `main`, for development commits. No push or hosting changes were performed.
+
 Updated 7 October 2026. This records the implementation following [the baseline review](BASELINE_REVIEW.md). The initial product is a single-user local AI workspace: import context, find evidence, ask cited questions, retain conversations, and explicitly approve supported actions.
 
 ## What changed

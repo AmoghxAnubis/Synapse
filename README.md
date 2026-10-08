@@ -70,6 +70,20 @@ Core embedding and generation calls use local models. Authentication requires no
 
 Local data is not encrypted by Synapse at rest. Protect your OS account, disk, browser profile, pairing token, and backups. Embedding telemetry is disabled. No model downloads occur during ordinary startup or retrieval.
 
+## Chat workflow development
+
+Chat uses LangChain's `ChatOllama` through `backend/app/core/llm.py` and a deterministic LangGraph in `backend/app/workflows/chat.py`:
+
+`validate agent/source scope -> load history -> retrieve evidence -> generate or abstain`.
+
+`backend/app/ai/prompts.py` preserves the evidence-only prompt and message bounds. `backend/app/ai/retriever.py` adapts existing ONNX/Chroma records into LangChain Documents without changing embeddings, thresholds, deduplication or provenance. Generation stays local; cloud LangSmith tracing is explicitly disabled for both graph and model calls, including when inherited environment settings enable it.
+
+The `/ask` response and `/ask/stream` sources/token/done/error events retain their existing contract. SQLite conversation turns are saved by the API only after successful completion. Graph execution checkpoints and restart/resume are not enabled in this first integration; cancellation remains cooperative and can wait for an Ollama read timeout. Chat has no action execution nodes. Kafka is not required or installed.
+
+Install from the updated backend lockfile in Python 3.12. No frontend dependency changes or vector reindexing are required. The targeted regressions are `backend/tests/test_chat_workflow.py` and `backend/tests/test_llm_evidence.py`; use the full backend verification command below before shipping changes.
+
+For an isolated real-Ollama check, run `backend/venv/Scripts/python.exe scripts/verify_chat_workflow.py --model YOUR_INSTALLED_MODEL`. It uses synthetic retrieval, temporary SQLite data, and no live provider writes. It checks streaming, facts, citations and saved follow-up turns; it does not exercise ONNX embeddings. Missing generated citations cause a nonzero exit even when API and persistence checks succeed.
+
 ## Integrations
 
 Enable connected features, open Connected Sources, enter a token and explicit source IDs, then validate and sync:

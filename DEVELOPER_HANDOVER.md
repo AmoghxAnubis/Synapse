@@ -1,5 +1,15 @@
 # Synapse developer handover
 
+## Framework continuation — 8 October 2026
+
+A01 is implemented on `ayush_lang`: `core/llm.py` adapts LangChain ChatOllama; `ai/prompts.py` preserves evidence/history bounds; `ai/retriever.py` wraps current ONNX/Chroma retrieval; `workflows/chat.py` implements deterministic scope/retrieval/generate-or-abstain nodes with custom streaming. The API still owns SQLite conversation persistence and SSE formatting. Graph execution checkpoints, action workflow changes and Kafka are outside this initial integration. Tracing is explicitly disabled for private model/graph calls.
+
+Verification: 71 backend tests passed, 1 skipped (unprovisioned real embedding model), and uv dependency consistency passed in isolated Python 3.12.13 under `.tmp/langgraph-venv`. Existing `backend/venv` is Python 3.13.5 and was not overwritten; install the updated lock in a supported Python 3.12 environment before starting the app. Existing locked package versions were retained.
+
+The tracked `scripts/verify_chat_workflow.py --model llama3.2:latest` exercises actual Ollama with synthetic retrieval/temporary SQLite. API/SSE, first cited budget answer and both persisted turns worked. The follow-up omitted its citation, so the script exits 1 for the quality diagnostic; do not report it as full acceptance. Q01 remains open and full real-ONNX evaluation is not available in this checkout. Preserve the evidence-only/action separation while investigating citation behavior. See IMPLEMENTATION_STATUS.md for exact verification limits.
+
+The user authorized committing completed work on 8 October 2026. Keep the relevant Markdown context/status files updated as work progresses, and commit completed, verified changes on `ayush_lang`. Do not make development commits on `main`. Commit IDs are recorded in Git history; pushing is not implied by this instruction.
+
 Prepared 7 October 2026. This is the technical and product context needed to continue the project without the original conversation. It records decisions, implementation, verification and unresolved work; it does not contain credentials or private document content.
 
 ## Start here

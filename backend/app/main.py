@@ -13,6 +13,7 @@ from .core.storage import Storage
 from .core.agent_store import AgentStore
 from .core.ingester import FileIngester
 from .core.llm import LocalLLM
+from .workflows.chat import ChatTokens, stream_chat
 from .core.integrations import IntegrationService
 from .core.actions import ActionService
 from .core.jobs import JobManager
@@ -252,45 +253,22 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
             raise HTTPException(404, "Conversation not found")
         return {"status": "success"}
 
-    def prepare_answer(query, s):
-        agent = s.agent(query.agent_id)
-        capabilities = agent.get("capabilities", {}) if agent else {}
-        history = s.storage.messages(query.conversation_id) if query.conversation_id else []
-        chosen = query.selected_sources or None
-        restricted = agent.get("linked_sources") if agent else None
-        if restricted:
-            chosen = [source for source in restricted if chosen is None or source in chosen]
-        # Add the previous question for short referential follow-ups.
-        previous = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
-        retrieval_query = query.text + ("\n" + previous[:1000] if previous and len(query.text.split()) < 12 else "")
-        citations = s.memory.recall(retrieval_query, source_filters=chosen, max_distance=s.settings.retrieval_max_distance)
-        used = []
-        if query.allow_web:
-            s.network()
-            if not capabilities.get("web_search"):
-                raise HTTPException(403, "Select an agent with web search enabled.")
-            from ddgs import DDGS
-            results = list(DDGS(timeout=15).text(query.text, max_results=3))
-            citations.extend({"id": r["href"], "source": r["title"], "page": 1, "chunk": 1, "url": r["href"], "text": r["body"], "distance": 0} for r in results)
-            used.append("web_search")
-        context = "\n\n".join(f"[{i+1}] {c['source']} (page {c['page']})\n{c['text']}" for i, c in enumerate(citations))
-        return agent, history, citations, context, used
-
     def answer_parts(query, s):
         if not s.chat_lock.acquire(blocking=False):
             raise HTTPException(409, "Another answer is in progress. Finish or cancel it first.")
+        events = stream_chat(query, s)
         try:
-            agent, history, citations, context, used = prepare_answer(query, s)
+            first = next(events)
+            if first["type"] != "sources":
+                raise RuntimeError("Chat workflow did not produce source metadata.")
         except BaseException:
-            s.chat_lock.release()
+            try:
+                events.close()
+            finally:
+                s.chat_lock.release()
             raise
 
-        def tokens():
-            if not citations:
-                yield "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source."
-            else:
-                yield from s.llm.stream_answer(context, query.text, agent.get("system_instruction") if agent else None, history)
-        return citations, used, tokens()
+        return first["citations"], first["capabilities_used"], ChatTokens(events)
 
     @router.post("/ask")
     def ask(query: Query, s: Services = Depends(services)):
@@ -301,8 +279,10 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
                 s.storage.save_turn(query.conversation_id, query.text, answer, citations)
             return {"answer": answer, "sources": [c["source"] for c in citations], "citations": citations, "capabilities_used": used, "hardware_flow": s.memory.brain.hardware_mode + " ? Ollama (local)"}
         finally:
-            tokens.close()
-            s.chat_lock.release()
+            try:
+                tokens.close()
+            finally:
+                s.chat_lock.release()
 
     @router.post("/ask/stream")
     async def ask_stream(query: Query, request: Request, s: Services = Depends(services)):
@@ -327,8 +307,10 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
             except Exception as exc:
                 yield event("error", {"detail": str(exc)[:500]})
             finally:
-                tokens.close()
-                s.chat_lock.release()
+                try:
+                    tokens.close()
+                finally:
+                    s.chat_lock.release()
         return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
 
     @router.post("/tools/terminal")
