@@ -1,0 +1,235 @@
+{
+  "metrics": {
+    "evidence_hit": {
+      "passed": 8,
+      "total": 8,
+      "percent": 100.0
+    },
+    "top_one_hit": {
+      "passed": 8,
+      "total": 8,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 4,
+      "total": 4,
+      "percent": 100.0
+    },
+    "retrieval_empty": {
+      "passed": 3,
+      "total": 3,
+      "percent": 100.0
+    }
+  },
+  "cases": [
+    {
+      "id": "budget",
+      "kind": "supported",
+      "retrieval_ms": 6.38,
+      "retrieved": [
+        {
+          "source": "release.txt",
+          "page": 1,
+          "distance": 0.2355
+        },
+        {
+          "source": "release.txt",
+          "page": 2,
+          "distance": 0.5579
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "owner",
+      "kind": "supported",
+      "retrieval_ms": 5.0,
+      "retrieved": [
+        {
+          "source": "release.txt",
+          "page": 1,
+          "distance": 0.2919
+        },
+        {
+          "source": "release.txt",
+          "page": 2,
+          "distance": 0.5679
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "rollback",
+      "kind": "supported",
+      "retrieval_ms": 4.76,
+      "retrieved": [
+        {
+          "source": "release.txt",
+          "page": 2,
+          "distance": 0.3158
+        },
+        {
+          "source": "release.txt",
+          "page": 1,
+          "distance": 0.5171
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "retention",
+      "kind": "supported",
+      "retrieval_ms": 4.99,
+      "retrieved": [
+        {
+          "source": "support.md",
+          "page": 1,
+          "distance": 0.1331
+        },
+        {
+          "source": "support.md",
+          "page": 2,
+          "distance": 0.5894
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "response",
+      "kind": "supported",
+      "retrieval_ms": 7.7,
+      "retrieved": [
+        {
+          "source": "support.md",
+          "page": 2,
+          "distance": 0.339
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "approval",
+      "kind": "supported",
+      "retrieval_ms": 5.04,
+      "retrieved": [
+        {
+          "source": "security.md",
+          "page": 1,
+          "distance": 0.5862
+        },
+        {
+          "source": "support.md",
+          "page": 1,
+          "distance": 0.6182
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true
+    },
+    {
+      "id": "scope-release",
+      "kind": "scoped",
+      "retrieval_ms": 5.43,
+      "retrieved": [
+        {
+          "source": "release.txt",
+          "page": 1,
+          "distance": 0.2919
+        },
+        {
+          "source": "release.txt",
+          "page": 2,
+          "distance": 0.5679
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "scope-support",
+      "kind": "scoped",
+      "retrieval_ms": 4.96,
+      "retrieved": [
+        {
+          "source": "support.md",
+          "page": 1,
+          "distance": 0.1331
+        },
+        {
+          "source": "support.md",
+          "page": 2,
+          "distance": 0.5894
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "scope-empty",
+      "kind": "scope-only",
+      "retrieval_ms": 0.31,
+      "retrieved": [],
+      "scope_respected": true
+    },
+    {
+      "id": "scope-exclusion",
+      "kind": "scope-only",
+      "retrieval_ms": 5.05,
+      "retrieved": [],
+      "scope_respected": true
+    },
+    {
+      "id": "unsupported-astronomy",
+      "kind": "unrelated",
+      "retrieval_ms": 5.19,
+      "retrieved": [],
+      "retrieval_empty": true
+    },
+    {
+      "id": "unsupported-recipe",
+      "kind": "unrelated",
+      "retrieval_ms": 4.42,
+      "retrieved": [],
+      "retrieval_empty": true
+    },
+    {
+      "id": "unsupported-ocean",
+      "kind": "unrelated",
+      "retrieval_ms": 4.85,
+      "retrieved": [],
+      "retrieval_empty": true
+    },
+    {
+      "id": "missing-revenue",
+      "kind": "unsupported-in-topic",
+      "status": "requires_generation_evaluation"
+    },
+    {
+      "id": "missing-refund",
+      "kind": "unsupported-in-topic",
+      "status": "requires_generation_evaluation"
+    },
+    {
+      "id": "follow-up-owner",
+      "kind": "follow-up",
+      "status": "requires_generation_evaluation"
+    }
+  ],
+  "generation_evaluated": false,
+  "created_utc": "2026-10-08T07:00:00.098251+00:00",
+  "corpus_version": 1,
+  "corpus_sha256": "baeaf0b963c33dd21f881fc7338bac07135171e158bb80959c46a8fdd881e6d5",
+  "provider": "CPU",
+  "max_distance": 0.65,
+  "model_manifest": {
+    "repository": "optimum/all-MiniLM-L6-v2",
+    "revision": "10244843eba3d9e479b27a4b81c94b56d8e9f4f2"
+  }
+}

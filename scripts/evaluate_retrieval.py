@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import sys
+import subprocess
 import tempfile
 import time
 from datetime import datetime, timezone
@@ -46,7 +47,21 @@ if __name__ == "__main__":
     parser.add_argument("--corpus", type=Path, default=ROOT / "evaluations/corpus.json")
     parser.add_argument("--output", type=Path, default=ROOT / "evaluations/results/retrieval-baseline.json")
     parser.add_argument("--max-distance", type=float, default=0.65)
+    parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--data-dir", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if not args.worker:
+        # Native Chroma mappings stay open on Windows until process exit.
+        # Run the benchmark in a child, then remove only its own temp directory.
+        scratch = ROOT / ".tmp"
+        scratch.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="synapse-eval-", dir=scratch) as directory:
+            subprocess.run([sys.executable, str(Path(__file__).resolve()), "--worker", "--data-dir", directory,
+                            "--corpus", str(args.corpus.resolve()), "--output", str(args.output.resolve()),
+                            "--max-distance", str(args.max_distance)], check=True)
+        sys.exit(0)
+    if args.data_dir is None:
+        parser.error("The internal worker requires a data directory")
     raw = args.corpus.read_bytes()
     corpus = json.loads(raw)
     from app.core.amd_bridge import AMDBridge
@@ -54,12 +69,11 @@ if __name__ == "__main__":
     import chromadb
     from chromadb.config import Settings
     brain = AMDBridge()
-    with tempfile.TemporaryDirectory(prefix="synapse-eval-") as directory:
-        client = chromadb.PersistentClient(path=str(Path(directory)/"vectors"), settings=Settings(anonymized_telemetry=False))
-        memory = MemoryBank(brain=brain, client=client)
-        for document in corpus["documents"]:
-            memory.ingest_document(document["source"], document["pages"])
-        result = evaluate(corpus, memory, args.max_distance)
+    client = chromadb.PersistentClient(path=str(args.data_dir/"vectors"), settings=Settings(anonymized_telemetry=False))
+    memory = MemoryBank(brain=brain, client=client)
+    for document in corpus["documents"]:
+        memory.ingest_document(document["source"], document["pages"])
+    result = evaluate(corpus, memory, args.max_distance)
     result.update(created_utc=datetime.now(timezone.utc).isoformat(), corpus_version=corpus["version"],
                   corpus_sha256=hashlib.sha256(raw).hexdigest(), provider=brain.hardware_mode, max_distance=args.max_distance,
                   model_manifest=json.loads((Path(brain.tokenizer.name_or_path)/"synapse-model.json").read_text()))
