@@ -124,3 +124,5 @@ See [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit and [IMPLEME
 Use [PROJECT_TRACKER.md](PROJECT_TRACKER.md) for the current task list, progress, priorities, time estimates, and activity log.
 
 Start with [DEVELOPER_HANDOVER.md](DEVELOPER_HANDOVER.md) for complete developer continuation context and verified limitations.
+
+See [evaluations/README.md](evaluations/README.md) for the synthetic quality corpus, retrieval benchmark, and the distinction between retrieval and answer-quality metrics.

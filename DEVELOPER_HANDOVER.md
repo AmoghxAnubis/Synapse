@@ -307,3 +307,5 @@ This handover records the context and decisions needed to continue safely. It do
 ## Continuation update - 8 October 2026
 
 Cloudflare tasks H01-H04 are deferred after the local beta gates; they are excluded from active estimates. Q01 has started with evaluations/corpus.json, a synthetic 16-case corpus, and scripts/evaluate_retrieval.py using temporary vector storage. This measures retrieval and scope behavior only; generated answer correctness, citation support, abstention and conversational follow-ups remain pending. See evaluations/README.md and PROJECT_TRACKER.md. Browser surfaces remain unavailable at this session's inventory check, so visual acceptance is still pending.
+
+Synthetic retrieval baseline passed 8/8 supported evidence checks, 8/8 top-one checks, 4/4 scope checks and 3/3 unrelated empty-retrieval checks at distance 0.65. Results are in evaluations/results/retrieval-baseline.json. These small synthetic results do not establish answer accuracy. The evaluation runs in a child process so Windows closes Chroma mappings before temporary storage cleanup. Backend suite now has 58 passing tests.

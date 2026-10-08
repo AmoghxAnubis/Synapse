@@ -69,7 +69,7 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Added versioned 16-case synthetic corpus and isolated retrieval benchmark. Next: representative content, actual generated answers/citations/abstention/follow-ups and agreed thresholds; synthetic retrieval alone does not complete this task |
+| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Synthetic baseline: evidence 8/8, top result 8/8, scope 4/4, unrelated empty 3/3; evaluations/results/retrieval-baseline.json. Next: representative content, actual generated answers/citations/abstention/follow-ups and agreed thresholds; synthetic retrieval alone does not complete this task |
 | Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
 | Q03 | P1 | TODO | 4-8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
 
@@ -170,3 +170,4 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | 2026-10-08 | Hosting moved behind local product readiness | H01-H04 DEFERRED; no account, deployment or DNS changes; beta work takes priority |
 | 2026-10-08 | Q01 started while browser acceptance waits | evaluations/corpus.json and scripts/evaluate_retrieval.py added; disposable synthetic storage; generation metrics pending |
+| 2026-10-08 | Synthetic retrieval baseline verified | 8/8 evidence/top-one hits, 4/4 scope checks, 3/3 unrelated questions returned no evidence. Windows temp cleanup isolated in child process; 58 backend tests passed. Q01 remains IN PROGRESS; generation and representative acceptance pending |
