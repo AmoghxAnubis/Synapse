@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "description": "Synthetic local-first document assistant baseline; not representative user acceptance or model answer accuracy.",
+  "documents": [
+    {
+      "source": "release.txt",
+      "pages": [
+        {
+          "page": 1,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "page": 2,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ]
+    },
+    {
+      "source": "support.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Customer support tickets are retained for 30 days. Security incidents must be escalated to the operations team within 20 minutes."
+        },
+        {
+          "page": 2,
+          "text": "The Standard support plan promises an initial response within four business hours. The support contact is support@example.invalid."
+        }
+      ]
+    },
+    {
+      "source": "architecture.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Synapse runs the frontend on loopback port 3000 and FastAPI on loopback port 8000. The maximum document upload size is 20 MB. Scanned PDFs require OCR before import. CPU embeddings are supported."
+        }
+      ]
+    },
+    {
+      "source": "security.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Connected features are disabled by default. Local inference uses ONNX embeddings and Ollama. Integration credentials are stored in the OS credential store. Action approval expires after five minutes and can be used only once."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "budget",
+      "kind": "supported",
+      "query": "What is the Borealis release budget?",
+      "evidence": {
+        "source": "release.txt",
+        "page": 1,
+        "contains": "12500"
+      }
+    },
+    {
+      "id": "owner",
+      "kind": "supported",
+      "query": "Who owns the Borealis release?",
+      "evidence": {
+        "source": "release.txt",
+        "page": 1,
+        "contains": "Mira Shah"
+      }
+    },
+    {
+      "id": "rollback",
+      "kind": "supported",
+      "query": "When should Borealis be rolled back?",
+      "evidence": {
+        "source": "release.txt",
+        "page": 2,
+        "contains": "two percent"
+      }
+    },
+    {
+      "id": "retention",
+      "kind": "supported",
+      "query": "How long are customer support tickets retained?",
+      "evidence": {
+        "source": "support.md",
+        "page": 1,
+        "contains": "30 days"
+      }
+    },
+    {
+      "id": "response",
+      "kind": "supported",
+      "query": "What is the initial response time for Standard support?",
+      "evidence": {
+        "source": "support.md",
+        "page": 2,
+        "contains": "four business hours"
+      }
+    },
+    {
+      "id": "approval",
+      "kind": "supported",
+      "query": "How long does action approval last and can it be reused?",
+      "evidence": {
+        "source": "security.md",
+        "page": 1,
+        "contains": "five minutes"
+      }
+    },
+    {
+      "id": "scope-release",
+      "kind": "scoped",
+      "query": "Who owns the Borealis release?",
+      "sources": [
+        "release.txt"
+      ],
+      "evidence": {
+        "source": "release.txt",
+        "page": 1,
+        "contains": "Mira Shah"
+      }
+    },
+    {
+      "id": "scope-support",
+      "kind": "scoped",
+      "query": "How long are customer support tickets retained?",
+      "sources": [
+        "support.md"
+      ],
+      "evidence": {
+        "source": "support.md",
+        "page": 1,
+        "contains": "30 days"
+      }
+    },
+    {
+      "id": "scope-empty",
+      "kind": "scope-only",
+      "query": "What is the Borealis release budget?",
+      "sources": []
+    },
+    {
+      "id": "scope-exclusion",
+      "kind": "scope-only",
+      "query": "What is the Borealis release budget?",
+      "sources": [
+        "security.md"
+      ]
+    },
+    {
+      "id": "unsupported-astronomy",
+      "kind": "unrelated",
+      "query": "What is the surface temperature of the planet Venus?"
+    },
+    {
+      "id": "unsupported-recipe",
+      "kind": "unrelated",
+      "query": "How do I bake a chocolate souffle?"
+    },
+    {
+      "id": "unsupported-ocean",
+      "kind": "unrelated",
+      "query": "What is the depth of the Mariana Trench?"
+    },
+    {
+      "id": "missing-revenue",
+      "kind": "unsupported-in-topic",
+      "query": "What revenue did Borealis earn last year?",
+      "expected_answer": "Abstain: no revenue is documented."
+    },
+    {
+      "id": "missing-refund",
+      "kind": "unsupported-in-topic",
+      "query": "What is the refund policy for Standard support?",
+      "expected_answer": "Abstain: response time does not establish refunds."
+    },
+    {
+      "id": "follow-up-owner",
+      "kind": "follow-up",
+      "history": [
+        {
+          "role": "user",
+          "content": "What is the Borealis release budget?"
+        },
+        {
+          "role": "ai",
+          "content": "The Borealis budget is 12500 rupees [1]."
+        }
+      ],
+      "query": "Who owns it?",
+      "expected_answer": "Mira Shah, supported by release.txt page 1."
+    }
+  ]
+}

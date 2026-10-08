@@ -10,7 +10,7 @@ Prepared 7 October 2026. This is the technical and product context needed to con
 4. Read [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit.
 5. Use [README.md](README.md) for setup and operation.
 
-The user's current priority is to finish baseline repairs and correct the landing-page replacement, then hand the project to another developer. The longer-term goal is a useful product people might pay for. Preserve the user's original landing-page identity and grow from verified workflows.
+As of 8 October 2026, the user has resumed the tracker and deferred Cloudflare until the local product work is complete. The previous session repaired the baseline, restored the landing composition and wrote this handover. The longer-term goal is a useful product people might pay for. Preserve the user's original landing-page identity and grow from verified workflows.
 
 ## Product intent and scope
 
@@ -267,7 +267,7 @@ No license decision has been made. No cloud hosting cutover or DNS modification 
 
 ## Cloudflare plan
 
-The user intends to move the public deployment from Vercel to Cloudflare. Start with marketing/docs/onboarding pages. Preserve the original landing design and keep Vercel available for rollback.
+The user intends to move the public deployment from Vercel to Cloudflare, but explicitly deferred that work on 8 October 2026. Finish local beta acceptance first. When resumed, start with marketing/docs/onboarding pages. Preserve the original landing design and keep Vercel available for rollback.
 
 A cloud server's 127.0.0.1 is not a customer's computer. The current local BFF/pairing architecture must not be deployed unchanged and expected to reach user Ollama/FastAPI. Public marketing and local app distribution need explicit separation.
 
@@ -303,3 +303,7 @@ Use PROJECT_TRACKER.md as the canonical queue. Mark active tasks, add evidence o
 - No secret values or share-link tokens belong in this handover, tracker or screenshots.
 
 This handover records the context and decisions needed to continue safely. It does not claim the full original feature vision or commercial release is complete.
+
+## Continuation update - 8 October 2026
+
+Cloudflare tasks H01-H04 are deferred after the local beta gates; they are excluded from active estimates. Q01 has started with evaluations/corpus.json, a synthetic 16-case corpus, and scripts/evaluate_retrieval.py using temporary vector storage. This measures retrieval and scope behavior only; generated answer correctness, citation support, abstention and conversational follow-ups remain pending. See evaluations/README.md and PROJECT_TRACKER.md. Browser surfaces remain unavailable at this session's inventory check, so visual acceptance is still pending.

@@ -1,8 +1,8 @@
 # Synapse product task tracker
 
-Last updated: 7 October 2026.
+Last updated: 8 October 2026.
 Owner: project developer with user review for product decisions.
-Current focus: baseline follow-up repairs, original landing-page restoration, and developer handover. Hosting migration has not started.
+Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
 ## Product direction
 
@@ -57,18 +57,7 @@ Completion above means the implemented repair passed its stated checks. Broader 
 | L03 | P0 | DONE | 0 remaining | L02 | Targeted copy/CTA corrections, truthful branded intro, local pairing preserved, anchor and motion cleanup; unsupported hardware/privacy/action claims removed |
 | L04 | P0 | WAITING | 2-4 | Connected browser/user review | Build, lint, landing HTML/anchors and production routes verified. Review http://127.0.0.1:3000 for mobile/desktop, dark/light, animation, canvas and keyboard behavior |
 
-## Phase 2 - Cloudflare public-site migration, 6-12 hours
-
-| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
-| --- | --- | --- | --- | --- | --- |
-| H01 | P0 | TODO | 1-2 | L01 | Inventory public routes, server dependencies, domain and build; choose static Pages versus Workers using current compatibility evidence |
-| H02 | P0 | TODO | 3-6 | H01, L02 | Configure a reproducible Cloudflare preview; keep public marketing separate from local pairing/API routes |
-| H03 | P0 | TODO | 1-2 | H02, L04 | Verify assets, navigation, metadata, security headers, theme behavior, performance and rollback on preview |
-| H04 | P0 | TODO | 1-2 | H03 | Perform authorized domain cutover, verify production and document rollback; preserve Vercel until acceptance |
-
-Current official references: [Cloudflare Next.js overview](https://developers.cloudflare.com/pages/framework-guides/nextjs/) and [Workers Next.js guidance](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/). Adapter/runtime compatibility must be tested against this project's version before selecting a full-stack migration. No account or DNS changes have occurred.
-
-## Phase 3 - dashboard alignment and usability, 10-20 hours
+## Phase 2 - dashboard alignment and usability, 10-20 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -76,17 +65,17 @@ Current official references: [Cloudflare Next.js overview](https://developers.cl
 | V02 | P1 | TODO | 4-8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
 | V03 | P1 | TODO | 3-6 | V01, V02 | Fix acceptance defects and verify a first-time import-to-answer journey without developer assistance |
 
-## Phase 4 - answer quality and performance, 12-24 hours
+## Phase 3 - answer quality and performance, 12-24 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | TODO | 4-8 | Representative documents | Version a supported/unsupported/follow-up corpus; measure retrieval hits, citation support, wrong answers and abstention; agree release thresholds |
+| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Added versioned 16-case synthetic corpus and isolated retrieval benchmark. Next: representative content, actual generated answers/citations/abstention/follow-ups and agreed thresholds; synthetic retrieval alone does not complete this task |
 | Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
 | Q03 | P1 | TODO | 4-8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
-## Phase 5 - live connector acceptance, 15-30 hours
+## Phase 4 - live connector acceptance, 15-30 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -98,7 +87,7 @@ The previous 50.79-second and 11.57-second responses are single samples, not a c
 
 Never put credentials in this tracker. Use dedicated resources; acceptance tests must not create issues/messages without explicit authorization. Large vendor-specific compatibility fixes may increase estimates.
 
-## Phase 6 - installation and recovery, 16-32 hours
+## Phase 5 - installation and recovery, 16-32 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -108,7 +97,7 @@ Never put credentials in this tracker. Use dedicated resources; acceptance tests
 
 This estimate covers a beta distribution prototype. A fully signed, production auto-update system may require additional work after the packaging choice.
 
-## Phase 7 - commercial groundwork and beta, 6-12 hours plus external feedback
+## Phase 6 - commercial groundwork and beta, 6-12 hours plus external feedback
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -117,6 +106,19 @@ This estimate covers a beta distribution prototype. A fully signed, production a
 | C03 | P1 | TODO | 2-4 | V03, Q03, D03 | Prepare a small beta protocol, feedback tracker and value/pricing questions; report observed usage and willingness to pay after feedback |
 
 Accounts, hosted multi-user isolation and billing are not assumed requirements. Decide them from the product model and beta findings.
+
+## Deferred - Cloudflare public-site migration, 6-12 hours
+
+| ID | Priority | Status | Hours | Depends on | Task / completion criterion |
+| --- | --- | --- | --- | --- | --- |
+| H01 | P2 | DEFERRED | 1-2 | V03, Q03, I01-I05, D03, C03 | Inventory public routes, server dependencies, domain and build; choose static Pages versus Workers using current compatibility evidence |
+| H02 | P2 | DEFERRED | 3-6 | H01, L02 | Configure a reproducible Cloudflare preview; keep public marketing separate from local pairing/API routes |
+| H03 | P2 | DEFERRED | 1-2 | H02, L04 | Verify assets, navigation, metadata, security headers, theme behavior, performance and rollback on preview |
+| H04 | P2 | DEFERRED | 1-2 | H03 | Perform authorized domain cutover, verify production and document rollback; preserve Vercel until acceptance |
+
+Current official references: [Cloudflare Next.js overview](https://developers.cloudflare.com/pages/framework-guides/nextjs/) and [Workers Next.js guidance](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/). Adapter/runtime compatibility must be tested against this project's version before selecting a full-stack migration. No account or DNS changes have occurred.
+
+Resume this phase after local usability, quality/performance, intended live connectors, installation/recovery and beta feedback gates pass. Existing Vercel hosting remains in place. Advanced post-beta features do not automatically block the eventual marketing-site migration.
 
 ## Post-beta original vision - estimates pending design
 
@@ -138,8 +140,8 @@ These are deliberately outside the initial beta estimate; their designs and targ
 
 ## Estimated sequence
 
-- Remaining landing acceptance plus Cloudflare preview/cutover: roughly **8.5-17 focused hours**, excluding browser/account access and review waits. Restoration and copy implementation are complete.
-- Original all-phase beta estimate was **73-146 focused hours**. With landing implementation and same-machine setup checks complete, remaining listed beta work is roughly **67-137 hours**; re-estimate after browser acceptance and live account access.
+- Active order: landing/dashboard acceptance; answer quality/performance; intended live connectors; installation/recovery; beta feedback/commercial groundwork. Browser-independent quality work can proceed while visual acceptance waits.
+- Cloudflare is excluded from the active estimate. Remaining non-hosting beta work is roughly **61-125 focused hours** based on the earlier phase estimates; this is provisional and should be revised after evaluation results and access to live accounts/another machine. Deferred Cloudflare work remains **6-12 hours**.
 - Allow roughly **3-5 calendar weeks** with account access, review, second-machine testing and beta feedback. External delays can extend this.
 - Original-vision expansion and a complete paid launch are not included. Re-estimate after measured beta results.
 
@@ -163,6 +165,8 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-07 | User selected original landing page as product design reference | Preserve original design; replacement page remains an implementation reference |
 | 2026-10-07 | Shared deployment content accessible | Original headline/navigation confirmed in HTML; visual inventory and deployed revision verification remain under L01 |
 | 2026-10-07 | Canonical tracker and estimates created | No development or hosting changes in this planning session; next task L01, then L02/H01 |
-
 | 2026-10-07 | Baseline follow-up and original landing restored | B12-B15, L02-L03 complete; 56 fresh-environment tests, supported Node install/build/lint/audit, production body-limit/anchor checks; L01/L04 waiting for browser acceptance |
 | 2026-10-07 | Reproducible smoke and handover complete | scripts/verify_local.py --with-inference passed; final sample 17.65s; synthetic data removed; DEVELOPER_HANDOVER.md written; no hosting/DNS changes |
+
+| 2026-10-08 | Hosting moved behind local product readiness | H01-H04 DEFERRED; no account, deployment or DNS changes; beta work takes priority |
+| 2026-10-08 | Q01 started while browser acceptance waits | evaluations/corpus.json and scripts/evaluate_retrieval.py added; disposable synthetic storage; generation metrics pending |
