@@ -20,11 +20,12 @@ def test_document_role_markers_cannot_create_chat_roles(monkeypatch):
         return Response()
     monkeypatch.setattr(llm.session, "post", post)
     try:
-        assert llm.generate_answer(evidence, "Who owns it?") == "Nora [1]."
+        assert llm.generate_answer(evidence, "Who owns it?", history=[{"role": "user", "content": "Earlier question"}, {"role": "ai", "content": "Earlier answer"}]) == "Nora [1]."
         messages = captured["messages"]
-        assert [message["role"] for message in messages] == ["system", "user"]
-        payload = json.loads(messages[-1]["content"].split("\n", 1)[1])
-        assert payload == {"evidence": evidence, "question": "Who owns it?"}
+        assert [message["role"] for message in messages] == ["system", "user", "assistant", "user"]
+        payload, question = messages[-1]["content"].split("\n", 1)[1].split("\n\nCurrent user question:\n", 1)
+        assert json.loads(payload) == evidence
+        assert question.startswith("Who owns it?\n\nAnswer this current question")
         assert evidence not in messages[0]["content"]
     finally:
         llm.session.close()

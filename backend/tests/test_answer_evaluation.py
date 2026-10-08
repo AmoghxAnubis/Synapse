@@ -31,3 +31,52 @@ def test_valid_abstention_variation_is_recognized():
     result = check_answer({}, {"answer": "I cannot provide information that is not present in the evidence.", "citations": []}, {"expect_abstention": True})
     assert result["abstention_language_present"]
     assert result["manual_semantic_review_required"]
+
+
+
+def test_not_published_abstention_is_recognized():
+    result = check_answer({}, {"answer": "The budget amount is not published.", "citations": []}, {"expect_abstention": True})
+    assert result["abstention_language_present"]
+
+
+def test_incorrect_version_widening_fails_diagnostic():
+    checks = {"forbidden_patterns": [r"3\.\s*12\s*(?:\*\*)?\s*(?:or\s+(?:newer|later)|and\s+(?:newer|later)|\+)"]}
+    wrong = check_answer({}, {"answer": "Python 3.12 or newer [1].", "citations": [{}]}, checks)
+    right = check_answer({}, {"answer": "Python 3.12 and Node 22.13 or newer [1].", "citations": [{}]}, checks)
+    assert not wrong["forbidden_claims_absent"]
+    assert right["forbidden_claims_absent"]
+    assert right["manual_semantic_review_required"]
+
+
+
+def test_explicit_rescore_preserves_original_and_verifies_original_checks(tmp_path):
+    import hashlib
+    import json
+    import subprocess
+    import sys
+    corpus = tmp_path / "corpus.json"
+    original_checks = tmp_path / "checks-original.json"
+    updated_checks = tmp_path / "checks-updated.json"
+    original = tmp_path / "run.json"
+    output = tmp_path / "rescored.json"
+    corpus.write_text(json.dumps({"cases": [{"id": "sample", "evidence": {"source": "note", "page": 1, "contains": "third"}}]}))
+    original_checks.write_text(json.dumps({"sample": {"answer_patterns": ["three"]}}))
+    updated_checks.write_text(json.dumps({"sample": {"answer_patterns": ["third"]}}))
+    row = {"id": "sample", "answer": "After the third attempt [1].", "citations": [{"source": "note", "page": 1, "text": "After the third attempt"}]}
+    row.update(check_answer(json.loads(corpus.read_text())["cases"][0], row, json.loads(original_checks.read_text())["sample"]))
+    original.write_text(json.dumps({"corpus_sha256": hashlib.sha256(corpus.read_bytes()).hexdigest(), "checks_sha256": hashlib.sha256(original_checks.read_bytes()).hexdigest(), "cases": [row], "metrics": metrics([row])}))
+    before = original.read_bytes()
+    command = [sys.executable, str(BACKEND_DIR.parent / "scripts/evaluate_answers.py"), "--rescore", str(original), "--corpus", str(corpus), "--checks", str(original_checks), "--updated-checks", str(updated_checks), "--output", str(output)]
+    success = subprocess.run(command, capture_output=True, text=True)
+    assert success.returncode == 0, success.stderr
+    result = json.loads(output.read_text())
+    assert result["metrics"]["expected_facts_present"]["passed"] == 1
+    assert result["original_metrics"]["expected_facts_present"]["passed"] == 0
+    assert result["checks_explicitly_updated"]
+    assert result["original_artifact_sha256"] == hashlib.sha256(before).hexdigest()
+    assert original.read_bytes() == before
+    original_checks.write_text("{}")
+    rejected = subprocess.run(command, capture_output=True, text=True)
+    assert rejected.returncode != 0
+    assert "Checks changed" in rejected.stderr
+    assert original.read_bytes() == before

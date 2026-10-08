@@ -2,6 +2,7 @@
 from contextlib import asynccontextmanager
 import json
 import logging
+import re
 import threading
 from pathlib import Path
 from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, Request, UploadFile
@@ -262,7 +263,8 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
             chosen = [source for source in restricted if chosen is None or source in chosen]
         # Add the previous question for short referential follow-ups.
         previous = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
-        retrieval_query = query.text + ("\n" + previous[:1000] if previous and len(query.text.split()) < 12 else "")
+        referential = re.search(r"\b(?:it|its|that|those|their|they|this|them)\b", query.text, re.I)
+        retrieval_query = query.text + ("\n" + previous[:1000] if previous and referential and len(query.text.split()) < 12 else "")
         citations = s.memory.recall(retrieval_query, source_filters=chosen, max_distance=s.settings.retrieval_max_distance)
         used = []
         if query.allow_web:

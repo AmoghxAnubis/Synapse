@@ -86,6 +86,8 @@ The connector checks have mocked API coverage; live account permissions and full
 
 ## Data preservation, migration, and backups
 
+New imports preserve source wording and formatting within token-aware chunks. Reimport original documents, or explicitly sync connected sources, to refresh older normalized chunks; existing user sources are not automatically rewritten.
+
 Paths are independent of the launch directory. The default is `backend/.synapse`; override `SYNAPSE_DATA_DIR` in backend/.env to choose another location. Runtime data is excluded from Git. Original legacy stores are preserved.
 
 Stop the backend before migration or backup. To preserve both original memory databases and re-embed their text into the stable store:
@@ -125,4 +127,4 @@ Use [PROJECT_TRACKER.md](PROJECT_TRACKER.md) for the current task list, progress
 
 Start with [DEVELOPER_HANDOVER.md](DEVELOPER_HANDOVER.md) for complete developer continuation context and verified limitations.
 
-See [evaluations/README.md](evaluations/README.md) for the synthetic quality corpus, retrieval benchmark, and the distinction between retrieval and answer-quality metrics.
+See [evaluations/README.md](evaluations/README.md) for quality evaluation and [the harder-case report](evaluations/HARDER_BASELINE.md) for observed failures, repairs, reproducible comparisons and remaining answer-quality limits.
