@@ -62,7 +62,7 @@ From the project root, after provisioning embeddings and starting Ollama:
 backend/venv/Scripts/python.exe scripts/evaluate_answers.py --model llama3:latest
 ~~~
 
-This invokes the local model and uses disposable storage. It checkpoints synthetic answers to the results file. A case failure is recorded and produces a nonzero exit code.
+This invokes the local model and uses disposable storage. It checkpoints synthetic answers to the results file. An API/model execution failure is recorded and produces a nonzero exit code. Diagnostic fact/citation checks are reported for review; they are not an approved automated release gate.
 
 To rescore saved answers without calling Ollama:
 
@@ -79,3 +79,5 @@ Keep private evaluation corpora and their outputs out of Git.
 Q01 stays IN PROGRESS. Add longer multi-chunk documents, ambiguity/conflicting versions, misleading embedded instructions, more follow-up chains and representative project content. Evaluate claim/citation support and abstention again, and agree release thresholds.
 
 Q02 must measure real HTTP streaming/first-token latency, cold/warm distributions, cancellation and resource use. Cloudflare remains deferred behind local product readiness.
+
+Regression verification after scorer changes: 61 backend tests passed, with the existing dependency deprecation warning.
