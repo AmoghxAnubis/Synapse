@@ -1,4 +1,5 @@
 import json
+import pytest
 import runpy
 from app.core.config import BACKEND_DIR
 
@@ -6,8 +7,9 @@ ROOT = BACKEND_DIR.parent
 evaluate = runpy.run_path(str(ROOT / "scripts/evaluate_retrieval.py"))["evaluate"]
 
 
-def test_corpus_labels_point_to_actual_evidence():
-    corpus = json.loads((ROOT / "evaluations/corpus.json").read_text())
+@pytest.mark.parametrize("filename", ["corpus.json", "harder-corpus.json"])
+def test_corpus_labels_point_to_actual_evidence(filename):
+    corpus = json.loads((ROOT / "evaluations" / filename).read_text())
     documents = {document["source"]: document for document in corpus["documents"]}
     assert len(documents) == len(corpus["documents"])
     assert len({case["id"] for case in corpus["cases"]}) == len(corpus["cases"])

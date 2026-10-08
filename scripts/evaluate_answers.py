@@ -44,12 +44,14 @@ def check_answer(case, response, checks):
     allowed = checks.get("expected_scope", case.get("sources"))
     if allowed is not None:
         row["scope_respected"] = all(c["source"] in allowed for c in citations)
+    if checks.get("forbidden_patterns"):
+        row["forbidden_claims_absent"] = not any(re.search(pattern, answer, re.I) for pattern in checks["forbidden_patterns"])
     return row
 
 
 def metrics(rows):
     fields = ["expected_facts_present", "expected_evidence_cited", "citation_numbers_valid",
-              "scope_respected", "abstention_language_present", "conversation_persisted"]
+              "scope_respected", "abstention_language_present", "conversation_persisted", "forbidden_claims_absent"]
     result = {}
     for field in fields:
         values = [row[field] for row in rows if field in row]
@@ -61,6 +63,8 @@ def metrics(rows):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="llama3:latest")
+    parser.add_argument("--corpus", type=Path, default=ROOT / "evaluations/corpus.json")
+    parser.add_argument("--checks", type=Path, default=ROOT / "evaluations/answer_checks.json")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--rescore", type=Path, help="Recheck saved answers without model calls; writes a separate artifact.")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
@@ -73,8 +77,8 @@ if __name__ == "__main__":
             parser.error("Rescoring must preserve the original artifact; choose a different output")
         raw = args.rescore.read_bytes()
         result = json.loads(raw)
-        corpus_raw = (ROOT / "evaluations/corpus.json").read_bytes()
-        checks_raw = (ROOT / "evaluations/answer_checks.json").read_bytes()
+        corpus_raw = args.corpus.read_bytes()
+        checks_raw = args.checks.read_bytes()
         assert result["corpus_sha256"] == hashlib.sha256(corpus_raw).hexdigest(), "Corpus changed; original run cannot be compared"
         assert result["checks_sha256"] == hashlib.sha256(checks_raw).hexdigest(), "Checks changed; original run cannot be compared"
         cases = {case["id"]: case for case in json.loads(corpus_raw)["cases"]}
@@ -94,7 +98,7 @@ if __name__ == "__main__":
         scratch.mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="synapse-answer-eval-", dir=scratch) as directory:
             subprocess.run([sys.executable, str(Path(__file__).resolve()), "--worker", "--data-dir", directory,
-                            "--model", args.model, "--output", str(args.output.resolve())], check=True)
+                            "--model", args.model, "--corpus", str(args.corpus.resolve()), "--checks", str(args.checks.resolve()), "--output", str(args.output.resolve())], check=True)
         sys.exit(0)
     if args.data_dir is None:
         parser.error("Internal worker requires a data directory")
@@ -110,8 +114,8 @@ if __name__ == "__main__":
     from app.core.llm import LocalLLM
     import chromadb
     from chromadb.config import Settings as ChromaSettings
-    corpus_raw = (ROOT / "evaluations/corpus.json").read_bytes()
-    checks_raw = (ROOT / "evaluations/answer_checks.json").read_bytes()
+    corpus_raw = args.corpus.read_bytes()
+    checks_raw = args.checks.read_bytes()
     corpus = json.loads(corpus_raw)
     checks = json.loads(checks_raw)
     assert LocalLLM(args.model).status()["ready"], "Start Ollama and select an installed model."
@@ -126,6 +130,7 @@ if __name__ == "__main__":
     result = {"created_utc": datetime.now(timezone.utc).isoformat(), "model": args.model,
               "provider": brain.hardware_mode, "corpus_sha256": hashlib.sha256(corpus_raw).hexdigest(),
               "checks_sha256": hashlib.sha256(checks_raw).hexdigest(), "threshold": 0.65,
+              "corpus_file": args.corpus.name, "checks_file": args.checks.name,
               "timing": "Total in-process API latency; first-token/network transport not measured.",
               "cases": [], "semantic_accuracy_measured": False}
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -143,7 +148,7 @@ if __name__ == "__main__":
             started = time.perf_counter()
             try:
                 if case["kind"] == "follow-up":
-                    seed = api.post("/ask", json={"text": case["history"][0]["content"], "conversation_id": conversation})
+                    seed = api.post("/ask", json={"text": case["history"][0]["content"], "conversation_id": conversation, "selected_sources": rules.get("seed_sources", body["selected_sources"])})
                     seed.raise_for_status()
                     row["seed_answer"] = seed.json()["answer"]
                     started = time.perf_counter()
