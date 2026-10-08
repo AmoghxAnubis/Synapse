@@ -25,3 +25,9 @@ def test_abstention_wording_is_not_a_semantic_accuracy_claim():
     summary = metrics([{"error": "Model unavailable"}, {"scope_respected": False}])
     assert summary["execution"] == {"completed": 1, "total": 2}
     assert summary["scope_respected"]["percent"] == 0
+
+
+def test_valid_abstention_variation_is_recognized():
+    result = check_answer({}, {"answer": "I cannot provide information that is not present in the evidence.", "citations": []}, {"expect_abstention": True})
+    assert result["abstention_language_present"]
+    assert result["manual_semantic_review_required"]

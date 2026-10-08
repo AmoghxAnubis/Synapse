@@ -39,7 +39,7 @@ def check_answer(case, response, checks):
         )
     if checks.get("expect_abstention"):
         row["abstention_language_present"] = bool(re.search(
-            r"couldn.t find|not (?:provided|specified|mentioned|available|supported)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified)|not have.*information",
+            r"couldn.t find|not (?:present|provided|specified|mentioned|available|supported)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified)|not have.*information",
             answer, re.I | re.S))
     allowed = checks.get("expected_scope", case.get("sources"))
     if allowed is not None:
@@ -61,10 +61,34 @@ def metrics(rows):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="llama3:latest")
-    parser.add_argument("--output", type=Path, default=ROOT / "evaluations/results/answers-baseline.json")
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--rescore", type=Path, help="Recheck saved answers without model calls; writes a separate artifact.")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--data-dir", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.output is None:
+        args.output = ROOT / ("evaluations/results/answers-rescored.json" if args.rescore else "evaluations/results/answers-baseline.json")
+    if args.rescore:
+        if args.output.resolve() == args.rescore.resolve():
+            parser.error("Rescoring must preserve the original artifact; choose a different output")
+        raw = args.rescore.read_bytes()
+        result = json.loads(raw)
+        corpus_raw = (ROOT / "evaluations/corpus.json").read_bytes()
+        checks_raw = (ROOT / "evaluations/answer_checks.json").read_bytes()
+        assert result["corpus_sha256"] == hashlib.sha256(corpus_raw).hexdigest(), "Corpus changed; original run cannot be compared"
+        assert result["checks_sha256"] == hashlib.sha256(checks_raw).hexdigest(), "Checks changed; original run cannot be compared"
+        cases = {case["id"]: case for case in json.loads(corpus_raw)["cases"]}
+        checks = json.loads(checks_raw)
+        result["original_metrics"] = result["metrics"]
+        for row in result["cases"]:
+            if "error" not in row:
+                row.update(check_answer(cases[row["id"]], row, checks[row["id"]]))
+        result.update(metrics=metrics(result["cases"]), original_artifact_sha256=hashlib.sha256(raw).hexdigest(),
+                      rescored_utc=datetime.now(timezone.utc).isoformat(), scorer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, indent=2)+"\n", encoding="utf-8")
+        print(json.dumps(result["metrics"], indent=2))
+        sys.exit(0)
     if not args.worker:
         scratch = ROOT / ".tmp"
         scratch.mkdir(exist_ok=True)
