@@ -21,3 +21,7 @@ Unsupported questions within a relevant topic and conversational follow-ups are 
 Next: add representative user-approved documents, evaluate generated claim/citation support and abstention, run follow-up chains through the actual API, and agree release thresholds. Proposed gates for discussion: at least 90% supported evidence hits, 100% source-scope compliance, and zero fabricated source references on the agreed corpus. These are proposals, not approved targets or measured product guarantees.
 
 Keep private corpora and their outputs out of Git. This corpus and its output contain only synthetic content.
+
+## Actual API answer evaluation
+
+See [ANSWER_BASELINE.md](ANSWER_BASELINE.md) for the reviewed 16-case run and limitations. Use scripts/evaluate_answers.py to run real local generation against isolated metadata/vectors. answer_checks.json adds answer/citation/abstention checks and API source-policy overrides without changing the versioned retrieval corpus. Automatic diagnostics are not semantic accuracy scores.
