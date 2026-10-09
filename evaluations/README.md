@@ -34,3 +34,5 @@ See [HARDER_BASELINE.md](HARDER_BASELINE.md) for 14 harder cases, actual failure
 The final fixed checks pass on the harder corpus, but the original corpus still contains a contradictory approval/reuse answer that lexical fact checks miss. Q01/Q03 are unfinished. These corpora include only synthetic content and a public repository README snapshot; do not commit private evaluation sources or outputs. runtime-observation.json records the installed model digest after the run, not per-run cryptographic pinning.
 
 See [POST_MERGE_QUALITY.md](POST_MERGE_QUALITY.md) for the 10 October post-merge runs, added contradiction/side-fact checks, corrected prompt, saved comparisons, and remaining limits. The older result and commentary above describe the earlier run; they are retained for provenance.
+
+See [UNSEEN_QUALITY.md](UNSEEN_QUALITY.md) for the additional ten-case development corpus, observed follow-up and regional-label failures, two final real-model runs, and the limits of those diagnostics. Those cases are no longer an independent holdout after being used for repairs.

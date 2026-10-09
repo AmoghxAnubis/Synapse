@@ -1,5 +1,9 @@
 # Synapse implementation status
 
+## Answer-quality continuation — 10 October 2026
+
+Ten additional synthetic real-API/ONNX/Ollama cases exposed changed-source history contamination and incomplete regional answers. The workflow now drops old generation history when source selection changes while retaining the previous question for retrieval. Stronger checks require both sources in two-document answers and label each regional value. Two final ten-case runs, the original/harder corpus regressions, and 84 backend tests passed. This remains development-corpus evidence rather than independent holdout acceptance; Q01/Q03 and Q02 are still open. See [the additional quality report](evaluations/UNSEEN_QUALITY.md).
+
 ## LangChain/LangGraph continuation — 8 October 2026
 
 The initial framework integration is implemented on `ayush_lang`. `LocalLLM` now uses LangChain's `ChatOllama`; `app/ai/prompts.py` retains the existing bounded evidence-only prompt/history and `app/ai/retriever.py` converts existing memory records to LangChain Documents. `app/workflows/chat.py` runs agent/source scope, follow-up retrieval, optional explicitly consented web context, and generation/abstention through LangGraph. Both API endpoints retain existing response/SSE contracts and save completed conversation turns through existing SQLite storage.

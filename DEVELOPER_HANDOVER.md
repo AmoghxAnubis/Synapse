@@ -1,5 +1,9 @@
 # Synapse developer handover
 
+## Quality continuation — 10 October 2026
+
+Q01/Q03 added ten synthetic cases covering historical/current rules, source changes, follow-up grounding, two-source answers, regional ambiguity and embedded instructions. Early runs revealed correct-looking answers with missing citations, an opposite historical reuse claim, and incomplete region labeling. The workflow now clears old generation history after source changes while using the prior user question only for retrieval. Two final ten-case runs, existing original/harder regressions, and 84 backend tests passed. These cases were used for repairs and are not an independent holdout. See `evaluations/UNSEEN_QUALITY.md`; Q01/Q03, Q02 and beta acceptance remain open.
+
 ## Framework continuation — 8 October 2026
 
 A01 is implemented on `ayush_lang`: `core/llm.py` adapts LangChain ChatOllama; `ai/prompts.py` preserves evidence/history bounds; `ai/retriever.py` wraps current ONNX/Chroma retrieval; `workflows/chat.py` implements deterministic scope/retrieval/generate-or-abstain nodes with custom streaming. The API still owns SQLite conversation persistence and SSE formatting. Graph execution checkpoints, action workflow changes and Kafka are outside this initial integration. Tracing is explicitly disabled for private model/graph calls.
