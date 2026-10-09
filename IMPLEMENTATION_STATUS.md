@@ -10,7 +10,7 @@ Verification in a fresh isolated Python **3.12.13** environment installed from t
 
 `scripts/verify_chat_workflow.py --model llama3.2:latest` used temporary synthetic retrieval/SQLite with the installed real Ollama model. Streaming returned the correct 4200 USD answer with [1], source provenance and a saved turn. A factual follow-up also persisted, but its generated text omitted [1]. The tracked smoke correctly exits **1** for that citation diagnostic. This is an unresolved Q01 quality issue, not a passing citation acceptance gate. Single stream-answer samples were 44.11 seconds initially and 1.29 seconds on a later run; neither is a controlled benchmark or a first-token measurement. Full real-embedding evaluation remains pending provisioning; no model download or user-data migration occurred.
 
-See A01 in PROJECT_TRACKER.md. Initial integration is complete; Q01-Q03 and beta acceptance remain open. The user authorized completed-work commits on `ayush_lang`; keep Markdown reports current and use that branch, never `main`, for development commits. No push or hosting changes were performed.
+See A01 in PROJECT_TRACKER.md. Initial integration is complete; Q01-Q03 and beta acceptance remain open. The 8 October `ayush_lang` commit instruction applied to that integration; on 10 October the user selected `origin/main` for the post-merge quality work. Keep Markdown reports current and confirm the target branch for later tasks when it is not specified.
 
 Updated 7 October 2026. This records the implementation following [the baseline review](BASELINE_REVIEW.md). The initial product is a single-user local AI workspace: import context, find evidence, ask cited questions, retain conversations, and explicitly approve supported actions.
 

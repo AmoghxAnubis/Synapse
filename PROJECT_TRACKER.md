@@ -164,7 +164,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 5. Mark WAITING with the exact external dependency when appropriate. Never mark tested-by-mocks work as live accepted.
 6. Add newly agreed work with a stable ID. Do not silently expand scope or replace the user's approved design.
 7. Report completed work, next tasks, blockers and revised estimate in each development handover. Updates are session-based, not an unattended monitoring service.
-8. Per the user on 8 October 2026, update relevant Markdown files as work progresses and commit completed, verified work on `ayush_lang`. Do not commit development work on `main`. Pushing requires separate authorization.
+8. Update relevant Markdown files as work progresses. On 10 October 2026, the user directed the post-merge quality work to `origin/main`; that supersedes the 8 October `ayush_lang` branch instruction for this work. Confirm the target branch for later tasks when it is not specified.
 
 ## Activity log
 
@@ -186,3 +186,4 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-08 | Harder quality failures repaired with preserved comparisons | 14 cases exposed fake-role injection, citation omission, follow-up regressions and incorrect version widening. Final fact/evidence 11/11, forbidden claims absent 4/4; original 16-case diagnostics and retrieval passed. Source formatting preserved, old chunks refresh on explicit reimport. 70 tests and live production smoke passed; synthetic source/conversation removed. Q01/Q03 remain IN PROGRESS due representative gates and manual approval-answer contradiction; Cloudflare deferred |
 | 2026-10-09 | PR #33 conflict resolution | Integrated the newer answer quality prompt and referential follow-up retrieval from main into the LangChain/LangGraph path. Removed the superseded API helper. The combined backend suite passed: 79 tests. Q01/Q03 acceptance status is unchanged. |
 | 2026-10-10 | Post-merge answer quality diagnostics | Real in-process API with local ONNX/Ollama: 16/16 original and 14/14 harder cases completed. New known-contradiction/uncited-side-fact checks exposed one old failure; the final concise-answer prompt passed 3/3 original and 4/4 harder forbidden-claim checks. 81 backend tests passed. Single runs and lexical diagnostics do not complete Q01/Q03; see evaluations/POST_MERGE_QUALITY.md. |
+| 2026-10-10 | Branch correction | The user selected `origin/main` for the verified post-merge quality work. It was consolidated into commit cd2c6f7 on main; the mistakenly created `q01-post-merge-quality` branch was removed locally and remotely after verification. |

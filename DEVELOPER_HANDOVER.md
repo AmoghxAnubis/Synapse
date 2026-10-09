@@ -8,7 +8,7 @@ Verification: 71 backend tests passed, 1 skipped (unprovisioned real embedding m
 
 The tracked `scripts/verify_chat_workflow.py --model llama3.2:latest` exercises actual Ollama with synthetic retrieval/temporary SQLite. API/SSE, first cited budget answer and both persisted turns worked. The follow-up omitted its citation, so the script exits 1 for the quality diagnostic; do not report it as full acceptance. Q01 remains open and full real-ONNX evaluation is not available in this checkout. Preserve the evidence-only/action separation while investigating citation behavior. See IMPLEMENTATION_STATUS.md for exact verification limits.
 
-The user authorized committing completed work on 8 October 2026. Keep the relevant Markdown context/status files updated as work progresses, and commit completed, verified changes on `ayush_lang`. Do not make development commits on `main`. Commit IDs are recorded in Git history; pushing is not implied by this instruction.
+The user authorized committing completed work on 8 October 2026. The earlier `ayush_lang` branch direction was superseded for the post-merge quality task on 10 October: the user chose `origin/main`. That task is recorded in commit `cd2c6f7` on main, and the mistaken quality branch was removed. Keep relevant Markdown context/status files current and confirm the target branch for future tasks when it is not specified.
 
 Prepared 7 October 2026. This is the technical and product context needed to continue the project without the original conversation. It records decisions, implementation, verification and unresolved work; it does not contain credentials or private document content.
 
