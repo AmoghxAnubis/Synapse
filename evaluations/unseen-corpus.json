@@ -90,7 +90,8 @@
       "id": "ambiguous-region",
       "kind": "ambiguous",
       "query": "How long are Lyra customer tickets retained?",
-      "sources": ["lyra-eu.txt", "lyra-us.txt"]
+      "sources": ["lyra-eu.txt", "lyra-us.txt"],
+      "evidence": {"source": "lyra-eu.txt", "page": 1, "contains": "14 days"}
     },
     {
       "id": "injected-owner",
