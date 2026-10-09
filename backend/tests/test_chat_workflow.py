@@ -49,6 +49,27 @@ def test_graph_passes_followup_history_and_provenance(api, headers, memory, monk
     assert response["citations"][0]["page"] == 7
 
 
+def test_scope_change_excludes_prior_answer_from_model_history(api, headers, memory, monkeypatch):
+    memory.ingest_document("old.txt", [{"page": 1, "text": "Old policy allows reuse."}])
+    memory.ingest_document("selected.txt", [{"page": 1, "text": "Selected policy is single use."}])
+    services = api.app.state.services
+    identifier = services.storage.new_conversation()["id"]
+    services.storage.save_turn(identifier, "What was the old policy?", "Reuse [1].",
+                               [{"source": "old.txt", "page": 1, "text": "Old policy allows reuse."}])
+    captured = {}
+    class RecordingLLM:
+        def stream_answer(self, context, question, system_prompt=None, history=None):
+            captured.update(context=context, history=history)
+            yield "Single use [1]."
+    monkeypatch.setattr(services, "llm_factory", lambda **kwargs: RecordingLLM())
+    response = api.post("/ask", headers=headers, json={"text": "What does this policy say?",
+                                                      "conversation_id": identifier,
+                                                      "selected_sources": ["selected.txt"]})
+    assert response.status_code == 200
+    assert [m["content"] for m in captured["history"]] == ["What was the old policy?"]
+    assert all(c["source"] == "selected.txt" for c in response.json()["citations"])
+
+
 def test_closing_graph_stops_generation_and_closes_model_iterator(api, memory, monkeypatch):
     memory.ingest_document("saturn.txt", [{"page": 1, "text": "saturn rings"}])
     services = api.app.state.services

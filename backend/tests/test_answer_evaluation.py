@@ -85,6 +85,24 @@ def test_two_source_answer_requires_both_sources_to_be_cited():
     assert both["required_citation_sources_cited"]
 
 
+def test_unseen_checks_reject_opposite_policy_and_unmapped_regions():
+    import json
+    checks = json.loads((BACKEND_DIR.parent / "evaluations/unseen-checks.json").read_text())
+    case = {"evidence": {"source": "nova-policy-v1.txt", "page": 1, "contains": "could be reused"}}
+    citations = [{"source": "nova-policy-v1.txt", "page": 1, "text": "An approval could be reused."}]
+    wrong = check_answer(case, {"answer": "According to version 1, an approval cannot be reused [1].",
+                                "citations": citations}, checks["changed-source"])
+    assert not wrong["expected_facts_present"]
+    assert not wrong["forbidden_claims_absent"]
+    ambiguous = check_answer({"evidence": {"source": "lyra-eu.txt", "page": 1, "contains": "14 days"}},
+                             {"answer": "The retention period is 14 days [1] or 60 days [2].",
+                              "citations": [{"source": "lyra-eu.txt", "page": 1, "text": "14 days"},
+                                            {"source": "lyra-us.txt", "page": 1, "text": "60 days"}]},
+                             checks["ambiguous-region"])
+    assert not ambiguous["expected_facts_present"]
+    assert ambiguous["required_citation_sources_cited"]
+
+
 
 def test_explicit_rescore_preserves_original_and_verifies_original_checks(tmp_path):
     import hashlib
