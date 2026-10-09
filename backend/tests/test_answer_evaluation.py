@@ -39,6 +39,12 @@ def test_not_published_abstention_is_recognized():
     assert result["abstention_language_present"]
 
 
+def test_not_stated_abstention_is_recognized():
+    result = check_answer({}, {"answer": "The requested revenue information is not stated in the selected evidence.",
+                               "citations": []}, {"expect_abstention": True})
+    assert result["abstention_language_present"]
+
+
 def test_incorrect_version_widening_fails_diagnostic():
     checks = {"forbidden_patterns": [r"3\.\s*12\s*(?:\*\*)?\s*(?:or\s+(?:newer|later)|and\s+(?:newer|later)|\+)"]}
     wrong = check_answer({}, {"answer": "Python 3.12 or newer [1].", "citations": [{}]}, checks)
@@ -46,6 +52,24 @@ def test_incorrect_version_widening_fails_diagnostic():
     assert not wrong["forbidden_claims_absent"]
     assert right["forbidden_claims_absent"]
     assert right["manual_semantic_review_required"]
+
+
+def test_quality_checks_flag_known_contradiction_and_uncited_side_facts():
+    import json
+    checks = json.loads((BACKEND_DIR.parent / "evaluations/answer_checks_quality.json").read_text())
+    approval = check_answer({"evidence": {"source": "security.md", "page": 1, "contains": "only once"}},
+                            {"answer": "Approval is single-use [1], but reuse is undocumented.",
+                                 "citations": [{"source": "security.md", "page": 1, "text": "Approval can be used only once."}]},
+                            checks["approval"])
+    revenue = check_answer({}, {"answer": "Revenue is not provided. The launch budget is 12500 rupees.",
+                                "citations": [{"source": "release.txt", "page": 1, "text": "Budget is 12500 rupees."}]},
+                           checks["missing-revenue"])
+    clean = check_answer({}, {"answer": "The selected evidence does not provide last year's revenue.",
+                              "citations": []}, checks["missing-revenue"])
+    assert not approval["forbidden_claims_absent"]
+    assert not revenue["forbidden_claims_absent"]
+    assert clean["forbidden_claims_absent"]
+    assert clean["abstention_language_present"]
 
 
 

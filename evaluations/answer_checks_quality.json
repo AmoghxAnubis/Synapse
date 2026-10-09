@@ -1,0 +1,98 @@
+{
+  "budget": {
+    "answer_patterns": [
+      "12[ ,]?500",
+      "rupees"
+    ]
+  },
+  "owner": {
+    "answer_patterns": [
+      "Mira Shah"
+    ]
+  },
+  "rollback": {
+    "answer_patterns": [
+      "(?:two|2)\\s*(?:percent|%)",
+      "(?:ten|10)\\s*minutes"
+    ]
+  },
+  "retention": {
+    "answer_patterns": [
+      "30\\s*days"
+    ]
+  },
+  "response": {
+    "answer_patterns": [
+      "(?:four|4)\\s*business\\s*hours"
+    ]
+  },
+  "approval": {
+    "answer_patterns": [
+      "(?:five|5)\\s*minutes",
+      "(?:once|one.time|cannot.*reus|can.t.*reus|not.*reus)"
+    ],
+    "forbidden_patterns": [
+      "(?:reus(?:e|ed|ing)|single.use).{0,60}(?:undocumented|unclear|unknown|not (?:documented|specified))",
+      "(?:undocumented|unclear|unknown|not (?:documented|specified)).{0,60}reus(?:e|ed|ing)"
+    ]
+  },
+  "scope-release": {
+    "answer_patterns": [
+      "Mira Shah"
+    ]
+  },
+  "scope-support": {
+    "answer_patterns": [
+      "30\\s*days"
+    ]
+  },
+  "scope-empty": {
+    "api_sources": [
+      "release.txt"
+    ],
+    "agent_sources": [
+      "security.md"
+    ],
+    "expected_scope": [],
+    "expect_abstention": true
+  },
+  "scope-exclusion": {
+    "expected_scope": [
+      "security.md"
+    ],
+    "expect_abstention": true
+  },
+  "unsupported-astronomy": {
+    "expect_abstention": true
+  },
+  "unsupported-recipe": {
+    "expect_abstention": true
+  },
+  "unsupported-ocean": {
+    "expect_abstention": true
+  },
+  "missing-revenue": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "12[ ,]?500",
+      "18\\s+November\\s+2026"
+    ]
+  },
+  "missing-refund": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "(?:four|4)\\s+business\\s+hours",
+      "support@example\\.invalid"
+    ]
+  },
+  "follow-up-owner": {
+    "answer_patterns": [
+      "Mira Shah"
+    ],
+    "evidence": {
+      "source": "release.txt",
+      "page": 1,
+      "contains": "Mira Shah"
+    }
+  }
+}

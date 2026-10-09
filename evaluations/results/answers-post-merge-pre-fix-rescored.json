@@ -1,0 +1,492 @@
+{
+  "created_utc": "2026-10-09T18:56:49.512902+00:00",
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "corpus_sha256": "baeaf0b963c33dd21f881fc7338bac07135171e158bb80959c46a8fdd881e6d5",
+  "checks_sha256": "6b4543ec33c6cebd3eb2e91283722242ca10ac7618449810755bb0977d25d699",
+  "threshold": 0.65,
+  "corpus_file": "corpus.json",
+  "checks_file": "answer_checks_quality.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "budget",
+      "kind": "supported",
+      "question": "What is the Borealis release budget?",
+      "answer": "According to the evidence, the Borealis release budget is 12500 rupees. This information is supported by [1] release.txt (page 1).",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2355,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5579,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ],
+      "latency_seconds": 16.75,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "owner",
+      "kind": "supported",
+      "question": "Who owns the Borealis release?",
+      "answer": "According to the evidence, the Borealis release owner is Mira Shah. This is supported by [1] release.txt (page 1).\n\nAnswer: Mira Shah [1]",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2919,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5679,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ],
+      "latency_seconds": 3.33,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "rollback",
+      "kind": "supported",
+      "question": "When should Borealis be rolled back?",
+      "answer": "According to the evidence, Borealis should be rolled back if failed requests exceed two percent for ten minutes. This is stated in [1] release.txt (page 2).",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.3158,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.5171,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        }
+      ],
+      "latency_seconds": 3.25,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "retention",
+      "kind": "supported",
+      "question": "How long are customer support tickets retained?",
+      "answer": "According to the evidence, customer support tickets are retained for 30 days. This is supported by [1] support.md (page 1).\n\nAnswer: 30 days [1]",
+      "citations": [
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:0",
+          "source": "support.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1331,
+          "text": "Customer support tickets are retained for 30 days. Security incidents must be escalated to the operations team within 20 minutes."
+        },
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:1",
+          "source": "support.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5894,
+          "text": "The Standard support plan promises an initial response within four business hours. The support contact is support@example.invalid."
+        }
+      ],
+      "latency_seconds": 3.38,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "response",
+      "kind": "supported",
+      "question": "What is the initial response time for Standard support?",
+      "answer": "According to the evidence, the initial response time for the Standard support plan is within four business hours. This is supported by the following passage:\n\n\"[1] support.md (page 2)\\nThe Standard support plan promises an initial response within four business hours.\"\n\nTherefore, the answer is: within four business hours. [1]",
+      "citations": [
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:1",
+          "source": "support.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.339,
+          "text": "The Standard support plan promises an initial response within four business hours. The support contact is support@example.invalid."
+        }
+      ],
+      "latency_seconds": 5.39,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "approval",
+      "kind": "supported",
+      "question": "How long does action approval last and can it be reused?",
+      "answer": "According to the evidence, action approval expires after five minutes and can be used only once. [1]\n\nThere is no indication in the provided evidence that action approval can be reused. The statement explicitly mentions that it can be used only once.\n\nTherefore, the answer is: Action approval lasts for five minutes and cannot be reused. [1]",
+      "citations": [
+        {
+          "id": "013c61324be8fda276a6b1616cea08c1bd56a8e03c5b37d767ad4eb7d4dc3d46:0",
+          "source": "security.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.5862,
+          "text": "Connected features are disabled by default. Local inference uses ONNX embeddings and Ollama. Integration credentials are stored in the OS credential store. Action approval expires after five minutes and can be used only once."
+        },
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:0",
+          "source": "support.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.6182,
+          "text": "Customer support tickets are retained for 30 days. Security incidents must be escalated to the operations team within 20 minutes."
+        }
+      ],
+      "latency_seconds": 6.11,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true,
+      "forbidden_claims_absent": true
+    },
+    {
+      "id": "scope-release",
+      "kind": "scoped",
+      "question": "Who owns the Borealis release?",
+      "answer": "According to the evidence, the Borealis release owner is Mira Shah. This is supported by [1] release.txt (page 1).\n\nAnswer: Mira Shah [1]",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2919,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5679,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ],
+      "latency_seconds": 4.08,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "scope-support",
+      "kind": "scoped",
+      "question": "How long are customer support tickets retained?",
+      "answer": "According to the evidence, customer support tickets are retained for 30 days. This is supported by [1] support.md (page 1).\n\nReference: [1] support.md (page 1)",
+      "citations": [
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:0",
+          "source": "support.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1331,
+          "text": "Customer support tickets are retained for 30 days. Security incidents must be escalated to the operations team within 20 minutes."
+        },
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:1",
+          "source": "support.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5894,
+          "text": "The Standard support plan promises an initial response within four business hours. The support contact is support@example.invalid."
+        }
+      ],
+      "latency_seconds": 4.09,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "scope-empty",
+      "kind": "scope-only",
+      "question": "What is the Borealis release budget?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.03,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "scope-exclusion",
+      "kind": "scope-only",
+      "question": "What is the Borealis release budget?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.07,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-astronomy",
+      "kind": "unrelated",
+      "question": "What is the surface temperature of the planet Venus?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.05,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-recipe",
+      "kind": "unrelated",
+      "question": "How do I bake a chocolate souffle?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.03,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-ocean",
+      "kind": "unrelated",
+      "question": "What is the depth of the Mariana Trench?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.03,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "missing-revenue",
+      "kind": "unsupported-in-topic",
+      "question": "What revenue did Borealis earn last year?",
+      "answer": "The evidence does not provide any information about the revenue earned by Borealis last year. The evidence only mentions the approved budget for the Borealis release, which is 12500 rupees, and the launch date, which is 18 November 2026. There is no mention of revenue or any financial data.\n\nTherefore, I must answer that the evidence is insufficient to provide the revenue earned by Borealis last year.",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.4611,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        }
+      ],
+      "latency_seconds": 7.93,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "conversation_persisted": true,
+      "forbidden_claims_absent": false
+    },
+    {
+      "id": "missing-refund",
+      "kind": "unsupported-in-topic",
+      "question": "What is the refund policy for Standard support?",
+      "answer": "The evidence does not mention a refund policy for the Standard support. The provided information only discusses the initial response time and the support contact. Therefore, I must state that the evidence is insufficient to answer the question about the refund policy.\n\nAnswer: The evidence does not provide information about the refund policy for the Standard support.",
+      "citations": [
+        {
+          "id": "017fcd31229e5b6d295ec48a4746aa15fb14eaf39ed3213ebb0e10436c73a90c:1",
+          "source": "support.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5358,
+          "text": "The Standard support plan promises an initial response within four business hours. The support contact is support@example.invalid."
+        }
+      ],
+      "latency_seconds": 5.94,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "conversation_persisted": true,
+      "forbidden_claims_absent": true
+    },
+    {
+      "id": "follow-up-owner",
+      "kind": "follow-up",
+      "question": "Who owns it?",
+      "seed_answer": "According to the evidence, the Borealis release budget is 12500 rupees. This information is supported by [1] release.txt (page 1).",
+      "answer": "According to the evidence, the Borealis release owner is Mira Shah. This information is supported by [1] release.txt (page 1).",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2298,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5992,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ],
+      "latency_seconds": 3.5,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 9,
+      "total": 9,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 9,
+      "total": 9,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 16,
+      "total": 16,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 4,
+      "total": 4,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "conversation_persisted": {
+      "passed": 16,
+      "total": 16,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 2,
+      "total": 3,
+      "percent": 66.7
+    },
+    "execution": {
+      "completed": 16,
+      "total": 16
+    }
+  },
+  "original_checks_sha256": "4365e1d281414efec45d91da6039c05e223e6d81a3e06898661b78a5fb3a487e",
+  "checks_explicitly_updated": true,
+  "original_metrics": {
+    "expected_facts_present": {
+      "passed": 9,
+      "total": 9,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 9,
+      "total": 9,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 16,
+      "total": 16,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 4,
+      "total": 4,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "conversation_persisted": {
+      "passed": 16,
+      "total": 16,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "execution": {
+      "completed": 16,
+      "total": 16
+    }
+  },
+  "original_artifact_sha256": "1884564c2892d5ca72649f4a6bc86dd182ad6cde0cb1fb5a62ed81710da7261c",
+  "rescored_utc": "2026-10-09T19:02:33.371771+00:00",
+  "scorer_sha256": "a7d339dc5611000204c47b57ca0a0265dfbca1a537be42e021243a0b7391eb0c"
+}

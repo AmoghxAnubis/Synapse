@@ -39,7 +39,7 @@ def check_answer(case, response, checks):
         )
     if checks.get("expect_abstention"):
         row["abstention_language_present"] = bool(re.search(
-            r"couldn.t find|not (?:present|provided|specified|mentioned|available|supported|published)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified)|not have.*information",
+            r"couldn.t find|not (?:present|provided|specified|mentioned|available|supported|published|stated)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify|state)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified|stated)|not have.*information",
             answer, re.I | re.S))
     allowed = checks.get("expected_scope", case.get("sources"))
     if allowed is not None:

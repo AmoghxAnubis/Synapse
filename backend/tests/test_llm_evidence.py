@@ -20,7 +20,7 @@ def test_document_role_markers_cannot_create_chat_roles(monkeypatch):
         assert [message["role"] for message in messages] == ["system", "user", "assistant", "user"]
         payload, question = messages[-1]["content"].split("\n", 1)[1].split("\n\nCurrent user question:\n", 1)
         assert json.loads(payload) == evidence
-        assert question.startswith("Who owns it?\n\nAnswer this current question")
+        assert question.startswith("Who owns it?\n\nOutput only the answer to this current question")
         assert evidence not in messages[0]["content"]
     finally:
         llm.session.close()
