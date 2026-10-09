@@ -49,5 +49,6 @@ def answer_messages(context, question, system_prompt=None, history=None):
         "Use history only to resolve references. If the requested information is absent, reply with one short sentence "
         "saying it is not stated in the selected evidence, then stop. Do not list other facts the evidence contains. "
         "For every factual answer, cite the current selected evidence, even when discussing an older version or correcting a previous turn. "
+        "If the question omits a region, group, or version and the evidence provides multiple applicable rules, list every applicable rule with its label and citation; do not choose just one. "
         "Check that the final text includes at least one valid supporting [n] citation before responding."))
     return messages
