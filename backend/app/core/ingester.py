@@ -56,15 +56,24 @@ class FileIngester:
     def chunk_text(text, tokenizer=None, chunk_size=200, overlap=40):
         if chunk_size <= overlap or overlap < 0:
             raise ValueError("Overlap must be smaller than chunk size")
+        offsets = None
         if tokenizer is None:
             tokens = text.split()
             decode = lambda part: " ".join(part)
+        elif getattr(tokenizer, "is_fast", False):
+            encoded = tokenizer(text, add_special_tokens=False, truncation=False,
+                                return_offsets_mapping=True, verbose=False)
+            tokens, offsets = encoded["input_ids"], encoded["offset_mapping"]
         else:
             tokens = tokenizer.encode(text, add_special_tokens=False, truncation=False)
             decode = lambda part: tokenizer.decode(part, skip_special_tokens=True)
         chunks = []
         for start in range(0, len(tokens), chunk_size - overlap):
-            part = decode(tokens[start:start + chunk_size]).strip()
+            end = min(start + chunk_size, len(tokens))
+            # Preserve source case, punctuation, whitespace and Markdown. Decoding
+            # an uncased embedding tokenizer rewrites quoted evidence.
+            part = (text[offsets[start][0]:offsets[end - 1][1]] if offsets is not None
+                    else decode(tokens[start:end])).strip()
             if part:
                 chunks.append(part)
             if start + chunk_size >= len(tokens):

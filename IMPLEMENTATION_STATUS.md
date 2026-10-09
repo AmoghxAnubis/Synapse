@@ -80,3 +80,10 @@ Fixed configuration initialization so backend .env loads before data-path resolu
 Final verification: 56 tests and pip check passed in a fresh locked Python environment; clean npm ci, strict lint, build and full audit JSON passed under isolated Node 22.13.1. The install-time audit summary and a subsequent audit initially differed; the final explicit-runtime JSON returned zero vulnerabilities, and no cause for the earlier discrepancy was established.
 
 The tracked scripts/verify_local.py --with-inference passed production session/origin/body-limit checks, restored landing headline/anchors, real cited answer, saved follow-up and deduplication. The final answer sample took 17.65 seconds; synthetic source/conversation were removed. See DEVELOPER_HANDOVER.md for complete continuation context and PROJECT_TRACKER.md for current task status.
+
+
+## Answer-quality follow-up - 8 October 2026
+
+Added a fixed 14-case harder evaluation alongside the 16-case synthetic baseline. Observed failures drove stronger quoted-evidence/current-question handling, less topic carryover and preserved source formatting via tokenizer offsets. Old chunk-format records refresh on explicit import/sync without automatic user-data rewriting. Comparable harder facts/cited evidence improved from 9/11 to 11/11; four specified forbidden-claim checks all passed in the final run. Original and intermediate failures and checker changes remain auditable.
+
+70 backend tests, final original-corpus diagnostics, real retrieval and production smoke passed. Synthetic smoke source/conversation were removed and the live backend runs the updated code. Manual review still found a contradictory approval/reuse answer despite passing automated facts; general semantic accuracy is not established. Q01/Q03 remain active, Q02 streaming/resource benchmarks and representative acceptance remain pending. No frontend or hosting change was made in this continuation. See evaluations/HARDER_BASELINE.md, PROJECT_TRACKER.md and DEVELOPER_HANDOVER.md.

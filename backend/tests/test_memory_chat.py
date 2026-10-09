@@ -84,3 +84,41 @@ def test_meetings_roundtrip(api, headers):
     data = {"notes": "Meeting budget", "tasks": [{"id": 1, "text": "Follow up", "completed": False}]}
     assert api.post("/meetings", headers=headers, json=data).status_code == 200
     assert api.get("/meetings", headers=headers).json() == data
+
+
+
+def test_referential_follow_up_keeps_previous_topic(api, headers, memory, storage, monkeypatch):
+    identifier = api.post("/conversations", headers=headers).json()["id"]
+    storage.save_turn(identifier, "Who operates Nimbus recovery?", "Leela [1].", [])
+    recalled = []
+    monkeypatch.setattr(memory, "recall", lambda query, **kwargs: recalled.append(query) or [])
+    response = api.post("/ask", headers=headers, json={"text": "What is its retry limit?", "conversation_id": identifier})
+    assert response.status_code == 200
+    assert recalled == ["What is its retry limit?\nWho operates Nimbus recovery?"]
+
+
+def test_new_topic_does_not_retrieve_previous_question(api, headers, memory, storage, monkeypatch):
+    identifier = api.post("/conversations", headers=headers).json()["id"]
+    storage.save_turn(identifier, "What is the Borealis release budget?", "12500 [1].", [])
+    recalled = []
+    monkeypatch.setattr(memory, "recall", lambda query, **kwargs: recalled.append(query) or [])
+    response = api.post("/ask", headers=headers, json={"text": "How long are Helios EU tickets retained?", "conversation_id": identifier})
+    assert response.status_code == 200
+    assert recalled == ["How long are Helios EU tickets retained?"]
+
+
+
+def test_reimport_refreshes_legacy_chunk_format_without_duplicates(memory):
+    pages = [{"page": 1, "text": "saturn rings"}]
+    memory.ingest_document("legacy.txt", pages)
+    old = memory.collection.get(include=["metadatas"])
+    metadata = dict(old["metadatas"][0])
+    metadata.pop("chunk_format")
+    # Updating metadata merges fields; delete/reinsert to simulate an old record.
+    memory.collection.delete(ids=old["ids"])
+    memory.collection.upsert(ids=old["ids"], documents=["saturn rings"], embeddings=[memory.brain.embed_text("saturn rings")], metadatas=[metadata])
+    refreshed = memory.ingest_document("legacy.txt", pages)
+    assert not refreshed["unchanged"]
+    assert memory.collection.count() == 1
+    assert memory.source_chunks("legacy.txt")[0]["chunk_format"] == 2
+    assert memory.ingest_document("legacy.txt", pages)["unchanged"]

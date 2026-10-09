@@ -27,3 +27,18 @@ def test_real_offline_embeddings_retrieve_document_without_network(tmp_path, mon
     assert result[0]["source"] == "planet.txt"
     assert result[0]["page"] == 2
     assert len(brain.embed_text("example")) == 384
+
+
+
+def test_real_tokenizer_preserves_source_case_format_and_token_budget():
+    from app.core.amd_bridge import AMDBridge
+    from app.core.ingester import FileIngester
+    brain = AMDBridge(model_dir=model_dir)
+    text = "Use stable Python **3.12** and Node **22.13 or newer**.\nDo NOT broaden the Python range."
+    assert FileIngester.chunk_text(text, tokenizer=brain.tokenizer) == [text]
+    long_text = (text + "\n") * 30
+    chunks = FileIngester.chunk_text(long_text, tokenizer=brain.tokenizer)
+    assert len(chunks) > 1
+    assert all(chunk in long_text for chunk in chunks)
+    assert chunks[-1].endswith("Python range.")
+    assert all(len(brain.tokenizer.encode(chunk, add_special_tokens=False)) <= 200 for chunk in chunks)

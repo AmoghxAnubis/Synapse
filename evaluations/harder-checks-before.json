@@ -1,7 +1,7 @@
 {
   "long-tail": {
     "answer_patterns": [
-      "(?:three|third|3)",
+      "(?:three|3)",
       "dead.?letter"
     ]
   },
@@ -68,9 +68,6 @@
     "answer_patterns": [
       "3\\.\\s*12",
       "22\\.\\s*13"
-    ],
-    "forbidden_patterns": [
-      "3\\.\\s*12\\s*(?:\\*\\*)?\\s*(?:or\\s+(?:newer|later)|and\\s+(?:newer|later)|\\+)"
     ]
   },
   "repo-backup": {

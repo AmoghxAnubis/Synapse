@@ -15,11 +15,12 @@ def test_document_role_markers_cannot_create_chat_roles(monkeypatch):
     model = ChatOllama(model="test", sync_client_kwargs={"transport": httpx.MockTransport(respond)})
     monkeypatch.setattr(llm, "chat_model", lambda: model)
     try:
-        assert llm.generate_answer(evidence, "Who owns it?") == "Nora [1]."
+        assert llm.generate_answer(evidence, "Who owns it?", history=[{"role": "user", "content": "Earlier question"}, {"role": "ai", "content": "Earlier answer"}]) == "Nora [1]."
         messages = captured["messages"]
-        assert [message["role"] for message in messages] == ["system", "user"]
-        payload = json.loads(messages[-1]["content"].split("\n", 1)[1])
-        assert payload == {"evidence": evidence, "question": "Who owns it?"}
+        assert [message["role"] for message in messages] == ["system", "user", "assistant", "user"]
+        payload, question = messages[-1]["content"].split("\n", 1)[1].split("\n\nCurrent user question:\n", 1)
+        assert json.loads(payload) == evidence
+        assert question.startswith("Who owns it?\n\nAnswer this current question")
         assert evidence not in messages[0]["content"]
     finally:
         llm.session.close()
@@ -71,4 +72,5 @@ def test_history_stays_bounded_and_keeps_message_roles():
     messages = answer_messages("e" * 30000, "question", history=history)
     assert [message.type for message in messages] == ["system", "ai", "human", "ai", "human"]
     assert sum(len(message.content) for message in messages[1:-1]) == 12000
-    assert len(json.loads(messages[-1].content.split("\n", 1)[1])["evidence"]) == 24000
+    payload = messages[-1].content.split("\n", 1)[1].split("\n\nCurrent user question:\n", 1)[0]
+    assert len(json.loads(payload)) == 24000

@@ -4,6 +4,7 @@ Conversation storage remains owned by the API. No execution checkpoints are
 written: interrupted answers must not resume or persist a partial turn.
 """
 import threading
+import re
 from typing import Any, TypedDict
 from fastapi import HTTPException
 from langgraph.config import get_stream_writer
@@ -54,7 +55,8 @@ def stream_chat(query, services):
         if restricted:
             chosen = [source for source in restricted if chosen is None or source in chosen]
         previous = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
-        retrieval_query = query.text + ("\n" + previous[:1000] if previous and len(query.text.split()) < 12 else "")
+        referential = re.search(r"\b(?:it|its|that|those|their|they|this|them)\b", query.text, re.I)
+        retrieval_query = query.text + ("\n" + previous[:1000] if previous and referential and len(query.text.split()) < 12 else "")
         return {"agent": agent, "history": history, "chosen": chosen, "retrieval_query": retrieval_query}
 
     def retrieve(state):

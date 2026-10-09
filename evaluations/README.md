@@ -25,3 +25,10 @@ Keep private corpora and their outputs out of Git. This corpus and its output co
 ## Actual API answer evaluation
 
 See [ANSWER_BASELINE.md](ANSWER_BASELINE.md) for the reviewed 16-case run and limitations. Use scripts/evaluate_answers.py to run real local generation against isolated metadata/vectors. answer_checks.json adds answer/citation/abstention checks and API source-policy overrides without changing the versioned retrieval corpus. Automatic diagnostics are not semantic accuracy scores.
+
+
+## Harder evaluation and audited comparisons
+
+See [HARDER_BASELINE.md](HARDER_BASELINE.md) for 14 harder cases, actual failures, repairs, final results and remaining manual-review defects. The runner accepts --corpus and --checks for alternate fixed corpora. Revised scoring of an old artifact requires --updated-checks explicitly, while --checks supplies the original file whose hash must match. Original answers are never overwritten by rescore. Always use a new --output path for comparison runs.
+
+The final fixed checks pass on the harder corpus, but the original corpus still contains a contradictory approval/reuse answer that lexical fact checks miss. Q01/Q03 are unfinished. These corpora include only synthetic content and a public repository README snapshot; do not commit private evaluation sources or outputs. runtime-observation.json records the installed model digest after the run, not per-run cryptographic pinning.

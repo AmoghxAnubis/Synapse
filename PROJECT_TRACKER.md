@@ -46,7 +46,7 @@ A task becomes DONE only when its completion criterion is verified. Estimates ar
 | B14 | DONE | Bound frontend request reads without Content-Length | Pairing 1 KB and proxy 21 MB limits; production chunked-body rejection passed |
 | B15 | DONE | Clean lockfile installation verification | Fresh Python environment: 56 tests/pip check; explicit Node 22.13.1 npm ci/lint/build/full audit |
 
-Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The backend suite contains 56 passing tests; GPU/NPU and live provider behavior are not verified.
+Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The fresh-install baseline contained 56 passing tests; the current suite contains 70 passing tests; GPU/NPU and live provider behavior are not verified.
 
 ## Phase 1 - original landing page, 8-16 hours
 
@@ -69,9 +69,9 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Synthetic baseline: evidence 8/8, top result 8/8, scope 4/4, unrelated empty 3/3; evaluations/results/retrieval-baseline.json. Actual API baseline now reviewed: 9/9 answer facts/evidence, 7/7 abstentions, 4/4 scope and 16/16 persistence; evaluations/ANSWER_BASELINE.md. Next: harder/representative content and agreed thresholds; one short synthetic run does not complete this task |
+| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Original 16-case run plus harder 14-case corpus reviewed. Comparable harder fact/evidence checks improved 9/11 to 11/11; forbidden claims absent 2/4 to 4/4. Original regression passed automated diagnostics, but manual review found an approval/reuse contradiction. See evaluations/HARDER_BASELINE.md; broader claim support, unseen/representative questions and approved thresholds remain |
 | Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
-| Q03 | P1 | TODO | 4-8 | Q01, Q02 | Tune only evidence-backed retrieval/model settings; rerun quality/performance gates; record remaining limits |
+| Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Repaired embedded-role/citation handling, current-question follow-ups, topic carryover and original-text chunking. 70 tests and production smoke passed. Resolve answer contradictions/uncited background facts; rerun representative quality and controlled performance gates; prompts do not guarantee injection resistance |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
@@ -183,3 +183,5 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-08 | Q01 real-answer baseline reviewed | 16 cases completed on isolated real API/Ollama; 9/9 fact/evidence checks, 7/7 abstentions after lexical scorer fix, real follow-up and scope/persistence passed. Original and rescored artifacts preserved; 61 backend tests passed. Q01 remains IN PROGRESS; Cloudflare deferred |
 | 2026-10-08 | A01 initial LangChain/LangGraph integration complete | On ayush_lang: local ChatOllama adapter, scoped RAG graph, unchanged chat API/SSE and existing SQLite turn persistence. 71 tests passed/1 skipped in isolated Python 3.12.13; uv pip check passed; existing locked package versions retained. Tracked synthetic-retrieval/real-Ollama smoke verifies API and persistence but exits 1 on omitted follow-up [1]. Q01 still open; Kafka/checkpointed actions not implemented. No commit/push performed. |
 | 2026-10-08 | Completed-work branch commits authorized | Keep Markdown context/status updated and commit completed work on ayush_lang, never main. A01 implementation, tests and reports are the first completed-work commit; see Git history for its revision. No push requested. |
+| 2026-10-08 | Harder quality failures repaired with preserved comparisons | 14 cases exposed fake-role injection, citation omission, follow-up regressions and incorrect version widening. Final fact/evidence 11/11, forbidden claims absent 4/4; original 16-case diagnostics and retrieval passed. Source formatting preserved, old chunks refresh on explicit reimport. 70 tests and live production smoke passed; synthetic source/conversation removed. Q01/Q03 remain IN PROGRESS due representative gates and manual approval-answer contradiction; Cloudflare deferred |
+| 2026-10-09 | PR #33 conflict resolution | Integrated the newer answer quality prompt and referential follow-up retrieval from main into the LangChain/LangGraph path. Removed the superseded API helper. The combined backend suite passed: 79 tests. Q01/Q03 acceptance status is unchanged. |

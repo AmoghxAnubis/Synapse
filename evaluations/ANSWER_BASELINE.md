@@ -81,3 +81,8 @@ Q01 stays IN PROGRESS. Add longer multi-chunk documents, ambiguity/conflicting v
 Q02 must measure real HTTP streaming/first-token latency, cold/warm distributions, cancellation and resource use. Cloudflare remains deferred behind local product readiness.
 
 Regression verification after scorer changes: 61 backend tests passed, with the existing dependency deprecation warning.
+
+
+## Later continuation
+
+The harder cases and source-format repairs are now documented in [HARDER_BASELINE.md](HARDER_BASELINE.md). This report describes the original short-corpus run, not the latest regression answers. The latest original-corpus run passed automated checks but introduced a manually observed approval/reuse contradiction, demonstrating why lexical fact/citation checks alone are insufficient. Q01 and Q03 remain active.

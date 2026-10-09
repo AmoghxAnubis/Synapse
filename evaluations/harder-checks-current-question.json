@@ -70,7 +70,7 @@
       "22\\.\\s*13"
     ],
     "forbidden_patterns": [
-      "3\\.\\s*12\\s*(?:\\*\\*)?\\s*(?:or\\s+(?:newer|later)|and\\s+(?:newer|later)|\\+)"
+      "3\\.\\s*12[^\\n]*(?:or newer|or later|and newer|and later|\\+)"
     ]
   },
   "repo-backup": {

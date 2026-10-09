@@ -24,7 +24,7 @@ class MemoryBank:
         text_hash = hashlib.sha256("\n".join(p["text"] for p in pages).encode()).hexdigest()
         with self.lock:
             existing = self.collection.get(where={"document_id": document_id}, include=["metadatas"])
-            if existing["ids"] and all(m.get("content_hash") == text_hash for m in existing["metadatas"]):
+            if existing["ids"] and all(m.get("content_hash") == text_hash and m.get("chunk_format") == 2 for m in existing["metadatas"]):
                 return {"chunks_processed": len(existing["ids"]), "unchanged": True}
             texts, metadata, ids, vectors = [], [], [], []
             for page in pages:
@@ -34,7 +34,7 @@ class MemoryBank:
                     index = len(ids)
                     ids.append(f"{document_id}:{index}")
                     texts.append(chunk)
-                    metadata.append({"source": source, "document_id": document_id, "page": page.get("page", 1), "chunk": index + 1, "url": url, "platform": platform, "content_hash": text_hash})
+                    metadata.append({"source": source, "document_id": document_id, "page": page.get("page", 1), "chunk": index + 1, "url": url, "platform": platform, "content_hash": text_hash, "chunk_format": 2})
                     vectors.append(self.brain.embed_text(chunk))
             if not ids:
                 raise ValueError("Document has no readable text")

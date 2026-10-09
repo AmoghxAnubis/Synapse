@@ -39,7 +39,7 @@ def check_answer(case, response, checks):
         )
     if checks.get("expect_abstention"):
         row["abstention_language_present"] = bool(re.search(
-            r"couldn.t find|not (?:present|provided|specified|mentioned|available|supported)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified)|not have.*information",
+            r"couldn.t find|not (?:present|provided|specified|mentioned|available|supported|published)|no (?:information|evidence|supporting)|does(?:n.t| not).*?(?:provide|contain|mention|specify)|cannot (?:determine|answer)|don.t (?:know|have)|isn.t (?:provided|specified)|not have.*information",
             answer, re.I | re.S))
     allowed = checks.get("expected_scope", case.get("sources"))
     if allowed is not None:
@@ -67,9 +67,12 @@ if __name__ == "__main__":
     parser.add_argument("--checks", type=Path, default=ROOT / "evaluations/answer_checks.json")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--rescore", type=Path, help="Recheck saved answers without model calls; writes a separate artifact.")
+    parser.add_argument("--updated-checks", type=Path, help="Explicit revised checks for rescore only; original --checks hash must still match.")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--data-dir", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.updated_checks and not args.rescore:
+        parser.error("--updated-checks requires --rescore")
     if args.output is None:
         args.output = ROOT / ("evaluations/results/answers-rescored.json" if args.rescore else "evaluations/results/answers-baseline.json")
     if args.rescore:
@@ -82,6 +85,12 @@ if __name__ == "__main__":
         assert result["corpus_sha256"] == hashlib.sha256(corpus_raw).hexdigest(), "Corpus changed; original run cannot be compared"
         assert result["checks_sha256"] == hashlib.sha256(checks_raw).hexdigest(), "Checks changed; original run cannot be compared"
         cases = {case["id"]: case for case in json.loads(corpus_raw)["cases"]}
+        if args.updated_checks:
+            result["original_checks_sha256"] = result["checks_sha256"]
+            checks_raw = args.updated_checks.read_bytes()
+            result["checks_sha256"] = hashlib.sha256(checks_raw).hexdigest()
+            result["checks_file"] = args.updated_checks.name
+            result["checks_explicitly_updated"] = True
         checks = json.loads(checks_raw)
         result["original_metrics"] = result["metrics"]
         for row in result["cases"]:
