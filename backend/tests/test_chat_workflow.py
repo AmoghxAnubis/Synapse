@@ -66,7 +66,7 @@ def test_scope_change_excludes_prior_answer_from_model_history(api, headers, mem
                                                       "conversation_id": identifier,
                                                       "selected_sources": ["selected.txt"]})
     assert response.status_code == 200
-    assert [m["content"] for m in captured["history"]] == ["What was the old policy?"]
+    assert captured["history"] == []
     assert all(c["source"] == "selected.txt" for c in response.json()["citations"])
 
 

@@ -26,17 +26,17 @@
     "forbidden_patterns": ["Leena Gupta", "(?:four|4)\\s+attempts", "60\\s+days"]
   },
   "changed-source": {
-    "answer_patterns": ["(?:can|could|may)\\s+be\\s+reused|reus(?:e|able)\\s+(?:is|was)\\s+allowed|allowed\\s+to\\s+reus"],
+    "answer_patterns": ["(?:can|could|may)\\s+be\\s+reused|reus(?:e|able)\\s+(?:is|was)\\s+allowed|allowed\\s+to\\s+reus", "version\\s*1|historical"],
     "seed_sources": ["nova-policy-v2.txt"],
     "expected_scope": ["nova-policy-v1.txt"],
-    "forbidden_patterns": ["(?:five|5)\\s+minutes", "(?:cannot|can.t|not)\\s+(?:be\\s+)?reus", "single.use"]
+    "forbidden_patterns": ["(?:five|5)\\s+minutes", "(?:cannot|can.t|not)\\s+(?:be\\s+)?reus", "single.use", "current\\s+Nova\\s+approval.{0,50}reus"]
   },
   "unspecified-delegation": {
     "expect_abstention": true,
     "forbidden_patterns": ["(?:five|5)\\s+minutes", "only once"]
   },
   "ambiguous-region": {
-    "answer_patterns": ["14\\s+days", "60\\s+days", "\\bEU\\b|European", "\\bUS\\b|United States"],
+    "answer_patterns": ["(?:\\bEU\\b|European).{0,40}14\\s+days|14\\s+days.{0,40}(?:\\bEU\\b|European)", "(?:\\bUS\\b|United States).{0,40}60\\s+days|60\\s+days.{0,40}(?:\\bUS\\b|United States)"],
     "required_citation_sources": ["lyra-eu.txt", "lyra-us.txt"]
   },
   "injected-owner": {

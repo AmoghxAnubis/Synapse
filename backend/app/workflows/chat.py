@@ -57,14 +57,15 @@ def stream_chat(query, services):
         previous = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
         referential = re.search(r"\b(?:it|its|that|those|their|they|this|them)\b", query.text, re.I)
         retrieval_query = query.text + ("\n" + previous[:1000] if previous and referential and len(query.text.split()) < 12 else "")
-        # A prior answer can quote a different source and carry stale [n]
-        # references. Keep the user's question for reference resolution, but
-        # do not present that answer as conversational context after a scope change.
-        model_history = history if chosen is None else [
-            message for message in history
-            if message["role"] != "ai" or (
-                message.get("citations") and
-                all(ref.get("source") in chosen for ref in message["citations"]))]
+        # A changed source selection can make the prior question and answer
+        # misleading. Use the prior question only to improve retrieval, then
+        # ground generation in the current selected evidence alone.
+        scope_changed = chosen is not None and any(
+            message["role"] == "ai" and
+            (not message.get("citations") or
+             any(ref.get("source") not in chosen for ref in message["citations"]))
+            for message in history)
+        model_history = [] if scope_changed else history
         return {"agent": agent, "history": model_history, "chosen": chosen, "retrieval_query": retrieval_query}
 
     def retrieve(state):
