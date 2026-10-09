@@ -72,6 +72,19 @@ def test_quality_checks_flag_known_contradiction_and_uncited_side_facts():
     assert clean["abstention_language_present"]
 
 
+def test_two_source_answer_requires_both_sources_to_be_cited():
+    case = {}
+    citations = [{"source": "orion.txt", "page": 1, "text": "Orion owner is Leena."},
+                 {"source": "lyra.txt", "page": 1, "text": "Lyra EU retention is 14 days."}]
+    checks = {"required_citation_sources": ["orion.txt", "lyra.txt"]}
+    one = check_answer(case, {"answer": "Leena owns Orion; Lyra EU retains tickets for 14 days [1].",
+                              "citations": citations}, checks)
+    both = check_answer(case, {"answer": "Leena owns Orion [1]; Lyra EU retains tickets for 14 days [2].",
+                               "citations": citations}, checks)
+    assert not one["required_citation_sources_cited"]
+    assert both["required_citation_sources_cited"]
+
+
 
 def test_explicit_rescore_preserves_original_and_verifies_original_checks(tmp_path):
     import hashlib

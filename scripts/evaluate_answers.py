@@ -46,12 +46,17 @@ def check_answer(case, response, checks):
         row["scope_respected"] = all(c["source"] in allowed for c in citations)
     if checks.get("forbidden_patterns"):
         row["forbidden_claims_absent"] = not any(re.search(pattern, answer, re.I) for pattern in checks["forbidden_patterns"])
+    if checks.get("required_citation_sources"):
+        cited_sources = {citations[number - 1]["source"] for number in refs if 1 <= number <= len(citations)}
+        row["required_citation_sources_cited"] = all(
+            source in cited_sources for source in checks["required_citation_sources"])
     return row
 
 
 def metrics(rows):
     fields = ["expected_facts_present", "expected_evidence_cited", "citation_numbers_valid",
-              "scope_respected", "abstention_language_present", "conversation_persisted", "forbidden_claims_absent"]
+              "scope_respected", "abstention_language_present", "conversation_persisted", "forbidden_claims_absent",
+              "required_citation_sources_cited"]
     result = {}
     for field in fields:
         values = [row[field] for row in rows if field in row]
