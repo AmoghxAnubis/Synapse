@@ -128,6 +128,31 @@
       "scope_respected": true,
       "forbidden_claims_absent": true,
       "conversation_persisted": true
+    },
+    {
+      "id": "history-cost-abstention",
+      "kind": "follow-up",
+      "question": "What is its monthly operating cost?",
+      "seed_answer": "Orion recovery is operated by Leena Gupta. [1]",
+      "answer": "The monthly operating cost is not stated in the selected evidence. [1]",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3506,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        }
+      ],
+      "latency_seconds": 2.39,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
     }
   ],
   "semantic_accuracy_measured": false,
@@ -143,28 +168,28 @@
       "percent": 100.0
     },
     "citation_numbers_valid": {
-      "passed": 4,
-      "total": 4,
+      "passed": 5,
+      "total": 5,
       "percent": 100.0
     },
     "scope_respected": {
-      "passed": 4,
-      "total": 4,
+      "passed": 5,
+      "total": 5,
       "percent": 100.0
     },
     "abstention_language_present": {
-      "passed": 0,
-      "total": 0,
-      "percent": null
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
     },
     "conversation_persisted": {
-      "passed": 4,
-      "total": 4,
+      "passed": 5,
+      "total": 5,
       "percent": 100.0
     },
     "forbidden_claims_absent": {
-      "passed": 4,
-      "total": 4,
+      "passed": 5,
+      "total": 5,
       "percent": 100.0
     },
     "required_citation_sources_cited": {
@@ -173,8 +198,8 @@
       "percent": 100.0
     },
     "execution": {
-      "completed": 4,
-      "total": 4
+      "completed": 5,
+      "total": 5
     }
   }
 }
