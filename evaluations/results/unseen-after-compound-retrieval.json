@@ -67,28 +67,89 @@
       "scope_respected": true,
       "forbidden_claims_absent": true,
       "conversation_persisted": true
+    },
+    {
+      "id": "multi-source",
+      "kind": "supported",
+      "question": "Who operates Orion recovery, and how long are Lyra EU customer tickets retained?",
+      "answer": "Orion recovery is operated by Leena Gupta [1]. Lyra EU customer tickets are retained for 14 days [2].",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2881,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        },
+        {
+          "id": "30863693603bb3b60b7b927d982bca08f1c7495ed13060f28c84e57cb1556c64:0",
+          "source": "lyra-eu.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1014,
+          "text": "Lyra customer tickets for the EU team are retained for 14 days. This rule applies only to the EU team."
+        }
+      ],
+      "latency_seconds": 3.12,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "referential-retry",
+      "kind": "follow-up",
+      "question": "What is its retry limit?",
+      "seed_answer": "Orion recovery is operated by Leena Gupta. [1]",
+      "answer": "The retry limit is four attempts. [1]",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1332,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        }
+      ],
+      "latency_seconds": 1.89,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
     }
   ],
   "semantic_accuracy_measured": false,
   "metrics": {
     "expected_facts_present": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "expected_evidence_cited": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "citation_numbers_valid": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "scope_respected": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "abstention_language_present": {
@@ -97,23 +158,23 @@
       "percent": null
     },
     "conversation_persisted": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "forbidden_claims_absent": {
-      "passed": 2,
-      "total": 2,
+      "passed": 4,
+      "total": 4,
       "percent": 100.0
     },
     "required_citation_sources_cited": {
-      "passed": 0,
-      "total": 0,
-      "percent": null
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
     },
     "execution": {
-      "completed": 2,
-      "total": 2
+      "completed": 4,
+      "total": 4
     }
   }
 }
