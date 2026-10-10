@@ -137,53 +137,127 @@
       "expected_evidence_cited": true,
       "scope_respected": true,
       "conversation_persisted": true
+    },
+    {
+      "id": "referential-preview",
+      "kind": "follow-up",
+      "question": "How long does its preview last?",
+      "seed_answer": "Synapse can preview and approve actions that go through \"/actions/preview\" or \"/actions/{id}/approve\" or cancellation. This is stated in the selected evidence [1].",
+      "answer": "According to the selected evidence, previews expire after five minutes and are consumed once. [1]\n\n(Note: This answer only addresses the current question and does not provide any additional information.)",
+      "citations": [
+        {
+          "id": "30d770505b2c2ed97677a37cfb3dfdbb836fde817950e7db87e860bcafe07e58:1",
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4482,
+          "text": "Actions go through /actions/preview, /actions/{id}/approve or cancellation. Previews disclose destination and content, expire after five minutes and are consumed once. Permissions and network policy are checked again at approval. App launch is restricted to three fixed executable choices; diagnostics accept fixed argv choices with shell=False."
+        }
+      ],
+      "latency_seconds": 4.21,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-encryption",
+      "kind": "unsupported",
+      "question": "Which encryption algorithm does the action preview use?",
+      "answer": "The action preview does not mention the encryption algorithm used.",
+      "citations": [
+        {
+          "id": "30d770505b2c2ed97677a37cfb3dfdbb836fde817950e7db87e860bcafe07e58:1",
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5753,
+          "text": "Actions go through /actions/preview, /actions/{id}/approve or cancellation. Previews disclose destination and content, expire after five minutes and are consumed once. Permissions and network policy are checked again at approval. App launch is restricted to three fixed executable choices; diagnostics accept fixed argv choices with shell=False."
+        }
+      ],
+      "latency_seconds": 2.24,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "two-document",
+      "kind": "supported",
+      "question": "What latency measurement did the baseline review request, and what concurrency limit does the developer handover describe for answers?",
+      "answer": "The baseline review requested latency measurements for \"first-token latency\" and \"total response latency\", as stated in [1].",
+      "citations": [
+        {
+          "id": "243683ea01767811b501e66629adf03d44701755954501c9ab370132f1c24183:1",
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5854,
+          "text": "Use a versioned test corpus and record retrieval hit rate, citation correctness, unsupported-question behavior, follow-up accuracy, duplicate count after reimport, restart/restore integrity, first-token latency, total response latency, peak RAM, ingestion throughput, and observed outbound traffic. Set numeric targets after measuring the first working baseline."
+        }
+      ],
+      "latency_seconds": 3.09,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": false,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "required_citation_sources_cited": false,
+      "conversation_persisted": true
     }
   ],
   "semantic_accuracy_measured": false,
   "metrics": {
     "expected_facts_present": {
-      "passed": 5,
-      "total": 5,
-      "percent": 100.0
+      "passed": 6,
+      "total": 7,
+      "percent": 85.7
     },
     "expected_evidence_cited": {
-      "passed": 5,
-      "total": 5,
+      "passed": 7,
+      "total": 7,
       "percent": 100.0
     },
     "citation_numbers_valid": {
-      "passed": 5,
-      "total": 5,
+      "passed": 8,
+      "total": 8,
       "percent": 100.0
     },
     "scope_respected": {
-      "passed": 5,
-      "total": 5,
+      "passed": 8,
+      "total": 8,
       "percent": 100.0
     },
     "abstention_language_present": {
-      "passed": 0,
-      "total": 0,
-      "percent": null
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
     },
     "conversation_persisted": {
-      "passed": 5,
-      "total": 5,
+      "passed": 8,
+      "total": 8,
       "percent": 100.0
     },
     "forbidden_claims_absent": {
-      "passed": 0,
-      "total": 0,
-      "percent": null
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
     },
     "required_citation_sources_cited": {
       "passed": 0,
-      "total": 0,
-      "percent": null
+      "total": 1,
+      "percent": 0.0
     },
     "execution": {
-      "completed": 5,
-      "total": 5
+      "completed": 8,
+      "total": 8
     }
   }
 }
