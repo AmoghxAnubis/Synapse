@@ -188,53 +188,137 @@
       "scope_respected": true,
       "forbidden_claims_absent": true,
       "conversation_persisted": true
+    },
+    {
+      "id": "changed-source",
+      "kind": "follow-up",
+      "question": "Can it be reused according to this selected source?",
+      "seed_answer": "According to the selected evidence, a current Nova approval lasts for five minutes, as stated in [1].",
+      "answer": "According to the selected source, an approval could be reused until it expired after 30 minutes, as stated in version 1. [1]",
+      "citations": [
+        {
+          "id": "6a30a6ea66bbc65b7da1c4ba439e30195f674a95398d9aaf9d9df5e8a41c881a:0",
+          "source": "nova-policy-v1.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2995,
+          "text": "Nova approval policy version 1 was a historical draft. In version 1, an approval could be reused until it expired after 30 minutes. Version 1 is superseded and is not the current rule."
+        }
+      ],
+      "latency_seconds": 2.95,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unspecified-delegation",
+      "kind": "unsupported-in-topic",
+      "question": "Who may receive a delegated Nova approval under the current policy?",
+      "answer": "Delegation is not specified in the current Nova approval policy version 2, which is stated in [1]. Therefore, it is not stated in the selected evidence who may receive a delegated Nova approval under the current policy.",
+      "citations": [
+        {
+          "id": "a4c00113f916805b280ad9de5874f29cd6633265335d865e7f60cd9f7878fe0e:0",
+          "source": "nova-policy-v2.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2962,
+          "text": "Nova approval policy version 2 is the current approved rule and supersedes version 1. Under version 2, each approval may be used only once and expires after five minutes. Delegation is not specified in this policy."
+        }
+      ],
+      "latency_seconds": 4.1,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "ambiguous-region",
+      "kind": "ambiguous",
+      "question": "How long are Lyra customer tickets retained?",
+      "answer": "Lyra customer tickets are retained for 60 days for the US team [1] and 14 days for the EU team [2].",
+      "citations": [
+        {
+          "id": "38d2bc944b22e450bb838e97391d6f1c53107041e5d97ac381285c29d2dd7751:0",
+          "source": "lyra-us.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1767,
+          "text": "Lyra customer tickets for the US team are retained for 60 days. This rule applies only to the US team."
+        },
+        {
+          "id": "30863693603bb3b60b7b927d982bca08f1c7495ed13060f28c84e57cb1556c64:0",
+          "source": "lyra-eu.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.18,
+          "text": "Lyra customer tickets for the EU team are retained for 14 days. This rule applies only to the EU team."
+        }
+      ],
+      "latency_seconds": 3.07,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
     }
   ],
   "semantic_accuracy_measured": false,
   "metrics": {
     "expected_facts_present": {
-      "passed": 5,
-      "total": 5,
+      "passed": 7,
+      "total": 7,
       "percent": 100.0
     },
     "expected_evidence_cited": {
-      "passed": 5,
-      "total": 5,
+      "passed": 7,
+      "total": 7,
       "percent": 100.0
     },
     "citation_numbers_valid": {
-      "passed": 6,
-      "total": 6,
+      "passed": 9,
+      "total": 9,
       "percent": 100.0
     },
     "scope_respected": {
-      "passed": 6,
-      "total": 6,
+      "passed": 9,
+      "total": 9,
       "percent": 100.0
     },
     "abstention_language_present": {
-      "passed": 1,
-      "total": 1,
+      "passed": 2,
+      "total": 2,
       "percent": 100.0
     },
     "conversation_persisted": {
-      "passed": 6,
-      "total": 6,
+      "passed": 9,
+      "total": 9,
       "percent": 100.0
     },
     "forbidden_claims_absent": {
-      "passed": 6,
-      "total": 6,
+      "passed": 8,
+      "total": 8,
       "percent": 100.0
     },
     "required_citation_sources_cited": {
-      "passed": 1,
-      "total": 1,
+      "passed": 2,
+      "total": 2,
       "percent": 100.0
     },
     "execution": {
-      "completed": 6,
-      "total": 6
+      "completed": 9,
+      "total": 9
     }
   }
 }
