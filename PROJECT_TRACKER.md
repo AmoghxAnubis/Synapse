@@ -1,6 +1,6 @@
 # Synapse product task tracker
 
-Last updated: 8 October 2026.
+Last updated: 10 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
@@ -69,9 +69,9 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | Two final real API/Ollama runs of ten additional synthetic cases passed fixed fact/evidence, scope, abstention and two-source diagnostics after repairing observed history and regional-answer failures. Original 16-case and harder 14-case regressions passed. These cases became development data; a separate approved holdout, claim-level review and release thresholds remain. See evaluations/UNSEEN_QUALITY.md |
+| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | A fixed eight-case public-document holdout ran through real API/ONNX/Ollama. Manual review found 7/8 complete supported answers; one two-document answer omitted the handover's concurrency limit and its citation. Diagnose and repair, then use a fresh representative holdout and agreed release thresholds. See evaluations/HOLDOUT_QUALITY.md |
 | Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
-| Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Repaired embedded-role/citation handling, current-question follow-ups, topic carryover and original-text chunking. Source changes now remove stale generation history while keeping the prior user question for retrieval. Added group-label and two-source checks; 84 backend tests and fixed-corpus regressions passed. Independent holdout and controlled performance gates remain; prompts do not guarantee injection resistance |
+| Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Repaired embedded-role/citation handling, current-question follow-ups, topic carryover and original-text chunking. Source changes now remove stale generation history while keeping the prior user question for retrieval. A fixed public-document holdout exposed an incomplete two-document answer despite passing development regressions. Repair and independently revalidate; controlled performance gate remains |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
@@ -188,3 +188,4 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-10 | Post-merge answer quality diagnostics | Real in-process API with local ONNX/Ollama: 16/16 original and 14/14 harder cases completed. New known-contradiction/uncited-side-fact checks exposed one old failure; the final concise-answer prompt passed 3/3 original and 4/4 harder forbidden-claim checks. 81 backend tests passed. Single runs and lexical diagnostics do not complete Q01/Q03; see evaluations/POST_MERGE_QUALITY.md. |
 | 2026-10-10 | Branch correction | The user selected `origin/main` for the verified post-merge quality work. It was consolidated into commit cd2c6f7 on main; the mistakenly created `q01-post-merge-quality` branch was removed locally and remotely after verification. |
 | 2026-10-10 | Additional Q01/Q03 cases and history-scope repair | Ten new synthetic cases revealed citation omission, reversal of a historical reuse rule, and incomplete regional answers. Stricter checks and scoped generation-history handling repaired the observed samples. Two final ten-case runs, original/harder regressions, and 84 backend tests passed. Separate holdout review and thresholds remain; see evaluations/UNSEEN_QUALITY.md. |
+| 2026-10-10 | First independent document holdout | Frozen eight-case excerpts from public project documents ran through real API/ONNX/Ollama. Manual review found seven complete supported answers and one two-document omission with a missing citation. First-run artifact preserved; Q01/Q03 remain open. Diagnose the omission, then create a new representative holdout; see evaluations/HOLDOUT_QUALITY.md. |
