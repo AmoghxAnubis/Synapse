@@ -1,0 +1,151 @@
+{
+  "metrics": {
+    "evidence_hit": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "top_one_hit": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "retrieval_empty": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    }
+  },
+  "cases": [
+    {
+      "id": "product-promise",
+      "kind": "supported",
+      "retrieval_ms": 14.35,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "distance": 0.5214
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "baseline-gate",
+      "kind": "supported",
+      "retrieval_ms": 7.6,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "distance": 0.5944
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.6379
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "scorecard",
+      "kind": "supported",
+      "retrieval_ms": 7.42,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5588
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "import-formats",
+      "kind": "supported",
+      "retrieval_ms": 6.67,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 1,
+          "distance": 0.6235
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "preview-expiry",
+      "kind": "supported",
+      "retrieval_ms": 10.17,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.4352
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "referential-preview",
+      "kind": "follow-up",
+      "status": "requires_generation_evaluation"
+    },
+    {
+      "id": "unsupported-encryption",
+      "kind": "unsupported",
+      "retrieval_ms": 9.55,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5753
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "two-document",
+      "kind": "supported",
+      "retrieval_ms": 10.68,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5863
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    }
+  ],
+  "generation_evaluated": false,
+  "created_utc": "2026-10-10T07:23:15.316578+00:00",
+  "corpus_version": 1,
+  "corpus_sha256": "94b1e4cc2f368ee38a014cd445452f5327972f255bb2f8938bb5820fea6f29d7",
+  "provider": "CPU",
+  "max_distance": 0.65,
+  "model_manifest": {
+    "repository": "optimum/all-MiniLM-L6-v2",
+    "revision": "10244843eba3d9e479b27a4b81c94b56d8e9f4f2"
+  }
+}
