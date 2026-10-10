@@ -1,0 +1,189 @@
+{
+  "created_utc": "2026-10-10T07:28:05.398756+00:00",
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "corpus_sha256": "94b1e4cc2f368ee38a014cd445452f5327972f255bb2f8938bb5820fea6f29d7",
+  "checks_sha256": "1cba782a3bd84e56f2364023f81b3d6b4f8724dd87354f2492f1775e45469098",
+  "threshold": 0.65,
+  "corpus_file": "holdout-corpus.json",
+  "checks_file": "holdout-checks.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "product-promise",
+      "kind": "supported",
+      "question": "What did the 7 October baseline review recommend as the initial product promise?",
+      "answer": "The 7 October baseline review recommended the initial product promise as \"Import documents, ask useful questions with verifiable citations, retain personal context, and perform explicitly authorized actions using local inference. Hardware acceleration should be optional and measured.\" [1]",
+      "citations": [
+        {
+          "id": "243683ea01767811b501e66629adf03d44701755954501c9ab370132f1c24183:0",
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.5214,
+          "text": "Recommended initial product promise: Import documents, ask useful questions with verifiable citations, retain personal context, and perform explicitly authorized actions using local inference. Hardware acceleration should be optional and measured."
+        }
+      ],
+      "latency_seconds": 19.79,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "baseline-gate",
+      "kind": "supported",
+      "question": "What did the baseline review require to pass its memory-to-answer gate?",
+      "answer": "The baseline review required to pass its memory-to-answer gate by importing a PDF, asking a supported question with an accurate citation, answering a follow-up, declining unsupported questions, and repeating after restart with network blocked. [1]",
+      "citations": [
+        {
+          "id": "243683ea01767811b501e66629adf03d44701755954501c9ab370132f1c24183:2",
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "chunk": 3,
+          "url": "",
+          "distance": 0.5944,
+          "text": "Complete the memory-to-answer workflow. Improve ingestion, deduplication, provenance, retrieval evaluation, persisted chat, streaming, and offline startup. Gate: import a PDF, ask a supported question with an accurate citation, answer a follow-up, decline unsupported questions, and repeat after restart with network blocked."
+        },
+        {
+          "id": "243683ea01767811b501e66629adf03d44701755954501c9ab370132f1c24183:1",
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.6379,
+          "text": "Use a versioned test corpus and record retrieval hit rate, citation correctness, unsupported-question behavior, follow-up accuracy, duplicate count after reimport, restart/restore integrity, first-token latency, total response latency, peak RAM, ingestion throughput, and observed outbound traffic. Set numeric targets after measuring the first working baseline."
+        }
+      ],
+      "latency_seconds": 7.14,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "scorecard",
+      "kind": "supported",
+      "question": "Name two latency or resource measurements the baseline scorecard calls for.",
+      "answer": "The baseline scorecard calls for two latency or resource measurements: \"first-token latency\" and \"total response latency\". [1]",
+      "citations": [
+        {
+          "id": "243683ea01767811b501e66629adf03d44701755954501c9ab370132f1c24183:1",
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5588,
+          "text": "Use a versioned test corpus and record retrieval hit rate, citation correctness, unsupported-question behavior, follow-up accuracy, duplicate count after reimport, restart/restore integrity, first-token latency, total response latency, peak RAM, ingestion throughput, and observed outbound traffic. Set numeric targets after measuring the first working baseline."
+        }
+      ],
+      "latency_seconds": 5.36,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "import-formats",
+      "kind": "supported",
+      "question": "Which five local file types does the developer handover say Synapse can import?",
+      "answer": "Synapse can import PDF, TXT, MD, and PY, and DOCX files, according to the DEVELOPER_HANDOVER.md excerpt. [1]",
+      "citations": [
+        {
+          "id": "30d770505b2c2ed97677a37cfb3dfdbb836fde817950e7db87e860bcafe07e58:0",
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.6235,
+          "text": "Supported today: PDF/TXT/MD/PY/DOCX import, source reading/deletion, scoped semantic retrieval. Local Ollama answers with retrieved passages, source references, conversation history and streaming. Selected GitHub, Notion, Jira Cloud, Slack and Discord content imports through a shared REST pipeline. Preview/approval for launching Notepad/Calculator/Paint, creating GitHub issues, and sending Slack/Discord messages. Manual meeting notes/tasks, saved workflow preferences, settings/readiness and fixed diagnostic commands. Not implemented: window tiling, notification suppression, meeting recording/transcription, interoperable MCP transport, production installer/updates, billing or hosted account isolation."
+        }
+      ],
+      "latency_seconds": 4.88,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "preview-expiry",
+      "kind": "supported",
+      "question": "How long does an action preview last, and how many times can it be consumed?",
+      "answer": "An action preview lasts for five minutes and can be consumed once, according to the selected evidence [1].",
+      "citations": [
+        {
+          "id": "30d770505b2c2ed97677a37cfb3dfdbb836fde817950e7db87e860bcafe07e58:1",
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4402,
+          "text": "Actions go through /actions/preview, /actions/{id}/approve or cancellation. Previews disclose destination and content, expire after five minutes and are consumed once. Permissions and network policy are checked again at approval. App launch is restricted to three fixed executable choices; diagnostics accept fixed argv choices with shell=False."
+        }
+      ],
+      "latency_seconds": 4.43,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "conversation_persisted": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "required_citation_sources_cited": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "execution": {
+      "completed": 5,
+      "total": 5
+    }
+  }
+}
