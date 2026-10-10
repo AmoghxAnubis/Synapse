@@ -1,0 +1,119 @@
+{
+  "created_utc": "2026-10-10T07:38:55.464979+00:00",
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "corpus_sha256": "ce5443f5a0b75411d817f3da83c677d390e0ab8a59e30f3e6c50edaebbab393b",
+  "checks_sha256": "d89a3f8737e54c7aaa042e757e97c6cf1d5d86c30e8e34feccb9bbf94c4a781b",
+  "threshold": 0.65,
+  "corpus_file": "unseen-corpus.json",
+  "checks_file": "unseen-checks.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "current-approval",
+      "kind": "supported",
+      "question": "Under the current Nova policy, how many times can an approval be used and when does it expire?",
+      "answer": "Under the current Nova policy, an approval can be used only once and expires after five minutes. [1]\n\n(Note: The question does not ask about delegation, which is not specified in the current policy.)",
+      "citations": [
+        {
+          "id": "a4c00113f916805b280ad9de5874f29cd6633265335d865e7f60cd9f7878fe0e:0",
+          "source": "nova-policy-v2.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1795,
+          "text": "Nova approval policy version 2 is the current approved rule and supersedes version 1. Under version 2, each approval may be used only once and expires after five minutes. Delegation is not specified in this policy."
+        },
+        {
+          "id": "6a30a6ea66bbc65b7da1c4ba439e30195f674a95398d9aaf9d9df5e8a41c881a:0",
+          "source": "nova-policy-v1.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1873,
+          "text": "Nova approval policy version 1 was a historical draft. In version 1, an approval could be reused until it expired after 30 minutes. Version 1 is superseded and is not the current rule."
+        }
+      ],
+      "latency_seconds": 6.92,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "historical-approval",
+      "kind": "supported",
+      "question": "According to Nova policy version 1, could an approval be reused and how long did it last?",
+      "answer": "According to Nova policy version 1, an approval could be reused until it expired. The approval would last for 30 minutes. [1]",
+      "citations": [
+        {
+          "id": "6a30a6ea66bbc65b7da1c4ba439e30195f674a95398d9aaf9d9df5e8a41c881a:0",
+          "source": "nova-policy-v1.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1466,
+          "text": "Nova approval policy version 1 was a historical draft. In version 1, an approval could be reused until it expired after 30 minutes. Version 1 is superseded and is not the current rule."
+        }
+      ],
+      "latency_seconds": 3.34,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "conversation_persisted": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "required_citation_sources_cited": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    },
+    "execution": {
+      "completed": 2,
+      "total": 2
+    }
+  }
+}
