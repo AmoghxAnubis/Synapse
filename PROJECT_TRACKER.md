@@ -61,17 +61,17 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| V01 | P1 | TODO | 3-6 | Browser access | Visually exercise pairing, imports, citations, chat cancellation, source/agent scope, settings, failures and narrow screens; record reproducible defects |
+| V01 | P1 | IN PROGRESS | 3-6 | Browser access | Synthetic running-app HTTP journey passed pairing, route protection, import, answer, follow-up and cleanup. Browser automation surface was unavailable, so visual, narrow-screen, keyboard and cancellation review remain |
 | V02 | P1 | TODO | 4-8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
-| V03 | P1 | TODO | 3-6 | V01, V02 | Fix acceptance defects and verify a first-time import-to-answer journey without developer assistance |
+| V03 | P1 | IN PROGRESS | 3-6 | V01, V02 | Isolated running-app HTTP journey passed with real local ONNX/Ollama after configuring the provisioned model path. A first-time human UI journey and observed usability fixes remain |
 
 ## Phase 3 - answer quality and performance, 12-24 hours
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | A second frozen 11-case PDF/DOCX/Markdown holdout completed with 10/11 complete supported answers. Its unnamed two-source question falsely said the PDF retry limit was absent; only 1/2 compound answers cited both sources. The proposed two-source gate failed. Diagnose and repair, then use a third independent sample and agreed release thresholds. See evaluations/SECOND_HOLDOUT.md |
-| Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
-| Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Clause-balanced, source-directed retrieval repaired the first named-document omission, but a new PDF/DOCX/Markdown holdout exposed an unnamed compound-question omission. Scope, abstention and embedded-instruction cases passed. Repair compound coverage and independently revalidate; controlled performance remains |
+| Q01 | P1 | IN PROGRESS | 4-8 | Citation support/release threshold | Bounded clause fallback repaired the unnamed compound omission: preserved 11-case rerun passed saved checks and 87 backend tests passed. Repeated generation still cited only one source in 2/3 two-source answers. Resolve that focused citation blocker, then use a short fresh independent gate; see evaluations/SECOND_HOLDOUT.md |
+| Q02 | P1 | IN PROGRESS | 4-8 | Target machine; can run alongside Q01 | Six in-process first-token/total samples and backend working set recorded. True cold start, Ollama RAM, larger ingestion, long sessions and any model comparison remain; see evaluations/Q02_SCREENING.md |
+| Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Clause fallback repaired the observed retrieval omission; scope, abstention and embedded-instruction regressions passed. Repeated two-source citation support remains unreliable, so quality is not accepted; performance screening started |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
@@ -191,3 +191,4 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-10 | First independent document holdout | Frozen eight-case excerpts from public project documents ran through real API/ONNX/Ollama. Manual review found seven complete supported answers and one two-document omission with a missing citation. First-run artifact preserved; Q01/Q03 remain open. Diagnose the omission, then create a new representative holdout; see evaluations/HOLDOUT_QUALITY.md. |
 | 2026-10-10 | Compound retrieval repair | The failed handover passage was excluded by the whole-question 0.65 distance cutoff. Clause-balanced retrieval with a bounded fallback for explicitly named selected documents supplied both sources; repaired holdout rerun passed 8/8 manual reviews and saved checks. Backend suite passed 86 tests; additional, original and harder development sets passed their saved checks. A new independent holdout and thresholds remain. |
 | 2026-10-10 | Second fixed PDF/DOCX/Markdown holdout | Eleven cases used actual parser output from public synthetic format fixtures and real API/ONNX/Ollama. Manual review found 10/11 complete supported answers; the unnamed two-source question omitted the PDF retry fact and falsely called it absent. Predeclared two-source gate failed 1/2. Inputs and first run preserved; see evaluations/SECOND_HOLDOUT.md. |
+| 2026-10-10 | Focused repair and faster beta progression | At most one nearby candidate is added for an empty compound clause; the preserved 11-case rerun and ten-case development set passed fixed checks, with 87 backend tests. Six local performance samples measured first-token/total time and backend RAM; repeated compound answers revealed 2/3 missing second citations. Isolated running-app HTTP pairing/import/answer/follow-up journey passed after pointing test data at the installed embedding model; browser visual access was unavailable. Q01 citation support remains the focused blocker while Q02 and V01/V03 proceed in parallel. |
