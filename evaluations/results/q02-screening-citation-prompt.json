@@ -1,0 +1,95 @@
+{
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "ingestion_seconds": 0.101,
+  "documents": 3,
+  "first_token_scope": "In-process graph/retrieval/model stream; excludes HTTP and browser.",
+  "memory_scope": "Backend process working set after each answer; excludes Ollama process and peak system RAM.",
+  "cold_scope": "First observed sample; Ollama may already be warm.",
+  "summary": {
+    "single": {
+      "first_observed_total_seconds": 3.242,
+      "later_median_first_token_seconds": 0.982,
+      "later_median_total_seconds": 1.969
+    },
+    "compound": {
+      "first_observed_total_seconds": 2.505,
+      "later_median_first_token_seconds": 0.904,
+      "later_median_total_seconds": 2.74
+    }
+  },
+  "rows": [
+    {
+      "case": "single",
+      "repeat": 1,
+      "first_token_seconds": 2.081,
+      "total_seconds": 3.242,
+      "citation_sources": [
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The event queue retries a failed delivery at most three times. [1]",
+      "backend_working_set_mb": 271.4
+    },
+    {
+      "case": "compound",
+      "repeat": 1,
+      "first_token_seconds": 1.098,
+      "total_seconds": 2.505,
+      "citation_sources": [
+        "cedar-runbook.pdf",
+        "cedar-approval.docx",
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The incident retry limit is three times, and access approval is valid for ten minutes. [1]",
+      "backend_working_set_mb": 272.4
+    },
+    {
+      "case": "single",
+      "repeat": 2,
+      "first_token_seconds": 1.088,
+      "total_seconds": 2.065,
+      "citation_sources": [
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The event queue retries a failed delivery at most three times. [1]",
+      "backend_working_set_mb": 272.9
+    },
+    {
+      "case": "compound",
+      "repeat": 2,
+      "first_token_seconds": 0.905,
+      "total_seconds": 3.234,
+      "citation_sources": [
+        "cedar-runbook.pdf",
+        "cedar-approval.docx",
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The incident retry limit is three times, after which the message moves to the quarantine queue [1]. Access approval is valid for ten minutes and may be consumed once [2].",
+      "backend_working_set_mb": 273.0
+    },
+    {
+      "case": "single",
+      "repeat": 3,
+      "first_token_seconds": 0.875,
+      "total_seconds": 1.873,
+      "citation_sources": [
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The event queue retries a failed delivery at most three times. [1]",
+      "backend_working_set_mb": 272.9
+    },
+    {
+      "case": "compound",
+      "repeat": 3,
+      "first_token_seconds": 0.903,
+      "total_seconds": 2.246,
+      "citation_sources": [
+        "cedar-runbook.pdf",
+        "cedar-approval.docx",
+        "cedar-runbook.pdf"
+      ],
+      "answer": "The incident retry limit is three times, and access approval is valid for ten minutes. [1]",
+      "backend_working_set_mb": 273.4
+    }
+  ]
+}
