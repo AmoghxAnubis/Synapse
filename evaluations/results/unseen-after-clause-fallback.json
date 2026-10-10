@@ -1,0 +1,240 @@
+{
+  "created_utc": "2026-10-10T08:04:26.975316+00:00",
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "corpus_sha256": "ce5443f5a0b75411d817f3da83c677d390e0ab8a59e30f3e6c50edaebbab393b",
+  "checks_sha256": "d89a3f8737e54c7aaa042e757e97c6cf1d5d86c30e8e34feccb9bbf94c4a781b",
+  "threshold": 0.65,
+  "corpus_file": "unseen-corpus.json",
+  "checks_file": "unseen-checks.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "current-approval",
+      "kind": "supported",
+      "question": "Under the current Nova policy, how many times can an approval be used and when does it expire?",
+      "answer": "Under the current Nova policy, an approval can be used only once and expires after five minutes. [1]\n\n(Note: The question does not ask about delegation, which is not specified in the current policy.)",
+      "citations": [
+        {
+          "id": "a4c00113f916805b280ad9de5874f29cd6633265335d865e7f60cd9f7878fe0e:0",
+          "source": "nova-policy-v2.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1795,
+          "text": "Nova approval policy version 2 is the current approved rule and supersedes version 1. Under version 2, each approval may be used only once and expires after five minutes. Delegation is not specified in this policy."
+        },
+        {
+          "id": "6a30a6ea66bbc65b7da1c4ba439e30195f674a95398d9aaf9d9df5e8a41c881a:0",
+          "source": "nova-policy-v1.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1873,
+          "text": "Nova approval policy version 1 was a historical draft. In version 1, an approval could be reused until it expired after 30 minutes. Version 1 is superseded and is not the current rule."
+        }
+      ],
+      "latency_seconds": 6.32,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "historical-approval",
+      "kind": "supported",
+      "question": "According to Nova policy version 1, could an approval be reused and how long did it last?",
+      "answer": "According to Nova policy version 1, an approval could be reused until it expired. The approval would last for 30 minutes. [1]",
+      "citations": [
+        {
+          "id": "6a30a6ea66bbc65b7da1c4ba439e30195f674a95398d9aaf9d9df5e8a41c881a:0",
+          "source": "nova-policy-v1.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1466,
+          "text": "Nova approval policy version 1 was a historical draft. In version 1, an approval could be reused until it expired after 30 minutes. Version 1 is superseded and is not the current rule."
+        }
+      ],
+      "latency_seconds": 4.79,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "multi-source",
+      "kind": "supported",
+      "question": "Who operates Orion recovery, and how long are Lyra EU customer tickets retained?",
+      "answer": "Orion recovery is operated by Leena Gupta [1]. Lyra EU customer tickets are retained for 14 days [2].",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2881,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        },
+        {
+          "id": "30863693603bb3b60b7b927d982bca08f1c7495ed13060f28c84e57cb1556c64:0",
+          "source": "lyra-eu.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1014,
+          "text": "Lyra customer tickets for the EU team are retained for 14 days. This rule applies only to the EU team."
+        }
+      ],
+      "latency_seconds": 4.38,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "referential-retry",
+      "kind": "follow-up",
+      "question": "What is its retry limit?",
+      "seed_answer": "Orion recovery is operated by Leena Gupta. [1]",
+      "answer": "The retry limit is four attempts. [1]",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1332,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        }
+      ],
+      "latency_seconds": 3.8,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "history-cost-abstention",
+      "kind": "follow-up",
+      "question": "What is its monthly operating cost?",
+      "seed_answer": "Orion recovery is operated by Leena Gupta. [1]",
+      "answer": "The monthly operating cost is not stated in the selected evidence. [1]",
+      "citations": [
+        {
+          "id": "bc514e77f7ac1a6af63c1aeda404d8f1cd41d78b3211c404708b75e12f603ffd:0",
+          "source": "orion-recovery.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3506,
+          "text": "Orion recovery is operated by Leena Gupta. The retry limit is four attempts. After the fourth failed attempt, the job moves to the quarantine queue. This runbook gives no monthly operating cost."
+        }
+      ],
+      "latency_seconds": 3.69,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "topic-switch",
+      "kind": "follow-up",
+      "question": "How long are Lyra EU customer tickets retained?",
+      "seed_answer": "Orion recovery is operated by Leena Gupta. [1]",
+      "answer": "Lyra EU customer tickets are retained for 14 days. This rule applies only to the EU team. [1]",
+      "citations": [
+        {
+          "id": "30863693603bb3b60b7b927d982bca08f1c7495ed13060f28c84e57cb1556c64:0",
+          "source": "lyra-eu.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1014,
+          "text": "Lyra customer tickets for the EU team are retained for 14 days. This rule applies only to the EU team."
+        },
+        {
+          "id": "38d2bc944b22e450bb838e97391d6f1c53107041e5d97ac381285c29d2dd7751:0",
+          "source": "lyra-us.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1929,
+          "text": "Lyra customer tickets for the US team are retained for 60 days. This rule applies only to the US team."
+        }
+      ],
+      "latency_seconds": 5.61,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 5,
+      "total": 5,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
+    },
+    "conversation_persisted": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "required_citation_sources_cited": {
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
+    },
+    "execution": {
+      "completed": 6,
+      "total": 6
+    }
+  }
+}
