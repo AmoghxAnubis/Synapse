@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "description": "Fixed independent holdout from public project-document excerpts, frozen before first model run on 10 October 2026. Each page is a logical Markdown section, not a PDF page.",
+  "documents": [
+    {
+      "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+      "pages": [
+        {"page": 1, "text": "Recommended initial product promise: Import documents, ask useful questions with verifiable citations, retain personal context, and perform explicitly authorized actions using local inference. Hardware acceleration should be optional and measured."},
+        {"page": 2, "text": "Use a versioned test corpus and record retrieval hit rate, citation correctness, unsupported-question behavior, follow-up accuracy, duplicate count after reimport, restart/restore integrity, first-token latency, total response latency, peak RAM, ingestion throughput, and observed outbound traffic. Set numeric targets after measuring the first working baseline."},
+        {"page": 3, "text": "Complete the memory-to-answer workflow. Improve ingestion, deduplication, provenance, retrieval evaluation, persisted chat, streaming, and offline startup. Gate: import a PDF, ask a supported question with an accurate citation, answer a follow-up, decline unsupported questions, and repeat after restart with network blocked."}
+      ]
+    },
+    {
+      "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+      "pages": [
+        {"page": 1, "text": "Supported today: PDF/TXT/MD/PY/DOCX import, source reading/deletion, scoped semantic retrieval. Local Ollama answers with retrieved passages, source references, conversation history and streaming. Selected GitHub, Notion, Jira Cloud, Slack and Discord content imports through a shared REST pipeline. Preview/approval for launching Notepad/Calculator/Paint, creating GitHub issues, and sending Slack/Discord messages. Manual meeting notes/tasks, saved workflow preferences, settings/readiness and fixed diagnostic commands. Not implemented: window tiling, notification suppression, meeting recording/transcription, interoperable MCP transport, production installer/updates, billing or hosted account isolation."},
+        {"page": 2, "text": "Actions go through /actions/preview, /actions/{id}/approve or cancellation. Previews disclose destination and content, expire after five minutes and are consumed once. Permissions and network policy are checked again at approval. App launch is restricted to three fixed executable choices; diagnostics accept fixed argv choices with shell=False."},
+        {"page": 3, "text": "Chat applies the intersection of user selection and agent source restrictions, recalls relevant passages with a cosine threshold, passes bounded evidence/history to Ollama, and persists completed turns. No supporting passages produces an abstention. Streaming events are sources/token/done/error. The current backend permits one answer at a time through a lock."}
+      ]
+    }
+  ],
+  "cases": [
+    {"id": "product-promise", "kind": "supported", "query": "What did the 7 October baseline review recommend as the initial product promise?", "sources": ["BASELINE_REVIEW.md (7 Oct excerpt)"], "evidence": {"source": "BASELINE_REVIEW.md (7 Oct excerpt)", "page": 1, "contains": "verifiable citations"}},
+    {"id": "baseline-gate", "kind": "supported", "query": "What did the baseline review require to pass its memory-to-answer gate?", "sources": ["BASELINE_REVIEW.md (7 Oct excerpt)"], "evidence": {"source": "BASELINE_REVIEW.md (7 Oct excerpt)", "page": 3, "contains": "network blocked"}},
+    {"id": "scorecard", "kind": "supported", "query": "Name two latency or resource measurements the baseline scorecard calls for.", "sources": ["BASELINE_REVIEW.md (7 Oct excerpt)"], "evidence": {"source": "BASELINE_REVIEW.md (7 Oct excerpt)", "page": 2, "contains": "first-token latency"}},
+    {"id": "import-formats", "kind": "supported", "query": "Which five local file types does the developer handover say Synapse can import?", "sources": ["DEVELOPER_HANDOVER.md (10 Oct excerpt)"], "evidence": {"source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)", "page": 1, "contains": "PDF/TXT/MD/PY/DOCX"}},
+    {"id": "preview-expiry", "kind": "supported", "query": "How long does an action preview last, and how many times can it be consumed?", "sources": ["DEVELOPER_HANDOVER.md (10 Oct excerpt)"], "evidence": {"source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)", "page": 2, "contains": "expire after five minutes"}},
+    {"id": "referential-preview", "kind": "follow-up", "query": "How long does its preview last?", "sources": ["DEVELOPER_HANDOVER.md (10 Oct excerpt)"], "history": [{"role": "user", "content": "What actions can Synapse preview and approve?"}], "evidence": {"source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)", "page": 2, "contains": "five minutes"}},
+    {"id": "unsupported-encryption", "kind": "unsupported", "query": "Which encryption algorithm does the action preview use?", "sources": ["DEVELOPER_HANDOVER.md (10 Oct excerpt)"], "evidence": {"source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)", "page": 2, "contains": "Previews disclose destination"}},
+    {"id": "two-document", "kind": "supported", "query": "What latency measurement did the baseline review request, and what concurrency limit does the developer handover describe for answers?", "sources": ["BASELINE_REVIEW.md (7 Oct excerpt)", "DEVELOPER_HANDOVER.md (10 Oct excerpt)"], "evidence": {"source": "BASELINE_REVIEW.md (7 Oct excerpt)", "page": 2, "contains": "first-token latency"}}
+  ]
+}

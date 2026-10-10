@@ -1,0 +1,10 @@
+{
+  "product-promise": {"answer_patterns": ["import documents", "citations", "local inference"]},
+  "baseline-gate": {"answer_patterns": ["PDF", "citation", "follow.up", "unsupported", "network blocked"]},
+  "scorecard": {"answer_patterns": ["(?:first.token|total response).*?latency|latency.*?(?:first.token|total response)", "(?:peak RAM|ingestion throughput|total response latency|first.token latency)"]},
+  "import-formats": {"answer_patterns": ["PDF", "TXT", "MD", "PY", "DOCX"]},
+  "preview-expiry": {"answer_patterns": ["(?:five|5) minutes", "(?:once|one.time|single.use)"]},
+  "referential-preview": {"answer_patterns": ["(?:five|5) minutes"]},
+  "unsupported-encryption": {"expect_abstention": true, "forbidden_patterns": ["AES", "RSA", "ChaCha", "encrypted with"]},
+  "two-document": {"answer_patterns": ["(?:first.token|total response).*?latency|latency.*?(?:first.token|total response)", "one answer at a time|(?:single|one).*?answer.*?time"], "required_citation_sources": ["BASELINE_REVIEW.md (7 Oct excerpt)", "DEVELOPER_HANDOVER.md (10 Oct excerpt)"]}
+}
