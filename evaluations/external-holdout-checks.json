@@ -1,0 +1,15 @@
+{
+  "sqlite-timeout": {"answer_patterns": ["(?:5|five) seconds", "OperationalError"]},
+  "sqlite-thread": {"answer_patterns": ["True", "ProgrammingError"]},
+  "sqlite-context": {"answer_patterns": ["(?:not|doesn.t).*?close", "(?:not|doesn.t).*?(?:start|open)"], "forbidden_patterns": ["automatically closes", "implicitly starts"]},
+  "ollama-stream": {"answer_patterns": ["true", "partial|stream"]},
+  "ollama-unload": {"answer_patterns": ["\\b0\\b"], "forbidden_patterns": ["5m.*immediately"]},
+  "fastapi-timing": {"answer_patterns": ["after", "response"]},
+  "fastapi-heavy": {"answer_patterns": ["Celery", "RabbitMQ", "Redis"]},
+  "sqlite-followup": {"answer_patterns": ["OperationalError"]},
+  "changed-source-followup": {"answer_patterns": ["after", "response"], "seed_sources": ["Python SQLite.md"], "forbidden_patterns": ["(?:5|five) seconds"]},
+  "two-documents": {"answer_patterns": ["(?:5|five) seconds", "true"], "required_citation_sources": ["Python SQLite.md", "Ollama Generate.md"]},
+  "unsupported-price": {"expect_abstention": true, "forbidden_patterns": ["\\$[0-9]", "[0-9]+.*per month"]},
+  "excluded-source": {"expect_abstention": true, "forbidden_patterns": ["(?:5|five) seconds"]},
+  "unsupported-default": {"expect_abstention": true, "forbidden_patterns": ["defaults? (?:to|is|of) (?:5m|(?:five|5) minutes)"]}
+}

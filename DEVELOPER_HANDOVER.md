@@ -1,5 +1,13 @@
 # Synapse developer handover
 
+## External-document holdout continuation — 10 October 2026
+
+This conversation resumed on `ayush_lang` after fast-forwarding it and local main to fetched `4a199f4`. Continue this work and completed-work commits on `ayush_lang`, per the explicit user instruction in this conversation; main is not the development commit target. Keep Markdown context/status current and do not push without authorization.
+
+The user approved 100% scope/citation-reference validity, at least 90% complete supported answers with supporting citations, and at least 90% correct abstentions. A frozen 13-case external technical-summary holdout passed sample targets: 13/13 scope/references, 9/10 strict supported claims, 3/3 abstentions. All lexical checks passed, but the assistant reviewer conservatively excluded imprecise rollback wording. No product tuning was performed for this run. See evaluations/EXTERNAL_HOLDOUT.md and its hash-bound first-run/review artifacts. This is a convenience sample and assistant review, not independent human acceptance; Q01/Q03 remain open for representative longer/imported files. Q02 still needs controlled performance measurements.
+
+The existing Python 3.12.13 environment at `.tmp/langgraph-venv` passed 86 backend tests with no skips after provisioning embeddings under ignored `.tmp/q01-assets/models/minilm`. Set SYNAPSE_EMBEDDING_DIR to that directory for evaluations; for the real offline embedding test, also set SYNAPSE_DATA_DIR to `.tmp/q01-assets`. Do not assume ignored assets travel with Git. No production store or saved model preference changed.
+
 ## Quality continuation — 10 October 2026
 
 Q01/Q03 added ten synthetic cases covering historical/current rules, source changes, follow-up grounding, two-source answers, regional ambiguity and embedded instructions. Early runs revealed correct-looking answers with missing citations, an opposite historical reuse claim, and incomplete region labeling. The workflow now clears old generation history after source changes while using the prior user question only for retrieval. Two final ten-case runs, existing original/harder regressions, and 84 backend tests passed. These cases were used for repairs and are not an independent holdout. See `evaluations/UNSEEN_QUALITY.md`; Q01/Q03, Q02 and beta acceptance remain open.

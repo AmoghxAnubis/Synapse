@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "description": "Frozen 10 October 2026 before first model run. Authored summaries of independently sourced public documentation, not production user files. Pages are logical sections. No product tuning against this set before the first run.",
+  "documents": [
+    {"source": "Python SQLite.md", "reference_url": "https://docs.python.org/3.12/library/sqlite3.html", "pages": [
+      {"page": 1, "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."},
+      {"page": 2, "text": "Python 3.12 SQLite thread checking: check_same_thread defaults to True. Using a connection from a different thread than the one that created it raises ProgrammingError. Setting check_same_thread to False permits access from multiple threads, but the application may need to serialize writes to prevent data corruption."},
+      {"page": 3, "text": "Python 3.12 SQLite connection context manager: when an open transaction is present, a successful with block commits it and an exception rolls it back. The connection context manager does not close the connection and does not implicitly start a new transaction. Close the connection explicitly or use contextlib.closing when automatic closing is required."}
+    ]},
+    {"source": "Ollama Generate.md", "reference_url": "https://docs.ollama.com/api/generate", "pages": [
+      {"page": 1, "text": "Ollama's POST /api/generate endpoint requires a model name. Its stream parameter defaults to true. When stream is true, the endpoint returns partial responses as a stream. The prompt parameter supplies the text to generate a response from."},
+      {"page": 2, "text": "For Ollama /api/generate, keep_alive specifies model keep-alive duration. The documentation gives 5m as an example duration and 0 as the value to unload the model immediately. These are example keep_alive values; this excerpt does not specify its default. Runtime generation options are provided through the options object."}
+    ]},
+    {"source": "FastAPI Background Tasks.md", "reference_url": "https://fastapi.tiangolo.com/tutorial/background-tasks/", "pages": [
+      {"page": 1, "text": "FastAPI BackgroundTasks schedules work after the response has been returned. A background task function may be synchronous or asynchronous. A slow file-processing request can return HTTP 202 Accepted while the file is processed in the background."},
+      {"page": 2, "text": "FastAPI's background task guidance suggests considering Celery for heavy computation when the work does not need to share the same process's memory or variables. Larger task systems require more configuration and a job/message queue manager such as RabbitMQ or Redis, but can run jobs across multiple processes and servers."}
+    ]}
+  ],
+  "cases": [
+    {"id": "sqlite-timeout", "kind": "supported", "query": "What is Python SQLite's default connection timeout, and which error is raised if a table stays locked?", "sources": ["Python SQLite.md"], "evidence": {"source": "Python SQLite.md", "page": 1, "contains": "timeout of 5 seconds"}},
+    {"id": "sqlite-thread", "kind": "supported", "query": "What is the default for check_same_thread, and which error results if a different thread uses that connection?", "sources": ["Python SQLite.md"], "evidence": {"source": "Python SQLite.md", "page": 2, "contains": "ProgrammingError"}},
+    {"id": "sqlite-context", "kind": "supported", "query": "Does Python SQLite's connection context manager close the connection or implicitly start a new transaction?", "sources": ["Python SQLite.md"], "evidence": {"source": "Python SQLite.md", "page": 3, "contains": "does not close"}},
+    {"id": "ollama-stream", "kind": "supported", "query": "What is the default stream value for Ollama /api/generate and what does enabling it return?", "sources": ["Ollama Generate.md"], "evidence": {"source": "Ollama Generate.md", "page": 1, "contains": "defaults to true"}},
+    {"id": "ollama-unload", "kind": "supported", "query": "Which keep_alive value unloads the Ollama model immediately?", "sources": ["Ollama Generate.md"], "evidence": {"source": "Ollama Generate.md", "page": 2, "contains": "unload the model immediately"}},
+    {"id": "fastapi-timing", "kind": "supported", "query": "When does FastAPI BackgroundTasks run work relative to returning the HTTP response?", "sources": ["FastAPI Background Tasks.md"], "evidence": {"source": "FastAPI Background Tasks.md", "page": 1, "contains": "after the response"}},
+    {"id": "fastapi-heavy", "kind": "supported", "query": "Which tool does the FastAPI guidance suggest for heavy computation that does not need shared process memory, and which two queue managers are examples?", "sources": ["FastAPI Background Tasks.md"], "evidence": {"source": "FastAPI Background Tasks.md", "page": 2, "contains": "Celery"}},
+    {"id": "sqlite-followup", "kind": "follow-up", "query": "What error does it raise if the table stays locked after that wait?", "sources": ["Python SQLite.md"], "history": [{"role": "user", "content": "How long is Python SQLite's default connection timeout?"}], "evidence": {"source": "Python SQLite.md", "page": 1, "contains": "OperationalError"}},
+    {"id": "changed-source-followup", "kind": "follow-up", "query": "When does the background task run relative to the response?", "sources": ["FastAPI Background Tasks.md"], "history": [{"role": "user", "content": "How long is Python SQLite's default connection timeout?"}], "evidence": {"source": "FastAPI Background Tasks.md", "page": 1, "contains": "after the response"}},
+    {"id": "two-documents", "kind": "supported", "query": "What is Python SQLite.md's default connection timeout, and what is Ollama Generate.md's default stream value?", "sources": ["Python SQLite.md", "Ollama Generate.md"], "evidence": {"source": "Python SQLite.md", "page": 1, "contains": "timeout of 5 seconds"}},
+    {"id": "unsupported-price", "kind": "unsupported", "query": "What is the monthly cloud backup subscription price in this Python SQLite documentation?", "sources": ["Python SQLite.md"]},
+    {"id": "excluded-source", "kind": "unsupported", "query": "What is SQLite's default connection timeout?", "sources": ["FastAPI Background Tasks.md"]},
+    {"id": "unsupported-default", "kind": "unsupported", "query": "What default keep_alive duration does the provided Ollama Generate excerpt specify?", "sources": ["Ollama Generate.md"]}
+  ]
+}

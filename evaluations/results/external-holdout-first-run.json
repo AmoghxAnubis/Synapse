@@ -1,0 +1,475 @@
+{
+  "created_utc": "2026-10-10T07:58:02.464542+00:00",
+  "model": "llama3:latest",
+  "provider": "CPU",
+  "corpus_sha256": "46303e81e6f9c96a69b0d092a2e2a2cbc2ce291f7ef008cb4e80be5bb6bbd6be",
+  "checks_sha256": "c32cb42355d0146e44d147fcaf724e04ec219968730389aec486df153a4406c1",
+  "threshold": 0.65,
+  "corpus_file": "external-holdout-corpus.json",
+  "checks_file": "external-holdout-checks.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "sqlite-timeout",
+      "kind": "supported",
+      "question": "What is Python SQLite's default connection timeout, and which error is raised if a table stays locked?",
+      "answer": "Python SQLite's default connection timeout is 5 seconds, and if a table stays locked, it raises an OperationalError. [1]",
+      "citations": [
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:0",
+          "source": "Python SQLite.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1675,
+          "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:1",
+          "source": "Python SQLite.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.2974,
+          "text": "Python 3.12 SQLite thread checking: check_same_thread defaults to True. Using a connection from a different thread than the one that created it raises ProgrammingError. Setting check_same_thread to False permits access from multiple threads, but the application may need to serialize writes to prevent data corruption."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:2",
+          "source": "Python SQLite.md",
+          "page": 3,
+          "chunk": 3,
+          "url": "",
+          "distance": 0.3085,
+          "text": "Python 3.12 SQLite connection context manager: when an open transaction is present, a successful with block commits it and an exception rolls it back. The connection context manager does not close the connection and does not implicitly start a new transaction. Close the connection explicitly or use contextlib.closing when automatic closing is required."
+        }
+      ],
+      "latency_seconds": 54.79,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "sqlite-thread",
+      "kind": "supported",
+      "question": "What is the default for check_same_thread, and which error results if a different thread uses that connection?",
+      "answer": "The default for check_same_thread is True, and using a connection from a different thread than the one that created it raises a ProgrammingError [1].",
+      "citations": [
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:1",
+          "source": "Python SQLite.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4993,
+          "text": "Python 3.12 SQLite thread checking: check_same_thread defaults to True. Using a connection from a different thread than the one that created it raises ProgrammingError. Setting check_same_thread to False permits access from multiple threads, but the application may need to serialize writes to prevent data corruption."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:2",
+          "source": "Python SQLite.md",
+          "page": 3,
+          "chunk": 3,
+          "url": "",
+          "distance": 0.5918,
+          "text": "Python 3.12 SQLite connection context manager: when an open transaction is present, a successful with block commits it and an exception rolls it back. The connection context manager does not close the connection and does not implicitly start a new transaction. Close the connection explicitly or use contextlib.closing when automatic closing is required."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:0",
+          "source": "Python SQLite.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.6398,
+          "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."
+        }
+      ],
+      "latency_seconds": 0.95,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "sqlite-context",
+      "kind": "supported",
+      "question": "Does Python SQLite's connection context manager close the connection or implicitly start a new transaction?",
+      "answer": "The Python SQLite connection context manager does not close the connection and does not implicitly start a new transaction. Instead, it commits an open transaction if a successful with block is present, and rolls back an exception. This behavior is stated in [1].",
+      "citations": [
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:2",
+          "source": "Python SQLite.md",
+          "page": 3,
+          "chunk": 3,
+          "url": "",
+          "distance": 0.099,
+          "text": "Python 3.12 SQLite connection context manager: when an open transaction is present, a successful with block commits it and an exception rolls it back. The connection context manager does not close the connection and does not implicitly start a new transaction. Close the connection explicitly or use contextlib.closing when automatic closing is required."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:0",
+          "source": "Python SQLite.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.298,
+          "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:1",
+          "source": "Python SQLite.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4182,
+          "text": "Python 3.12 SQLite thread checking: check_same_thread defaults to True. Using a connection from a different thread than the one that created it raises ProgrammingError. Setting check_same_thread to False permits access from multiple threads, but the application may need to serialize writes to prevent data corruption."
+        }
+      ],
+      "latency_seconds": 1.3,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "ollama-stream",
+      "kind": "supported",
+      "question": "What is the default stream value for Ollama /api/generate and what does enabling it return?",
+      "answer": "The default stream value for Ollama /api/generate is true, and enabling it returns partial responses as a stream. This is stated in [1] Ollama Generate.md (page 1).",
+      "citations": [
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:0",
+          "source": "Ollama Generate.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3062,
+          "text": "Ollama's POST /api/generate endpoint requires a model name. Its stream parameter defaults to true. When stream is true, the endpoint returns partial responses as a stream. The prompt parameter supplies the text to generate a response from."
+        },
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:1",
+          "source": "Ollama Generate.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4393,
+          "text": "For Ollama /api/generate, keep_alive specifies model keep-alive duration. The documentation gives 5m as an example duration and 0 as the value to unload the model immediately. These are example keep_alive values; this excerpt does not specify its default. Runtime generation options are provided through the options object."
+        }
+      ],
+      "latency_seconds": 1.15,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "ollama-unload",
+      "kind": "supported",
+      "question": "Which keep_alive value unloads the Ollama model immediately?",
+      "answer": "The keep_alive value that unloads the Ollama model immediately is 0. This is stated in the documentation as an example value to unload the model immediately. [1]",
+      "citations": [
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:1",
+          "source": "Ollama Generate.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.2175,
+          "text": "For Ollama /api/generate, keep_alive specifies model keep-alive duration. The documentation gives 5m as an example duration and 0 as the value to unload the model immediately. These are example keep_alive values; this excerpt does not specify its default. Runtime generation options are provided through the options object."
+        },
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:0",
+          "source": "Ollama Generate.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.6324,
+          "text": "Ollama's POST /api/generate endpoint requires a model name. Its stream parameter defaults to true. When stream is true, the endpoint returns partial responses as a stream. The prompt parameter supplies the text to generate a response from."
+        }
+      ],
+      "latency_seconds": 0.96,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "fastapi-timing",
+      "kind": "supported",
+      "question": "When does FastAPI BackgroundTasks run work relative to returning the HTTP response?",
+      "answer": "FastAPI BackgroundTasks runs work after the response has been returned. A background task function may be synchronous or asynchronous. A slow file-processing request can return HTTP 202 Accepted while the file is processed in the background. [1]",
+      "citations": [
+        {
+          "id": "8c8edd817cab0250ff70a594601134f0deff3c9ac60db914aa0231a211215a08:0",
+          "source": "FastAPI Background Tasks.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.1447,
+          "text": "FastAPI BackgroundTasks schedules work after the response has been returned. A background task function may be synchronous or asynchronous. A slow file-processing request can return HTTP 202 Accepted while the file is processed in the background."
+        }
+      ],
+      "latency_seconds": 1.24,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "fastapi-heavy",
+      "kind": "supported",
+      "question": "Which tool does the FastAPI guidance suggest for heavy computation that does not need shared process memory, and which two queue managers are examples?",
+      "answer": "The FastAPI guidance suggests Celery for heavy computation that does not need shared process memory. The two queue managers mentioned as examples are RabbitMQ and Redis. [1]",
+      "citations": [
+        {
+          "id": "8c8edd817cab0250ff70a594601134f0deff3c9ac60db914aa0231a211215a08:1",
+          "source": "FastAPI Background Tasks.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.3949,
+          "text": "FastAPI's background task guidance suggests considering Celery for heavy computation when the work does not need to share the same process's memory or variables. Larger task systems require more configuration and a job/message queue manager such as RabbitMQ or Redis, but can run jobs across multiple processes and servers."
+        }
+      ],
+      "latency_seconds": 0.95,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "sqlite-followup",
+      "kind": "follow-up",
+      "question": "What error does it raise if the table stays locked after that wait?",
+      "seed_answer": "Python SQLite's default connection timeout is 5 seconds. This is controlled by the timeout parameter of the sqlite3.connect function [1].",
+      "answer": "The connection raises an OperationalError if the table stays locked after the 5-second wait. [1]",
+      "citations": [
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:0",
+          "source": "Python SQLite.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.4342,
+          "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."
+        }
+      ],
+      "latency_seconds": 0.75,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "changed-source-followup",
+      "kind": "follow-up",
+      "question": "When does the background task run relative to the response?",
+      "seed_answer": "Python SQLite's default connection timeout is 5 seconds. This is controlled by the `sqlite3.connect` method, which waits for a locked table before raising an `OperationalError`. [1]",
+      "answer": "The background task runs after the response has been returned. This is stated in the evidence: \"FastAPI Background Tasks schedules work after the response has been returned.\" [1]\n\n(Note: This answer only includes the requested information and does not provide additional facts or explanations.)",
+      "citations": [
+        {
+          "id": "8c8edd817cab0250ff70a594601134f0deff3c9ac60db914aa0231a211215a08:0",
+          "source": "FastAPI Background Tasks.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3583,
+          "text": "FastAPI BackgroundTasks schedules work after the response has been returned. A background task function may be synchronous or asynchronous. A slow file-processing request can return HTTP 202 Accepted while the file is processed in the background."
+        }
+      ],
+      "latency_seconds": 1.38,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "two-documents",
+      "kind": "supported",
+      "question": "What is Python SQLite.md's default connection timeout, and what is Ollama Generate.md's default stream value?",
+      "answer": "The default connection timeout in Python SQLite.md is 5 seconds [1]. The default stream value in Ollama Generate.md is true [2].",
+      "citations": [
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:0",
+          "source": "Python SQLite.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2245,
+          "text": "Python 3.12 SQLite connection timeout: sqlite3.connect defaults to a timeout of 5 seconds. This controls how long the connection waits for a locked table before raising OperationalError. A transaction modifying a table keeps the table locked until that transaction is committed."
+        },
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:0",
+          "source": "Ollama Generate.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3879,
+          "text": "Ollama's POST /api/generate endpoint requires a model name. Its stream parameter defaults to true. When stream is true, the endpoint returns partial responses as a stream. The prompt parameter supplies the text to generate a response from."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:1",
+          "source": "Python SQLite.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.3466,
+          "text": "Python 3.12 SQLite thread checking: check_same_thread defaults to True. Using a connection from a different thread than the one that created it raises ProgrammingError. Setting check_same_thread to False permits access from multiple threads, but the application may need to serialize writes to prevent data corruption."
+        },
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:1",
+          "source": "Ollama Generate.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4953,
+          "text": "For Ollama /api/generate, keep_alive specifies model keep-alive duration. The documentation gives 5m as an example duration and 0 as the value to unload the model immediately. These are example keep_alive values; this excerpt does not specify its default. Runtime generation options are provided through the options object."
+        },
+        {
+          "id": "b89ef1cea2ece1e88996016a6bc5954397b1343f48219dbbde11b397f70bb183:2",
+          "source": "Python SQLite.md",
+          "page": 3,
+          "chunk": 3,
+          "url": "",
+          "distance": 0.3549,
+          "text": "Python 3.12 SQLite connection context manager: when an open transaction is present, a successful with block commits it and an exception rolls it back. The connection context manager does not close the connection and does not implicitly start a new transaction. Close the connection explicitly or use contextlib.closing when automatic closing is required."
+        }
+      ],
+      "latency_seconds": 1.19,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-price",
+      "kind": "unsupported",
+      "question": "What is the monthly cloud backup subscription price in this Python SQLite documentation?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.13,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "excluded-source",
+      "kind": "unsupported",
+      "question": "What is SQLite's default connection timeout?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.14,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unsupported-default",
+      "kind": "unsupported",
+      "question": "What default keep_alive duration does the provided Ollama Generate excerpt specify?",
+      "answer": "The provided Ollama Generate excerpt does not specify a default keep_alive duration. [1]",
+      "citations": [
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:1",
+          "source": "Ollama Generate.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.2758,
+          "text": "For Ollama /api/generate, keep_alive specifies model keep-alive duration. The documentation gives 5m as an example duration and 0 as the value to unload the model immediately. These are example keep_alive values; this excerpt does not specify its default. Runtime generation options are provided through the options object."
+        },
+        {
+          "id": "c7d883d6ddd11a6ea2f1ea4763dd77afbf5b42ccda03df784085c1ee6127eaf0:0",
+          "source": "Ollama Generate.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.5494,
+          "text": "Ollama's POST /api/generate endpoint requires a model name. Its stream parameter defaults to true. When stream is true, the endpoint returns partial responses as a stream. The prompt parameter supplies the text to generate a response from."
+        }
+      ],
+      "latency_seconds": 1.01,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 10,
+      "total": 10,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 10,
+      "total": 10,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 13,
+      "total": 13,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 13,
+      "total": 13,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 3,
+      "total": 3,
+      "percent": 100.0
+    },
+    "conversation_persisted": {
+      "passed": 13,
+      "total": 13,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "required_citation_sources_cited": {
+      "passed": 1,
+      "total": 1,
+      "percent": 100.0
+    },
+    "execution": {
+      "completed": 13,
+      "total": 13
+    }
+  }
+}

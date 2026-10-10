@@ -1,0 +1,18 @@
+{
+  "frozen_before_first_run": true,
+  "date": "2026-10-10",
+  "product_revision": "4a199f4dd14f5500c13284913ea4fb9aca12e3e2",
+  "corpus_sha256": "46303e81e6f9c96a69b0d092a2e2a2cbc2ce291f7ef008cb4e80be5bb6bbd6be",
+  "checks_sha256": "c32cb42355d0146e44d147fcaf724e04ec219968730389aec486df153a4406c1",
+  "embedding_model": {
+    "repository": "optimum/all-MiniLM-L6-v2",
+    "revision": "10244843eba3d9e479b27a4b81c94b56d8e9f4f2"
+  },
+  "model": "llama3:latest",
+  "approved_targets": {
+    "scope": 1.0,
+    "citation_reference_validity": 1.0,
+    "supported_complete_cited": 0.9,
+    "correct_abstention": 0.9
+  }
+}

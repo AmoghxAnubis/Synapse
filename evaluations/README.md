@@ -1,5 +1,7 @@
 # Quality evaluation
 
+See [EXTERNAL_HOLDOUT.md](EXTERNAL_HOLDOUT.md) for the fresh 13-case external-document run and user-approved beta targets (10 October 2026). The unchanged product met this sample's scope/reference, strict supported-answer and abstention targets; the report preserves first-run output, claim review and limits. Representative user files and independent human acceptance remain outstanding.
+
 This versioned synthetic corpus starts Q01. It is a diagnostic baseline, not representative acceptance testing or a generated-answer accuracy score.
 
 Run from the root after provisioning the local embedding model:

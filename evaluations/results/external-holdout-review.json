@@ -1,0 +1,110 @@
+{
+  "reviewer": "Coding assistant; not independent human acceptance",
+  "result_sha256": "9b888caa38a5bdeeb4b51f4966c4943d4ef567a1173f90c8509d87d18f3c6eb5",
+  "corpus_sha256": "46303e81e6f9c96a69b0d092a2e2a2cbc2ce291f7ef008cb4e80be5bb6bbd6be",
+  "checks_sha256": "c32cb42355d0146e44d147fcaf724e04ec219968730389aec486df153a4406c1",
+  "product_tuned_for_this_run": false,
+  "cases": [
+    {
+      "id": "sqlite-timeout",
+      "review_note": "Both requested facts are supported by citation [1], Python SQLite page 1.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "sqlite-thread",
+      "review_note": "True and ProgrammingError are supported by citation [1], page 2.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "sqlite-context",
+      "review_note": "Both requested negative answers are correct and cited. Extra wording says it rolls back an exception rather than a transaction; conservatively excluded from strict all-claims-supported acceptance.",
+      "complete_supported_cited": false
+    },
+    {
+      "id": "ollama-stream",
+      "review_note": "True and partial streamed responses are supported by citation [1], page 1.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "ollama-unload",
+      "review_note": "Immediate unloading with 0 is supported by citation [1], page 2.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "fastapi-timing",
+      "review_note": "Requested after-response timing and extra sync/async and HTTP 202 facts are all supported by [1], page 1.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "fastapi-heavy",
+      "review_note": "Celery, RabbitMQ and Redis are supported by [1], page 2.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "sqlite-followup",
+      "review_note": "OperationalError and the stated five-second wait are supported by [1], page 1.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "changed-source-followup",
+      "review_note": "After-response timing is supported by current FastAPI citation [1]; SQLite history did not leak into the factual answer. The concluding meta note is unnecessary.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "two-documents",
+      "review_note": "Both facts are complete and separately cited to SQLite [1] page 1 and Ollama [2] page 1.",
+      "complete_supported_cited": true
+    },
+    {
+      "id": "unsupported-price",
+      "review_note": "No matching evidence; abstains without inventing a price.",
+      "correct_abstention": true
+    },
+    {
+      "id": "excluded-source",
+      "review_note": "Selected FastAPI source cannot supply SQLite timeout; abstains without giving the excluded fact.",
+      "correct_abstention": true
+    },
+    {
+      "id": "unsupported-default",
+      "review_note": "Correctly distinguishes example values from an unspecified default, supported by [1], page 2.",
+      "correct_abstention": true
+    }
+  ],
+  "reviewed_gates": {
+    "scope": {
+      "passed": 13,
+      "total": 13,
+      "rate": 1.0,
+      "approved_target": 1.0,
+      "target_met": true
+    },
+    "citation_reference_validity": {
+      "passed": 13,
+      "total": 13,
+      "rate": 1.0,
+      "approved_target": 1.0,
+      "target_met": true
+    },
+    "supported_complete_cited": {
+      "passed": 9,
+      "total": 10,
+      "rate": 0.9,
+      "approved_target": 0.9,
+      "target_met": true
+    },
+    "correct_abstention": {
+      "passed": 3,
+      "total": 3,
+      "rate": 1.0,
+      "approved_target": 0.9,
+      "target_met": true
+    }
+  },
+  "all_sample_targets_met": true,
+  "limits": [
+    "13 cases from short authored technical summaries",
+    "Not representative user PDF/DOCX or live connector acceptance",
+    "One run; assistant review; no general accuracy estimate"
+  ]
+}

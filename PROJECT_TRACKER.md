@@ -69,13 +69,15 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/release thresholds | A fixed eight-case public-document holdout found one two-document omission. Source-directed clause retrieval repaired that sample; the rerun passed all eight manual reviews and saved diagnostics, and 10/16/14-case development regressions passed. The same holdout is now development data; use a newly frozen representative holdout and agreed release thresholds. See evaluations/HOLDOUT_QUALITY.md |
+| Q01 | P1 | IN PROGRESS | 4-8 | Representative documents/human review | User-approved targets now recorded. A fresh 13-case external technical-summary holdout met sample gates: scope/reference validity 13/13, strict supported answers 9/10, abstention 3/3. No product tuning against that run; first output and assistant claim review preserved. Longer real PDF/DOCX/imported-workspace documents and independent human acceptance remain; see evaluations/EXTERNAL_HOLDOUT.md |
 | Q02 | P1 | TODO | 4-8 | Q01 | Benchmark cold/warm first-token and total latency, RAM, ingestion and long sessions; compare suitable models using the same corpus |
 | Q03 | P1 | IN PROGRESS | 4-8 | Q01, Q02 | Repaired embedded-role/citation handling, current-question follow-ups, topic carryover and original-text chunking. Source changes remove stale generation history while keeping the prior user question for retrieval. Clause-balanced, source-directed retrieval repaired the observed two-document omission; 86 backend tests and 10/16/14-case development regressions passed. Independent holdout and controlled performance gates remain |
 
 The previous 50.79-second and 11.57-second responses are single samples, not a controlled benchmark or promised speed.
 
 ## Framework integration agreed 8 October 2026
+
+Q01/Q03 continuation on `ayush_lang`, 10 October 2026: the user approved 100% scope compliance and valid citation references, at least 90% complete supported answers with supporting citations, and at least 90% correct abstentions. The frozen 13-case external-document summary run met those targets for this sample. See evaluations/EXTERNAL_HOLDOUT.md. Independent human review and representative user-document acceptance remain required; Q01/Q03 stay IN PROGRESS. Readiness percentages and completed task counts are unchanged.
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
@@ -164,7 +166,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 5. Mark WAITING with the exact external dependency when appropriate. Never mark tested-by-mocks work as live accepted.
 6. Add newly agreed work with a stable ID. Do not silently expand scope or replace the user's approved design.
 7. Report completed work, next tasks, blockers and revised estimate in each development handover. Updates are session-based, not an unattended monitoring service.
-8. Update relevant Markdown files as work progresses. On 10 October 2026, the user directed the post-merge quality work to `origin/main`; that supersedes the 8 October `ayush_lang` branch instruction for this work. Confirm the target branch for later tasks when it is not specified.
+8. Update relevant Markdown files as work progresses. The earlier separate post-merge quality task was directed to main, as recorded below. This conversation's continuation follows the user's explicit `ayush_lang` instruction: commit completed work on that branch, never main; do not push without authorization.
 
 ## Activity log
 
@@ -190,3 +192,4 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-10 | Additional Q01/Q03 cases and history-scope repair | Ten new synthetic cases revealed citation omission, reversal of a historical reuse rule, and incomplete regional answers. Stricter checks and scoped generation-history handling repaired the observed samples. Two final ten-case runs, original/harder regressions, and 84 backend tests passed. Separate holdout review and thresholds remain; see evaluations/UNSEEN_QUALITY.md. |
 | 2026-10-10 | First independent document holdout | Frozen eight-case excerpts from public project documents ran through real API/ONNX/Ollama. Manual review found seven complete supported answers and one two-document omission with a missing citation. First-run artifact preserved; Q01/Q03 remain open. Diagnose the omission, then create a new representative holdout; see evaluations/HOLDOUT_QUALITY.md. |
 | 2026-10-10 | Compound retrieval repair | The failed handover passage was excluded by the whole-question 0.65 distance cutoff. Clause-balanced retrieval with a bounded fallback for explicitly named selected documents supplied both sources; repaired holdout rerun passed 8/8 manual reviews and saved checks. Backend suite passed 86 tests; additional, original and harder development sets passed their saved checks. A new independent holdout and thresholds remain. |
+| 2026-10-10 | External-document holdout and quality gates | On ayush_lang after updating from main at 4a199f4, user approved 100% scope/reference validity and at least 90% supported/cited completeness and correct abstention. Frozen 13-case external technical-summary first run met sample gates (13/13, 13/13, 9/10, 3/3); one imprecise rollback claim excluded conservatively. 86 tests passed including real offline ONNX; isolated assets provisioned. No product tuning; Q01/Q03 remain open for representative files and human review. See evaluations/EXTERNAL_HOLDOUT.md. |
