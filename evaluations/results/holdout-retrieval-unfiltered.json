@@ -1,0 +1,226 @@
+{
+  "metrics": {
+    "evidence_hit": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "top_one_hit": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 7,
+      "total": 7,
+      "percent": 100.0
+    },
+    "retrieval_empty": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    }
+  },
+  "cases": [
+    {
+      "id": "product-promise",
+      "kind": "supported",
+      "retrieval_ms": 89.89,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "distance": 0.5214
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.7833
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "distance": 0.7865
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "baseline-gate",
+      "kind": "supported",
+      "retrieval_ms": 91.28,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "distance": 0.5944
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.6379
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "distance": 0.7644
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "scorecard",
+      "kind": "supported",
+      "retrieval_ms": 63.59,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5588
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "distance": 0.7381
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "distance": 0.8182
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "import-formats",
+      "kind": "supported",
+      "retrieval_ms": 72.13,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 1,
+          "distance": 0.6235
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 3,
+          "distance": 0.8494
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.8844
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "preview-expiry",
+      "kind": "supported",
+      "retrieval_ms": 102.2,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.4352
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 3,
+          "distance": 0.826
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 1,
+          "distance": 0.8693
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "referential-preview",
+      "kind": "follow-up",
+      "status": "requires_generation_evaluation"
+    },
+    {
+      "id": "unsupported-encryption",
+      "kind": "unsupported",
+      "retrieval_ms": 71.56,
+      "retrieved": [
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5753
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 3,
+          "distance": 0.8023
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 1,
+          "distance": 0.8452
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "two-document",
+      "kind": "supported",
+      "retrieval_ms": 90.69,
+      "retrieved": [
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 2,
+          "distance": 0.5863
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 1,
+          "distance": 0.7045
+        },
+        {
+          "source": "BASELINE_REVIEW.md (7 Oct excerpt)",
+          "page": 3,
+          "distance": 0.7116
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 3,
+          "distance": 0.7513
+        },
+        {
+          "source": "DEVELOPER_HANDOVER.md (10 Oct excerpt)",
+          "page": 2,
+          "distance": 0.8051
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    }
+  ],
+  "generation_evaluated": false,
+  "created_utc": "2026-10-10T07:23:43.019146+00:00",
+  "corpus_version": 1,
+  "corpus_sha256": "94b1e4cc2f368ee38a014cd445452f5327972f255bb2f8938bb5820fea6f29d7",
+  "provider": "CPU",
+  "max_distance": 1.0,
+  "model_manifest": {
+    "repository": "optimum/all-MiniLM-L6-v2",
+    "revision": "10244843eba3d9e479b27a4b81c94b56d8e9f4f2"
+  }
+}
