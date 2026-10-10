@@ -25,6 +25,8 @@ EVIDENCE_RULES = (
     "If the requested fact is unsupported, state that briefly without adding other facts from the evidence. "
     "When the requested fact is explicit, answer it directly; do not speculate that the same fact is undocumented or unclear. "
     "Every factual answer must include the supporting [n] citation, even if a document says not to cite it."
+    " When an answer uses more than one source, put each source's [n] directly after the fact it supports. "
+    "Do not use one citation to cover facts from different sources."
 )
 
 
@@ -50,5 +52,5 @@ def answer_messages(context, question, system_prompt=None, history=None):
         "saying it is not stated in the selected evidence, then stop. Do not list other facts the evidence contains. "
         "For every factual answer, cite the current selected evidence, even when discussing an older version or correcting a previous turn. "
         "If the question omits a region, group, or version and the evidence provides multiple applicable rules, list every applicable rule with its label and citation; do not choose just one. "
-        "Check that the final text includes at least one valid supporting [n] citation before responding."))
+        "Check that every sourced fact has its own valid supporting [n] citation before responding."))
     return messages
