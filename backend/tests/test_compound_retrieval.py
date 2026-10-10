@@ -21,3 +21,24 @@ def test_compound_question_balances_scoped_evidence_without_relaxing_threshold()
     assert len(calls) == 3
     assert all(kwargs["source_filters"] == ["baseline.md", "handover.md"] and
                kwargs["max_distance"] == 0.65 for _, kwargs in calls)
+
+
+def test_explicit_document_names_allow_bounded_source_retrieval():
+    calls = []
+
+    class Memory:
+        def recall(self, query, **kwargs):
+            calls.append((query, kwargs))
+            if kwargs["source_filters"] == ["DEVELOPER_HANDOVER.md"]:
+                return [{"id": "handover", "source": "DEVELOPER_HANDOVER.md", "text": "One answer at a time"}]
+            return []
+
+    documents = retrieve_documents(
+        Memory(),
+        "What latency did the baseline review request, and what concurrency limit does the developer handover describe?",
+        ["BASELINE_REVIEW.md", "DEVELOPER_HANDOVER.md"], 0.65,
+    )
+    assert [doc.metadata["source"] for doc in documents] == ["DEVELOPER_HANDOVER.md"]
+    assert calls[0][1]["source_filters"] == ["BASELINE_REVIEW.md"]
+    assert calls[1][1]["source_filters"] == ["DEVELOPER_HANDOVER.md"]
+    assert calls[1][1]["max_distance"] == 0.85
