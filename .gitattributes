@@ -1,0 +1,7 @@
+evaluations/external-holdout-corpus.json text eol=lf
+evaluations/external-holdout-checks.json text eol=lf
+evaluations/results/external-holdout-first-run.json -text whitespace=cr-at-eol
+evaluations/results/performance-first-run.json -text whitespace=cr-at-eol
+evaluations/results/performance-corrected-reverse-run.json -text whitespace=cr-at-eol
+evaluations/second-holdout/*.pdf binary
+evaluations/second-holdout/*.docx binary

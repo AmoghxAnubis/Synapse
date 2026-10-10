@@ -26,8 +26,8 @@ backend/venv/Scripts/python.exe -m pip install -r backend/requirements.lock.txt
 cd backend
 ./venv/Scripts/python.exe -m app.provision
 cd ../frontend
-npm ci
-npm run build
+npm.cmd ci
+npm.cmd run build
 ~~~
 
 Model provisioning is the explicit network step; it downloads a pinned snapshot into the local data directory. Installation also downloads dependencies.
@@ -49,14 +49,14 @@ Start the frontend in another:
 
 ~~~powershell
 cd frontend
-npm run start
+npm.cmd run start
 ~~~
 
 Both services bind to loopback through the supplied scripts. Open http://localhost:3000, copy the local pairing token from `backend/.synapse/api-token`, and pair your browser. The token is a secret; do not share it or paste it into public logs. A paired browser receives an HttpOnly, SameSite=Strict cookie with a one-day lifetime.
 
 When no model setting has been saved, Synapse selects an available installed Ollama model if the default is absent. In Settings, confirm or change that selection. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Knowledge requires the embedding model.
 
-For development, use `npm run dev`. Environment examples contain only non-secret placeholders.
+For development in PowerShell, use `npm.cmd run dev`. The `.cmd` form also works when PowerShell blocks `npm.ps1` through its execution policy. Environment examples contain only non-secret placeholders.
 
 ## Privacy and connected features
 
@@ -76,7 +76,7 @@ Chat uses LangChain's `ChatOllama` through `backend/app/core/llm.py` and a deter
 
 `validate agent/source scope -> load history -> retrieve evidence -> generate or abstain`.
 
-`backend/app/ai/prompts.py` preserves the evidence-only prompt and message bounds. `backend/app/ai/retriever.py` adapts existing ONNX/Chroma records into LangChain Documents without changing embeddings, thresholds, deduplication or provenance. Generation stays local; cloud LangSmith tracing is explicitly disabled for both graph and model calls, including when inherited environment settings enable it.
+`backend/app/ai/prompts.py` preserves the evidence-only prompt and message bounds. `backend/app/ai/retriever.py` adapts existing ONNX/Chroma records into LangChain Documents without changing embeddings, deduplication or provenance. Ordinary questions keep the configured retrieval threshold; bounded compound-question fallbacks search explicit clauses and named sources separately. Generation stays local; cloud LangSmith tracing is explicitly disabled for both graph and model calls, including when inherited environment settings enable it.
 
 The `/ask` response and `/ask/stream` sources/token/done/error events retain their existing contract. SQLite conversation turns are saved by the API only after successful completion. Graph execution checkpoints and restart/resume are not enabled in this first integration; cancellation remains cooperative and can wait for an Ollama read timeout. Chat has no action execution nodes. Kafka is not required or installed.
 
@@ -128,9 +128,9 @@ Backups contain private document text, vectors, conversations, settings, and met
 backend/venv/Scripts/python.exe -m pytest -c backend/pytest.ini backend/tests
 backend/venv/Scripts/python.exe -m pip check
 cd frontend
-npm run lint -- --max-warnings=0
-npm run build
-npm audit --audit-level=high
+npm.cmd run lint -- --max-warnings=0
+npm.cmd run build
+npm.cmd audit --audit-level=high
 ~~~
 
 Tests never send real messages or create GitHub issues. The real embedding test runs only when its local model is already provisioned; CI skips it without downloading assets. Existing import-time live mutation scripts were retired.

@@ -29,8 +29,15 @@ def retrieve_documents(memory, question, source_filters, max_distance):
             # The answer still has to be grounded in the returned passage.
             scoped = named if len(named) == 1 else source_filters
             distance = min(0.85, max_distance + 0.2) if len(named) == 1 else max_distance
-            batches.append(memory.recall(part, n_results=3, source_filters=scoped,
-                                         max_distance=distance))
+            batch = memory.recall(part, n_results=3, source_filters=scoped,
+                                  max_distance=distance)
+            if not batch and len(named) != 1:
+                # Compound clauses sometimes miss the normal cutoff narrowly.
+                # Admit at most one nearby candidate for an otherwise empty
+                # clause; ordinary and single-part questions keep their cutoff.
+                batch = memory.recall(part, n_results=1, source_filters=scoped,
+                                      max_distance=min(0.70, max_distance + 0.05))
+            batches.append(batch)
         records, seen = [], set()
         for index in range(3):
             for batch in batches:
