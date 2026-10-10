@@ -42,3 +42,25 @@ def test_explicit_document_names_allow_bounded_source_retrieval():
     assert calls[0][1]["source_filters"] == ["BASELINE_REVIEW.md"]
     assert calls[1][1]["source_filters"] == ["DEVELOPER_HANDOVER.md"]
     assert calls[1][1]["max_distance"] == 0.85
+
+
+def test_empty_compound_clause_gets_only_one_bounded_candidate():
+    calls = []
+
+    class Memory:
+        def recall(self, query, **kwargs):
+            calls.append((query, kwargs))
+            if query.startswith("What is the incident") and kwargs["max_distance"] == 0.70:
+                return [{"id": "runbook", "source": "runbook.pdf", "text": "Three retries"}]
+            if query.startswith("how long"):
+                return [{"id": "approval", "source": "approval.docx", "text": "Ten minutes"}]
+            return []
+
+    documents = retrieve_documents(
+        Memory(), "What is the incident retry limit, and how long is approval valid?",
+        ["runbook.pdf", "approval.docx"], 0.65,
+    )
+    assert [doc.metadata["source"] for doc in documents] == ["runbook.pdf", "approval.docx"]
+    fallback = [kwargs for query, kwargs in calls if query.startswith("What is the incident") and
+                kwargs["max_distance"] == 0.70]
+    assert len(fallback) == 1 and fallback[0]["n_results"] == 1
