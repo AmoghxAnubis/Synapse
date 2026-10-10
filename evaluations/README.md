@@ -1,5 +1,7 @@
 # Quality evaluation
 
+See [PERFORMANCE_BASELINE.md](PERFORMANCE_BASELINE.md) for the two-order local HTTP/SSE model comparison, preserved outputs, corrected process-tree RAM sampler and claim review. llama3 met the sample quality gates; the faster llama3.2 did not. Representative documents, longer sessions and browser/target-machine acceptance remain open.
+
 See [EXTERNAL_HOLDOUT.md](EXTERNAL_HOLDOUT.md) for the fresh 13-case external-document run and user-approved beta targets (10 October 2026). The unchanged product met this sample's scope/reference, strict supported-answer and abstention targets; the report preserves first-run output, claim review and limits. Representative user files and independent human acceptance remain outstanding.
 
 This versioned synthetic corpus starts Q01. It is a diagnostic baseline, not representative acceptance testing or a generated-answer accuracy score.

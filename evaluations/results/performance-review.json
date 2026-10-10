@@ -1,0 +1,803 @@
+{
+  "reviewer": "Coding assistant; not independent human acceptance",
+  "method": "Review saved warm answers against their supplied passages and requested facts. Conservatively exclude imprecise or unsupported extra claims. Repetitions are correlated, not independent documents.",
+  "product_tuned_for_these_runs": false,
+  "corpus_sha256": "46303e81e6f9c96a69b0d092a2e2a2cbc2ce291f7ef008cb4e80be5bb6bbd6be",
+  "checks_sha256": "c32cb42355d0146e44d147fcaf724e04ec219968730389aec486df153a4406c1",
+  "runs": [
+    {
+      "result": "performance-first-run.json",
+      "result_sha256": "2370385d41d5c4e237c7bd11174db6d153fd3e1a2b689c7b382175e2cdc36a5d",
+      "memory_valid": false,
+      "models": [
+        {
+          "model": "llama3:latest",
+          "cases": [
+            {
+              "id": "sqlite-timeout",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "sqlite-timeout",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested negative facts are correct/cited; extra wording rolls back an exception rather than a transaction. Conservatively excluded, consistent with the external holdout.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            }
+          ],
+          "strict_supported": {
+            "passed": 19,
+            "total": 20
+          },
+          "correct_abstentions": {
+            "passed": 6,
+            "total": 6
+          }
+        },
+        {
+          "model": "llama3.2:latest",
+          "cases": [
+            {
+              "id": "sqlite-timeout",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Claims streaming default is unstated although supplied evidence says true; required supported answer/citation missing.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Adds an unsupported universal HTTP 202 condition to task timing.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "sqlite-timeout",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Claims streaming default is unstated although supplied evidence says true; required supported answer/citation missing.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "After-response wording is contradicted by the extra claim that the task runs while the response is returned.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            }
+          ],
+          "strict_supported": {
+            "passed": 16,
+            "total": 20
+          },
+          "correct_abstentions": {
+            "passed": 6,
+            "total": 6
+          }
+        }
+      ]
+    },
+    {
+      "result": "performance-corrected-reverse-run.json",
+      "result_sha256": "65cd45955474bcc8257c45124d361c010914aecf052b865efb7b8e91028cfc09",
+      "memory_valid": true,
+      "models": [
+        {
+          "model": "llama3.2:latest",
+          "cases": [
+            {
+              "id": "sqlite-timeout",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Claims streaming default is unstated although supplied evidence says true; required supported answer/citation missing.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "After-response wording is contradicted by the extra claim that the task runs while the response is returned.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "sqlite-timeout",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Claims streaming default is unstated although supplied evidence says true; required supported answer/citation missing.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            }
+          ],
+          "strict_supported": {
+            "passed": 17,
+            "total": 20
+          },
+          "correct_abstentions": {
+            "passed": 6,
+            "total": 6
+          }
+        },
+        {
+          "model": "llama3:latest",
+          "cases": [
+            {
+              "id": "sqlite-timeout",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested negative facts are correct/cited; extra wording rolls back an exception rather than a transaction. Conservatively excluded, consistent with the external holdout.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 0,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 0,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 0,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "sqlite-timeout",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-thread",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-context",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested negative facts are correct/cited; extra wording rolls back an exception rather than a transaction. Conservatively excluded, consistent with the external holdout.",
+              "complete_supported_cited": false
+            },
+            {
+              "id": "ollama-stream",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "ollama-unload",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-timing",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "fastapi-heavy",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "sqlite-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "changed-source-followup",
+              "repeat": 1,
+              "kind": "follow-up",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "two-documents",
+              "repeat": 1,
+              "kind": "supported",
+              "review_note": "Requested facts and extra claims are supported by the cited supplied evidence.",
+              "complete_supported_cited": true
+            },
+            {
+              "id": "unsupported-price",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "excluded-source",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            },
+            {
+              "id": "unsupported-default",
+              "repeat": 1,
+              "kind": "unsupported",
+              "review_note": "Correctly abstains from the unsupported request.",
+              "correct_abstention": true
+            }
+          ],
+          "strict_supported": {
+            "passed": 18,
+            "total": 20
+          },
+          "correct_abstentions": {
+            "passed": 6,
+            "total": 6
+          }
+        }
+      ]
+    }
+  ]
+}
