@@ -366,23 +366,56 @@
       "abstention_language_present": true,
       "forbidden_claims_absent": true,
       "conversation_persisted": true
+    },
+    {
+      "id": "follow-up-owner",
+      "kind": "follow-up",
+      "question": "Who owns it?",
+      "seed_answer": "The Borealis release budget is 12500 rupees. This is stated in [1].",
+      "answer": "The Borealis release owner is Mira Shah. [1]",
+      "citations": [
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:0",
+          "source": "release.txt",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.2298,
+          "text": "The Borealis release owner is Mira Shah. The approved Borealis release budget is 12500 rupees. The launch date is 18 November 2026."
+        },
+        {
+          "id": "da6108b0aaa39a3fca2d90d4fbddc241cd3fd80c0a59573754cfe74813ad1bbe:1",
+          "source": "release.txt",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.5992,
+          "text": "Borealis rollback is required if failed requests exceed two percent for ten minutes. The release checklist requires backup restoration before launch."
+        }
+      ],
+      "latency_seconds": 2.33,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "conversation_persisted": true
     }
   ],
   "semantic_accuracy_measured": false,
   "metrics": {
     "expected_facts_present": {
-      "passed": 8,
-      "total": 8,
+      "passed": 9,
+      "total": 9,
       "percent": 100.0
     },
     "expected_evidence_cited": {
-      "passed": 8,
-      "total": 8,
+      "passed": 9,
+      "total": 9,
       "percent": 100.0
     },
     "citation_numbers_valid": {
-      "passed": 15,
-      "total": 15,
+      "passed": 16,
+      "total": 16,
       "percent": 100.0
     },
     "scope_respected": {
@@ -396,8 +429,8 @@
       "percent": 100.0
     },
     "conversation_persisted": {
-      "passed": 15,
-      "total": 15,
+      "passed": 16,
+      "total": 16,
       "percent": 100.0
     },
     "forbidden_claims_absent": {
@@ -411,8 +444,8 @@
       "percent": null
     },
     "execution": {
-      "completed": 15,
-      "total": 15
+      "completed": 16,
+      "total": 16
     }
   }
 }
