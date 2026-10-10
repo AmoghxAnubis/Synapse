@@ -1,0 +1,195 @@
+{
+  "metrics": {
+    "evidence_hit": {
+      "passed": 7,
+      "total": 8,
+      "percent": 87.5
+    },
+    "top_one_hit": {
+      "passed": 6,
+      "total": 8,
+      "percent": 75.0
+    },
+    "scope_respected": {
+      "passed": 10,
+      "total": 10,
+      "percent": 100.0
+    },
+    "retrieval_empty": {
+      "passed": 0,
+      "total": 0,
+      "percent": null
+    }
+  },
+  "cases": [
+    {
+      "id": "pdf-retry",
+      "kind": "supported",
+      "retrieval_ms": 90.42,
+      "retrieved": [
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 1,
+          "distance": 0.462
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "pdf-escalation",
+      "kind": "supported",
+      "retrieval_ms": 74.99,
+      "retrieved": [
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 2,
+          "distance": 0.3768
+        },
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 1,
+          "distance": 0.5061
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "pdf-owner-injection",
+      "kind": "supported",
+      "retrieval_ms": 63.35,
+      "retrieved": [
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 1,
+          "distance": 0.5436
+        },
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 2,
+          "distance": 0.6178
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "docx-approval",
+      "kind": "supported",
+      "retrieval_ms": 89.45,
+      "retrieved": [
+        {
+          "source": "cedar-approval.docx",
+          "page": 1,
+          "distance": 0.3832
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "docx-table",
+      "kind": "supported",
+      "retrieval_ms": 72.89,
+      "retrieved": [
+        {
+          "source": "cedar-approval.docx",
+          "page": 1,
+          "distance": 0.503
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "md-regions",
+      "kind": "supported",
+      "retrieval_ms": 72.35,
+      "retrieved": [
+        {
+          "source": "cedar-regions.md",
+          "page": 1,
+          "distance": 0.1215
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": true,
+      "scope_respected": true
+    },
+    {
+      "id": "named-two-source",
+      "kind": "supported",
+      "retrieval_ms": 114.69,
+      "retrieved": [
+        {
+          "source": "cedar-approval.docx",
+          "page": 1,
+          "distance": 0.2969
+        },
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 1,
+          "distance": 0.488
+        }
+      ],
+      "evidence_hit": true,
+      "top_one_hit": false,
+      "scope_respected": true
+    },
+    {
+      "id": "unnamed-two-source",
+      "kind": "supported",
+      "retrieval_ms": 100.49,
+      "retrieved": [
+        {
+          "source": "cedar-approval.docx",
+          "page": 1,
+          "distance": 0.5362
+        },
+        {
+          "source": "cedar-runbook.pdf",
+          "page": 2,
+          "distance": 0.6442
+        }
+      ],
+      "evidence_hit": false,
+      "top_one_hit": false,
+      "scope_respected": true
+    },
+    {
+      "id": "unsupported-cost",
+      "kind": "unsupported",
+      "retrieval_ms": 65.89,
+      "retrieved": [],
+      "scope_respected": true
+    },
+    {
+      "id": "scope-exclusion",
+      "kind": "unsupported",
+      "retrieval_ms": 55.25,
+      "retrieved": [],
+      "scope_respected": true
+    },
+    {
+      "id": "referential-followup",
+      "kind": "follow-up",
+      "status": "requires_generation_evaluation"
+    }
+  ],
+  "generation_evaluated": false,
+  "created_utc": "2026-10-10T07:55:39.856169+00:00",
+  "corpus_version": 2,
+  "corpus_sha256": "420567b9123aa6972bf19b2b4ecce62dbd6d2e562e0f4c9727b8e44919299ab8",
+  "provider": "CPU",
+  "max_distance": 0.65,
+  "model_manifest": {
+    "repository": "optimum/all-MiniLM-L6-v2",
+    "revision": "10244843eba3d9e479b27a4b81c94b56d8e9f4f2"
+  }
+}
