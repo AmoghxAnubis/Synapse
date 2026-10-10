@@ -148,6 +148,7 @@ These are deliberately outside the initial beta estimate; their designs and targ
 
 ## Estimated sequence
 
+- Fast local beta path: finish the focused multi-source citation gate, complete a human desktop/narrow-screen and keyboard pass, then validate a clean install, restart and backup on a second Windows machine. Continue Q02 measurements and one intended live connector in parallel. Broader provider acceptance, advanced desktop features, paid launch work and Cloudflare stay outside the first local beta unless user feedback changes the scope.
 - Active order: landing/dashboard acceptance; answer quality/performance; intended live connectors; installation/recovery; beta feedback/commercial groundwork. Browser-independent quality work can proceed while visual acceptance waits.
 - Cloudflare is excluded from the active estimate. Remaining non-hosting beta work is roughly **61-125 focused hours** based on the earlier phase estimates; this is provisional and should be revised after evaluation results and access to live accounts/another machine. Deferred Cloudflare work remains **6-12 hours**.
 - Allow roughly **3-5 calendar weeks** with account access, review, second-machine testing and beta feedback. External delays can extend this.
