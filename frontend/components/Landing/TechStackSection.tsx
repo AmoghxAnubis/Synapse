@@ -34,11 +34,13 @@ const stackCards = [
 function StackCard({
     card,
     index,
-    progress
+    progress,
+    staticCard = false,
 }: {
     card: typeof stackCards[number];
     index: number;
-    progress: MotionValue<number>
+    progress: MotionValue<number>;
+    staticCard?: boolean;
 }) {
     // Each card's entrance stagger based on scroll progress
     const cardStart = index * 0.15;
@@ -48,14 +50,8 @@ function StackCard({
     const scale = useTransform(progress, [cardStart, cardEnd], [0.8, 1]);
     const opacity = useTransform(progress, [cardStart - 0.1, cardStart + 0.1], [0, 1]);
 
-    return (
-        <motion.div
-            style={{
-                scale,
-                opacity
-            }}
-            className="group relative flex h-[420px] w-[300px] shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/60 bg-white p-8 shadow-xl shadow-zinc-200/40 transition-shadow duration-500 hover:shadow-2xl hover:shadow-zinc-200/60 sm:h-[480px] sm:w-[360px] dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10 dark:shadow-none"
-        >
+    const content = (
+        <>
             {/* Background Pattern */}
             <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:mix-blend-overlay dark:opacity-20" />
 
@@ -77,8 +73,11 @@ function StackCard({
                     {card.desc}
                 </p>
             </motion.div>
-        </motion.div>
+        </>
     );
+    const className = "group relative flex h-[420px] w-[300px] shrink-0 flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-200/60 bg-white p-8 shadow-xl shadow-zinc-200/40 transition-shadow duration-500 hover:shadow-2xl hover:shadow-zinc-200/60 sm:h-[480px] sm:w-[360px] dark:border-white/10 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10 dark:shadow-none";
+    if (staticCard) return <div className={`${className} w-full max-w-[360px]`}>{content}</div>;
+    return <motion.div style={{ scale, opacity }} className={className}>{content}</motion.div>;
 }
 
 export default function TechStackSection() {
@@ -93,7 +92,18 @@ export default function TechStackSection() {
     const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
     return (
-        <section ref={targetRef} id="stack" className="relative h-[250vh] bg-zinc-50 dark:bg-zinc-950/50">
+        <section ref={targetRef} id="stack" className="relative bg-zinc-50 dark:bg-zinc-950/50">
+            <div className="px-6 py-20 md:hidden">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-400">Infrastructure</p>
+                <h2 className="mt-1 text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">stack.</h2>
+                <div className="mt-10 flex flex-col items-center gap-6">
+                    {stackCards.map((card, index) => <StackCard key={card.num} card={card} index={index} progress={scrollYProgress} staticCard />)}
+                </div>
+                <p className="mt-10 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                    Local inference · Optional connections · Your hardware
+                </p>
+            </div>
+            <div className="relative hidden h-[250vh] md:block">
             <div className="sticky top-0 flex h-screen items-center overflow-hidden">
 
                 {/* Header Area */}
@@ -132,6 +142,7 @@ export default function TechStackSection() {
                     </div>
                 </div>
 
+            </div>
             </div>
         </section>
     );
