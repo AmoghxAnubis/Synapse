@@ -207,6 +207,12 @@
     color: transparent;
   }
 
+  .dark .text-gradient {
+    background: linear-gradient(135deg, #fafafa 0%, #d4d4d8 50%, #fafafa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
   /* Scrollbar styling */
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
