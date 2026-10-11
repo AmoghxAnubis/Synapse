@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "description": "Fresh synthetic transfer sample frozen before the first model run on 11 October 2026. Authored operational summaries; no user data.",
+  "documents": [
+    {"source": "Harbor Queue Handbook.md", "pages": [
+      {"page": 1, "text": "Harbor failed-delivery queue handbook. A failed delivery is retried at most four times. After the fourth failure, it moves to the sealed review queue. Nia Bose owns the failed-delivery queue."},
+      {"page": 2, "text": "The operations team reviews sealed queue entries within six business hours. This handbook does not state a subscription price."}
+    ]},
+    {"source": "Harbor Access Terms.md", "pages": [
+      {"page": 1, "text": "A Harbor access approval remains valid for twelve minutes and can be consumed once. A new approval is required for another action. An approved export may be at most 18 MB."},
+      {"page": 2, "text": "Approvals are limited to the named destination. This policy does not state a monthly service price."}
+    ]},
+    {"source": "Harbor Regional Records.md", "pages": [
+      {"page": 1, "text": "Harbor support records are kept for 21 days in APAC and 45 days in EMEA. The region of the record determines which period applies."}
+    ]}
+  ],
+  "cases": [
+    {"id": "queue-retry", "kind": "supported", "query": "How many times is a failed delivery retried?", "sources": ["Harbor Queue Handbook.md"], "evidence": {"source": "Harbor Queue Handbook.md", "page": 1, "contains": "four times"}},
+    {"id": "access-validity", "kind": "supported", "query": "How long does an access approval remain valid, and can it be reused?", "sources": ["Harbor Access Terms.md"], "evidence": {"source": "Harbor Access Terms.md", "page": 1, "contains": "twelve minutes"}},
+    {"id": "unnamed-compound", "kind": "supported", "query": "What is the failed delivery retry limit, and how long does access approval remain valid?", "sources": ["Harbor Queue Handbook.md", "Harbor Access Terms.md"], "evidence": {"source": "Harbor Queue Handbook.md", "page": 1, "contains": "four times"}},
+    {"id": "owner-and-export", "kind": "supported", "query": "Who owns the failed-delivery queue, and what is the maximum approved export size?", "sources": ["Harbor Queue Handbook.md", "Harbor Access Terms.md"], "evidence": {"source": "Harbor Queue Handbook.md", "page": 1, "contains": "Nia Bose"}},
+    {"id": "regional-periods", "kind": "supported", "query": "How long are Harbor support records kept in APAC and EMEA?", "sources": ["Harbor Regional Records.md"], "evidence": {"source": "Harbor Regional Records.md", "page": 1, "contains": "21 days"}},
+    {"id": "queue-followup", "kind": "follow-up", "query": "Where does it go after its final failure?", "sources": ["Harbor Queue Handbook.md"], "history": [{"role": "user", "content": "How many times is a failed delivery retried?"}], "evidence": {"source": "Harbor Queue Handbook.md", "page": 1, "contains": "sealed review queue"}},
+    {"id": "unknown-price", "kind": "unsupported", "query": "What is the monthly service price?", "sources": ["Harbor Access Terms.md"]},
+    {"id": "scope-exclusion", "kind": "unsupported", "query": "How many times is a failed delivery retried?", "sources": ["Harbor Access Terms.md"]}
+  ]
+}
