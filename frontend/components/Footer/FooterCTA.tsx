@@ -24,15 +24,15 @@ export default function FooterCTA() {
 
                 {/* CTA button */}
                 <div className="pointer-events-auto mt-8 flex gap-3">
-                    <Link href="/dashboard">
-                        <Button
+                    <Button asChild
                             size="lg"
                             className="rounded-full bg-foreground px-8 text-base font-medium text-white shadow-lg shadow-black/5 hover:bg-foreground/90 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                         >
+                        <Link href="/dashboard">
                             Open Dashboard
                             <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Command snippet */}

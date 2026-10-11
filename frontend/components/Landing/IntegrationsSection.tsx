@@ -203,18 +203,18 @@ export default function IntegrationsSection() {
 
                 {/* CTA */}
                 <FadeIn delay={0.4} className="mt-16 flex flex-col items-center text-center">
-                    <Link href="/settings/integrations">
-                        <Button
+                    <Button asChild
                             size="lg"
                             className="group relative overflow-hidden rounded-full bg-zinc-900 px-8 py-6 text-base font-medium text-white shadow-lg transition-all hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/20 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:shadow-none"
                         >
+                        <Link href="/settings/integrations">
                             <span className="relative z-10 flex items-center">
                                 <Plug className="mr-2 h-4 w-4 transition-transform group-hover:-rotate-12" />
                                 Connect Your Tools
                                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </span>
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                     <div className="mt-6 flex items-center gap-2 rounded-full border border-zinc-200/80 bg-white/50 px-4 py-2 text-xs text-zinc-500 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
                         <Shield className="h-3.5 w-3.5 text-zinc-400" />
                         Credentials stay in your OS credential store. External writes require approval.

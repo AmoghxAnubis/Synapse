@@ -143,20 +143,18 @@ export default function LandingPage() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/sign-in">
-            <Button
+          <Button asChild
               variant="ghost"
               className="hidden rounded-full px-4 text-sm font-medium text-zinc-600 hover:text-foreground sm:inline-flex"
             >
-              Pair Browser
+              <Link href="/sign-in">Pair Browser</Link>
             </Button>
-          </Link>
-          <Link href="/sign-in">
-            <Button className="rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90">
+          <Button asChild className="rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90">
+            <Link href="/sign-in">
               Get Started
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </motion.nav>
 
@@ -198,29 +196,25 @@ export default function LandingPage() {
 
           <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">Local backend and models required. No cloud account. Connected features are optional.</p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-            <Link href="/dashboard">
-              <Button
+            <Button asChild
                 size="lg"
                 className="rounded-full bg-foreground px-8 text-base font-medium text-background hover:bg-foreground/90"
               >
+              <Link href="/dashboard">
                 Launch Dashboard
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-            <a
-              href="https://github.com/AmoghxAnubis/Synapse"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
+              </Link>
+            </Button>
+            <Button asChild
                 variant="outline"
                 size="lg"
                 className="rounded-full border-zinc-300 bg-white/70 px-8 text-base font-medium backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 dark:hover:bg-white/10"
               >
+              <a href="https://github.com/AmoghxAnubis/Synapse" target="_blank" rel="noopener noreferrer">
                 <Github className="mr-2 h-4 w-4" />
                 View Source
-              </Button>
-            </a>
+              </a>
+            </Button>
           </div>
         </FadeIn>
 
