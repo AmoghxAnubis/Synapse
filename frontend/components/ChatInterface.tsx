@@ -61,7 +61,7 @@ export default function ChatInterface() {
   }
   return <section className="flex flex-col h-full min-h-[70vh]">
     <header className="mb-5 flex flex-wrap gap-3 items-center">
-      <div className="flex-1"><h1 className="text-2xl font-semibold">Your local memory</h1><p className="mt-1 text-sm text-neutral-500">Ask about imported documents. Open the evidence to verify an answer.</p></div>
+      <div className="w-full sm:w-auto sm:flex-1"><h1 className="text-2xl font-semibold">Your local memory</h1><p className="mt-1 text-sm text-neutral-500">Ask about imported documents. Open the evidence to verify an answer.</p></div>
       <select aria-label="Conversation" disabled={busy || loadingHistory} value={conversationId || ""} onChange={e => { if (e.target.value) void open(e.target.value); }} className="max-w-56 rounded-lg border bg-transparent p-2 text-sm">
         <option value="">New conversation</option>{conversations.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
       </select>
