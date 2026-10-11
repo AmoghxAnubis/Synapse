@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Bot, ArrowLeft, BrainCircuit, AlignLeft, Sparkles, Globe, TerminalSquare, FileText, Code } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -54,9 +55,10 @@ export default function CreateAgentPage() {
     return (
         <div className="flex h-full flex-col">
             {/* Page Header */}
-            <header className="mb-6 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-neutral-800">
+            <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 pb-4 dark:border-neutral-800">
                 <div className="flex items-center gap-4">
                     <button 
+                        aria-label="Back to agents"
                         onClick={() => router.push('/dashboard/agents')}
                         className="p-2 border border-neutral-200 dark:border-neutral-700 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-500"
                     >
@@ -64,13 +66,13 @@ export default function CreateAgentPage() {
                     </button>
                     <div>
                         <nav className="text-sm text-neutral-500 font-medium mb-1">
-                            <span className="hover:text-neutral-800 cursor-pointer dark:text-neutral-400 dark:hover:text-neutral-200" onClick={() => router.push('/dashboard')}>
+                            <Link href="/dashboard" className="hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200">
                                 Synapse
-                            </span>
+                            </Link>
                             <span className="mx-2">/</span>
-                            <span className="hover:text-neutral-800 cursor-pointer dark:text-neutral-400 dark:hover:text-neutral-200" onClick={() => router.push('/dashboard/agents')}>
+                            <Link href="/dashboard/agents" className="hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200">
                                 Agents
-                            </span>
+                            </Link>
                             <span className="mx-2">/</span>
                             <span className="text-neutral-900 dark:text-neutral-100">
                                 Create
@@ -105,8 +107,9 @@ export default function CreateAgentPage() {
                         </h3>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Agent Name</label>
+                                <label htmlFor="agent-name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Agent Name</label>
                                 <input 
+                                    id="agent-name"
                                     type="text" 
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -115,8 +118,9 @@ export default function CreateAgentPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Short Description</label>
+                                <label htmlFor="agent-description" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Short Description</label>
                                 <input 
+                                    id="agent-description"
                                     type="text" 
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
@@ -136,6 +140,7 @@ export default function CreateAgentPage() {
                             {ICONS.map((item, idx) => (
                                 <button
                                     key={idx}
+                                    aria-pressed={selectedIconIdx === idx}
                                     onClick={() => setSelectedIconIdx(idx)}
                                     className={cn(
                                         "flex flex-col items-center justify-center gap-2 p-4 rounded-lg border transition-all cursor-pointer",
@@ -156,12 +161,13 @@ export default function CreateAgentPage() {
                     <section>
                         <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 mb-2 flex items-center gap-2">
                             <BrainCircuit className="h-5 w-5 text-neutral-500" />
-                            System Instructions
+                            <label htmlFor="agent-instructions">System Instructions</label>
                         </h3>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
                             Define the persona, role, and rules your agent must follow.
                         </p>
                         <textarea
+                            id="agent-instructions"
                             value={systemInstruction}
                             onChange={(e) => setSystemInstruction(e.target.value)}
                             placeholder="You are an expert... Your main focus is to..."
@@ -184,12 +190,12 @@ export default function CreateAgentPage() {
                                     </div>
                                     <div>
                                         <div className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Web Search</div>
-                                        <div className="text-xs text-neutral-500">Allow agent to browse the internet</div>
+                                        <div className="text-xs text-neutral-500">Search with your consent for each request</div>
                                     </div>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={webSearchEnabled} onChange={(e) => setWebSearchEnabled(e.target.checked)} />
-                                    <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
+                                    <input aria-label="Allow web search" type="checkbox" className="sr-only peer" checked={webSearchEnabled} onChange={(e) => setWebSearchEnabled(e.target.checked)} />
+                                    <div className="w-9 h-5 bg-neutral-200 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 peer-focus-visible:ring-offset-2 rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
                                 </label>
                             </div>
 
@@ -200,13 +206,13 @@ export default function CreateAgentPage() {
                                         <TerminalSquare className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
                                     </div>
                                     <div>
-                                        <div className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Local Terminal</div>
-                                        <div className="text-xs text-neutral-500">Execute commands on your machine</div>
+                                        <div className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Local diagnostics</div>
+                                        <div className="text-xs text-neutral-500">Fixed diagnostics and approved app launching</div>
                                     </div>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" className="sr-only peer" checked={terminalEnabled} onChange={(e) => setTerminalEnabled(e.target.checked)} />
-                                    <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
+                                    <input aria-label="Allow local diagnostics" type="checkbox" className="sr-only peer" checked={terminalEnabled} onChange={(e) => setTerminalEnabled(e.target.checked)} />
+                                    <div className="w-9 h-5 bg-neutral-200 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 peer-focus-visible:ring-offset-2 rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900 dark:peer-checked:bg-neutral-200"></div>
                                 </label>
                             </div>
                         </div>
