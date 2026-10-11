@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -54,10 +54,18 @@ export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const pathname = usePathname();
 
+    useEffect(() => {
+        const mobile = window.matchMedia("(max-width: 639px)");
+        const sync = () => setIsCollapsed(mobile.matches);
+        sync();
+        mobile.addEventListener("change", sync);
+        return () => mobile.removeEventListener("change", sync);
+    }, []);
+
     return (
         <aside
             className={cn(
-                "sticky top-0 flex h-screen flex-col border-r border-[#E5E5E5] bg-[#F9F9F9] transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900/50",
+                "sticky top-0 flex h-screen shrink-0 flex-col border-r border-[#E5E5E5] bg-[#F9F9F9] transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900/50",
                 isCollapsed ? "w-16" : "w-48 lg:w-60"
             )}
         >
@@ -101,6 +109,7 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
+                            aria-label={isCollapsed ? item.name : undefined}
                             className={cn(
                                 "group flex items-center gap-3 rounded-md px-2 py-2 text-sm font-medium transition-colors",
                                 isActive
