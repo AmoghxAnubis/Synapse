@@ -3,6 +3,7 @@ evaluations/external-holdout-checks.json text eol=lf
 evaluations/third-holdout-corpus.json text eol=lf
 evaluations/third-holdout-checks.json text eol=lf
 evaluations/results/third-holdout-first-run.json -text whitespace=cr-at-eol
+evaluations/results/second-holdout-after-citation-guard.json -text whitespace=cr-at-eol
 evaluations/results/external-holdout-first-run.json -text whitespace=cr-at-eol
 evaluations/results/performance-first-run.json -text whitespace=cr-at-eol
 evaluations/results/performance-corrected-reverse-run.json -text whitespace=cr-at-eol
