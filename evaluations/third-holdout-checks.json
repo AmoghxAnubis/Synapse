@@ -1,0 +1,10 @@
+{
+  "queue-retry": {"answer_patterns": ["(?:four|4)\\s+times"]},
+  "access-validity": {"answer_patterns": ["(?:twelve|12)\\s+minutes", "(?:once|one.time|single.use|cannot\\s+be\\s+reused)"]},
+  "unnamed-compound": {"answer_patterns": ["(?:four|4)\\s+times", "(?:twelve|12)\\s+minutes"], "required_citation_sources": ["Harbor Queue Handbook.md", "Harbor Access Terms.md"]},
+  "owner-and-export": {"answer_patterns": ["Nia Bose", "18\\s*MB"], "required_citation_sources": ["Harbor Queue Handbook.md", "Harbor Access Terms.md"]},
+  "regional-periods": {"answer_patterns": ["APAC.{0,40}21\\s+days|21\\s+days.{0,40}APAC", "EMEA.{0,40}45\\s+days|45\\s+days.{0,40}EMEA"]},
+  "queue-followup": {"answer_patterns": ["sealed review queue"]},
+  "unknown-price": {"expect_abstention": true, "forbidden_patterns": ["\\$\\s*\\d", "USD\\s*\\d"]},
+  "scope-exclusion": {"expect_abstention": true, "forbidden_patterns": ["(?:four|4)\\s+times"]}
+}
