@@ -1,5 +1,9 @@
 # Synapse implementation status
 
+## Browser first-use continuation - 11 October 2026
+
+The production browser journey passed pairing, local model selection, synthetic Markdown ingestion, keyboard source selection, a supported cited answer, source inspection and saved history with real ONNX/Ollama. Stopping a second answer preserved only the completed exchange after reload. Two observed UI defects were fixed: cancelled bubbles retained their pending label, and keyboard focus entered hidden status-bar links. The status panel is now clickable and wraps on mobile; 15 checked dashboard focus stops were visible and named. Strict frontend lint/build passed. See [evaluations/BROWSER_ACCEPTANCE.md](evaluations/BROWSER_ACCEPTANCE.md) for the sample, results and remaining acceptance. V01/V03 stay open for human and wider dashboard review.
+
 ## Compound citation continuation - 11 October 2026
 
 Two-clause generation now uses lead-passage metadata from clause-balanced retrieval to require both citation numbers before emitting an answer. It retries once with per-part citation instructions, then withholds an answer that remains uncited. This addresses the observed two-source omission without altering ordinary token streaming. Three repeated Cedar answers cited both sources; the preserved 11-case PDF/DOCX/Markdown regression passed all saved checks; and a newly frozen eight-case synthetic transfer sample met its predeclared diagnostics and assistant claim review. The full backend suite passed with provisioned real embeddings. See [evaluations/THIRD_HOLDOUT.md](evaluations/THIRD_HOLDOUT.md).

@@ -53,7 +53,8 @@ export default function ChatInterface() {
       await streamAnswer(text, selectedSources, agentId, id, allowWeb && !!selectedAgent?.capabilities.web_search, abort.signal, event => {
         setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: m.content + (event.text || ""), citations: event.citations || m.citations } : m));
       });
-      setConversations(await fetchConversations());
+      try { setConversations(await fetchConversations()); }
+      catch { toast.error("Answer saved, but the conversation list could not refresh. Reload to see it."); }
     } catch (e) {
       setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, status: abort.signal.aborted ? "stopped" : "failed" } : m));
       if (abort.signal.aborted) { toast.info("Answer stopped. Partial answers are not saved."); }

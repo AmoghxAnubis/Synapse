@@ -61,9 +61,9 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| V01 | P1 | IN PROGRESS | 2-4 | Human usability review | Synthetic HTTP journey passed pairing, route protection, import, answer, follow-up and cleanup. Isolated production Chrome paired through the actual UI on desktop/mobile and loaded chat with no JS errors or viewport overflow. Compact mobile sidebar and chat header fixed. Keyboard review of landing CTA links passed; dashboard keyboard and cancellation review remain |
+| V01 | P1 | IN PROGRESS | 1-3 | Human usability review | Actual browser import, keyboard source selection, cited answer/source inspection, saved conversation and answer cancellation passed with real local inference. Hidden status-bar focus and stale pending bubbles fixed; 15 dashboard focus stops visible and named. Mobile panel/conversation have no viewport overflow. Wider route/design review and import cancellation remain; see evaluations/BROWSER_ACCEPTANCE.md |
 | V02 | P1 | TODO | 4-8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
-| V03 | P1 | IN PROGRESS | 2-4 | V01, V02 | Isolated running-app HTTP journey passed with real local ONNX/Ollama after configuring the provisioned model path. Desktop/mobile browser pairing from protected dashboard to chat passed with isolated test data. First-time import/answer in the browser and human usability review remain |
+| V03 | P1 | IN PROGRESS | 1-3 | V01, V02 | Browser first-use path passed pairing, installed model selection, synthetic document import, scoped question, evidence inspection and saved history with real ONNX/Ollama. Cancellation preserved completed history. Human first-use acceptance and remaining dashboard alignment remain |
 
 ## Phase 3 - answer quality and performance, 12-24 hours
 
@@ -173,6 +173,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | Date | Update | Evidence / next action |
 | --- | --- | --- |
+| 2026-10-11 | First-use browser journey and cancellation/keyboard fixes | Real production UI imported a synthetic document, selected its scope by keyboard, answered with correct facts/citation and opened the source. Cancellation did not save the stopped turn. Fixed stale pending bubbles and offscreen status-bar focus; 15 focus stops, mobile wrapping, strict lint/build passed. Human/wider dashboard acceptance and installation/recovery remain; see evaluations/BROWSER_ACCEPTANCE.md. |
 | 2026-10-07 | Foundation repairs recorded | 11 completed groups; 49 backend tests; lint/build/dependency checks; real local inference and backup restoration |
 | 2026-10-07 | User selected original landing page as product design reference | Preserve original design; replacement page remains an implementation reference |
 | 2026-10-07 | Shared deployment content accessible | Original headline/navigation confirmed in HTML; visual inventory and deployed revision verification remain under L01 |
