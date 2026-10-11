@@ -1,0 +1,16 @@
+{
+  "frozen_before_first_run": true,
+  "date": "2026-10-11",
+  "purpose": "Independent synthetic transfer check for the compound citation guard",
+  "corpus_sha256": "61c514e32cc6ad0e30e0244985749988c5b3472e2edc652554e563d8908e37f9",
+  "checks_sha256": "d53e5323fb6a472966960b89bbfa8575c4403217e36b561520fc69c7f9846757",
+  "model": "llama3:latest",
+  "targets": {
+    "execution_and_persistence": "8/8",
+    "source_scope_and_citation_number_validity": "8/8",
+    "supported_answers_with_cited_evidence": "at least 5/6",
+    "compound_answers_citing_both_sources": "2/2",
+    "correct_abstentions": "2/2"
+  },
+  "limits": "Small authored Markdown summary sample; not representative user files or independent human acceptance."
+}
