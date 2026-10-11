@@ -1,5 +1,11 @@
 # Synapse implementation status
 
+## Compound citation continuation - 11 October 2026
+
+Two-clause generation now uses lead-passage metadata from clause-balanced retrieval to require both citation numbers before emitting an answer. It retries once with per-part citation instructions, then withholds an answer that remains uncited. This addresses the observed two-source omission without altering ordinary token streaming. Three repeated Cedar answers cited both sources; the preserved 11-case PDF/DOCX/Markdown regression passed all saved checks; and a newly frozen eight-case synthetic transfer sample met its predeclared diagnostics and assistant claim review. The full backend suite passed with provisioned real embeddings. See [evaluations/THIRD_HOLDOUT.md](evaluations/THIRD_HOLDOUT.md).
+
+Guarded compound answers emitted the whole response after 4.404-6.372 seconds in three local samples. This does not establish broader latency or semantic claim support. Q01/Q03 remain open for representative longer files and independent human review; Q02 must account for this buffered path.
+
 ## PR #34 integration - 10 October 2026
 
 The external holdout and controlled performance evidence are integrated with the newer PDF/DOCX/Markdown holdout and bounded clause fallback from `main`. The later repeated two-source probe found missing second citations in 2/3 answers, so Q01/Q03 remain open despite the external technical-summary sample meeting its gates. The current user request targets this PR to `main`; earlier branch directions below are historical.

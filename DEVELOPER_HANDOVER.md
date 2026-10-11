@@ -1,5 +1,11 @@
 # Synapse developer handover
 
+## Compound citation continuation - 11 October 2026
+
+The focused Q01/Q03 citation gap is guarded: clause-balanced retrieval identifies the lead passage for each part of a two-clause question; generation buffers these answers, retries once if either citation is missing, and withholds a still-uncited answer. Ordinary answers retain token streaming. Three repeated Cedar answers cited both sources, the preserved 11-case PDF/DOCX/Markdown regression passed its fixed checks, and a fresh eight-case synthetic transfer sample passed its predeclared diagnostics and assistant claim review. The full backend suite passed with real local embeddings. See [evaluations/THIRD_HOLDOUT.md](evaluations/THIRD_HOLDOUT.md) for evidence and limits.
+
+The tradeoff is slower first output for guarded compound answers: 4.404-6.372 seconds in three local samples, with the full answer emitted together. Q01/Q03 remain IN PROGRESS for independent human review and representative longer user files. Advance the fast local beta through visual/keyboard review, second-machine install and recovery, and one intended connector while broader Q02 latency is measured.
+
 ## PR #34 integration - 10 October 2026
 
 The external holdout and controlled performance evidence are integrated with the newer PDF/DOCX/Markdown holdout and bounded clause fallback from `main`. The latter exposed a repeated two-source citation gap (2/3 answers omitted the second citation); Q01/Q03 remain open despite the external summary sample meeting its gates. This PR is targeted to `main` by the user's current instruction. Earlier branch directions below are historical.
