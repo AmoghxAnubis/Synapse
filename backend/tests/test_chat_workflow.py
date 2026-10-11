@@ -106,3 +106,50 @@ def test_graph_disables_inherited_tracing(api, monkeypatch):
     monkeypatch.setattr(services, "agent", agent)
     assert list(stream_chat(Query(text="unsupported"), services))[0]["citations"] == []
     assert observed == [False]
+
+
+def test_compound_answer_retries_missing_citation(api, memory, monkeypatch):
+    services = api.app.state.services
+    def recall(question, **kwargs):
+        if question.startswith("What is retry"):
+            return [{"id": "retry", "source": "runbook.pdf", "page": 1, "text": "Retry three times."}]
+        if question.startswith("how long"):
+            return [{"id": "approval", "source": "approval.docx", "page": 1, "text": "Approval lasts ten minutes."}]
+        return []
+    monkeypatch.setattr(memory, "recall", recall)
+    calls = []
+    class LLM:
+        def stream_answer(self, context, question, system_prompt=None, history=None):
+            calls.append(question)
+            yield ("Three retries and ten minutes [1]." if len(calls) == 1 else
+                   "Three retries [1]. Approval lasts ten minutes [2].")
+    monkeypatch.setattr(services, "llm_factory", lambda **kwargs: LLM())
+    events = list(stream_chat(Query(text="What is retry limit, and how long is approval valid?",
+                                    selected_sources=["runbook.pdf", "approval.docx"]), services))
+    assert len(calls) == 2
+    assert "first part needs [1]" in calls[1] and "second part needs [2]" in calls[1]
+    assert [event["text"] for event in events if event["type"] == "token"] == [
+        "Three retries [1]. Approval lasts ten minutes [2]."]
+    assert all("_top_clauses" not in ref for ref in events[0]["citations"])
+
+
+def test_compound_answer_withholds_uncited_retry(api, memory, monkeypatch):
+    services = api.app.state.services
+    def recall(question, **kwargs):
+        if question.startswith("What is retry"):
+            return [{"id": "retry", "source": "runbook.pdf", "page": 1, "text": "Retry three times."}]
+        if question.startswith("how long"):
+            return [{"id": "approval", "source": "approval.docx", "page": 1, "text": "Approval lasts ten minutes."}]
+        return []
+    monkeypatch.setattr(memory, "recall", recall)
+    calls = []
+    class LLM:
+        def stream_answer(self, context, question, system_prompt=None, history=None):
+            calls.append(question)
+            yield "Three retries and ten minutes [1]."
+    monkeypatch.setattr(services, "llm_factory", lambda **kwargs: LLM())
+    events = list(stream_chat(Query(text="What is retry limit, and how long is approval valid?",
+                                    selected_sources=["runbook.pdf", "approval.docx"]), services))
+    assert len(calls) == 2
+    assert [event["text"] for event in events if event["type"] == "token"] == [
+        "I couldn't produce a fully cited answer from the selected sources. Try asking each part separately."]

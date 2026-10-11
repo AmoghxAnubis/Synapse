@@ -13,6 +13,7 @@ from langsmith import tracing_context
 from ..ai.retriever import citation, retrieve_documents
 
 ABSTENTION = "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source."
+UNCITED_COMPOUND = "I couldn't produce a fully cited answer from the selected sources. Try asking each part separately."
 
 
 class ChatTokens:
@@ -39,6 +40,7 @@ class ChatState(TypedDict, total=False):
     chosen: list[str] | None
     retrieval_query: str
     citations: list[dict]
+    required_refs: list[int]
     context: str
     used: list[str]
 
@@ -71,6 +73,11 @@ def stream_chat(query, services):
     def retrieve(state):
         documents = retrieve_documents(services.memory, state["retrieval_query"], state["chosen"], services.settings.retrieval_max_distance)
         citations = [citation(document) for document in documents]
+        clause_refs = {}
+        for index, document in enumerate(documents, 1):
+            for clause in document.metadata.get("_top_clauses", []):
+                clause_refs.setdefault(clause, index)
+        required_refs = [clause_refs[0], clause_refs[1]] if 0 in clause_refs and 1 in clause_refs else []
         used = []
         if query.allow_web:
             services.network()
@@ -83,21 +90,53 @@ def stream_chat(query, services):
             used.append("web_search")
         context = "\n\n".join(f"[{i+1}] {c['source']} (page {c['page']})\n{c['text']}" for i, c in enumerate(citations))
         get_stream_writer()({"type": "sources", "citations": citations, "capabilities_used": used})
-        return {"citations": citations, "context": context, "used": used}
+        return {"citations": citations, "context": context, "used": used, "required_refs": required_refs}
 
     def generate(state):
         if cancelled.is_set():
             return {}
         agent = state["agent"]
-        tokens = services.llm.stream_answer(state["context"], query.text,
-                                           agent.get("system_instruction") if agent else None, state["history"])
-        try:
-            for token in tokens:
+        system_prompt = agent.get("system_instruction") if agent else None
+        # Buffer only when separate top passages cover the two question
+        # clauses. A single citation after two claims can misattribute one.
+        refs = state.get("required_refs", [])
+        needs_both = len(refs) == 2 and refs[0] != refs[1]
+        if needs_both:
+            required = tuple(f"[{ref}]" for ref in refs)
+            for attempt in range(2):
                 if cancelled.is_set():
                     break
-                get_stream_writer()({"type": "token", "text": token})
-        finally:
-            tokens.close()
+                question = query.text
+                if attempt:
+                    question += ("\nAnswer each requested part in its own sentence. "
+                                 f"The first part needs {required[0]} and the second part needs {required[1]}. "
+                                 "Place each citation next to the fact it supports; do not cite a passage for an unsupported fact.")
+                tokens = services.llm.stream_answer(state["context"], question, system_prompt, state["history"])
+                try:
+                    parts = []
+                    for token in tokens:
+                        if cancelled.is_set():
+                            break
+                        parts.append(token)
+                    answer = "".join(parts)
+                finally:
+                    tokens.close()
+                if cancelled.is_set():
+                    break
+                if all(ref in answer for ref in required):
+                    get_stream_writer()({"type": "token", "text": answer})
+                    break
+            else:
+                get_stream_writer()({"type": "token", "text": UNCITED_COMPOUND})
+        else:
+            tokens = services.llm.stream_answer(state["context"], query.text, system_prompt, state["history"])
+            try:
+                for token in tokens:
+                    if cancelled.is_set():
+                        break
+                    get_stream_writer()({"type": "token", "text": token})
+            finally:
+                tokens.close()
         return {}
 
     def abstain(state):

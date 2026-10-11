@@ -12,6 +12,7 @@ def retrieve_documents(memory, question, source_filters, max_distance):
     parts = [part.strip() for part in re.split(
         r",?\s+and\s+(?=(?:what|which|who|how|when|where|why)\b)", question, flags=re.I
     ) if part.strip()]
+    clause_tops = {}
     if len(parts) == 1 or len(parts) > 3:
         records = memory.recall(question, source_filters=source_filters, max_distance=max_distance)
     else:
@@ -38,6 +39,9 @@ def retrieve_documents(memory, question, source_filters, max_distance):
                 batch = memory.recall(part, n_results=1, source_filters=scoped,
                                       max_distance=min(0.70, max_distance + 0.05))
             batches.append(batch)
+        for clause_index, batch in enumerate(batches):
+            if batch:
+                clause_tops.setdefault(batch[0]["id"], set()).add(clause_index)
         records, seen = [], set()
         for index in range(3):
             for batch in batches:
@@ -51,9 +55,13 @@ def retrieve_documents(memory, question, source_filters, max_distance):
                     records.append(record)
                     seen.add(record["id"])
         records = records[:5]
-    return [Document(page_content=record["text"], metadata={k: v for k, v in record.items() if k != "text"})
+    return [Document(page_content=record["text"], metadata={
+                **{k: v for k, v in record.items() if k != "text"},
+                "_top_clauses": sorted(clause_tops.get(record["id"], ())),
+            })
             for record in records]
 
 
 def citation(document):
-    return {**document.metadata, "text": document.page_content}
+    return {**{k: v for k, v in document.metadata.items() if not k.startswith("_")},
+            "text": document.page_content}
