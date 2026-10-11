@@ -6,6 +6,8 @@ Ollama's separate-process memory, and a true unloaded-model cold start.
 import argparse
 import ctypes
 import json
+import ctypes
+import json
 import os
 import statistics
 import subprocess
