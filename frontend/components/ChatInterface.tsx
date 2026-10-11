@@ -55,6 +55,7 @@ export default function ChatInterface() {
       });
       setConversations(await fetchConversations());
     } catch (e) {
+      setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, status: abort.signal.aborted ? "stopped" : "failed" } : m));
       if (abort.signal.aborted) { toast.info("Answer stopped. Partial answers are not saved."); }
       else setError(errorMessage(e));
     } finally { controller.current = null; setBusy(false); }

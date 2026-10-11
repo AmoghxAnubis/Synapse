@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Cpu, Zap, Brain, Wifi, WifiOff, ArrowLeft, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,7 @@ export default function HardwareStatusBanner() {
     const [health, setHealth] = useState<HealthResponse | null>(null);
     const [online, setOnline] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const toggle = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const poll = async () => {
@@ -55,26 +56,26 @@ export default function HardwareStatusBanner() {
 
     return (
         <>
-            {/* Invisible hover zone to trigger the banner */}
-            <div
-                className="fixed inset-x-0 top-0 z-[60] h-6"
-                onMouseEnter={() => setIsHovered(true)}
-            />
-
             <motion.header
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseLeave={event => { if (!event.currentTarget.contains(document.activeElement)) setIsHovered(false); }}
+                onFocusCapture={event => { if (event.target !== toggle.current) setIsHovered(true); }}
+                onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsHovered(false); }}
                 initial={{ y: "-100%" }}
                 animate={{ y: isHovered ? 0 : "-100%" }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 px-6 py-3 backdrop-blur-xl shadow-sm"
+                className="fixed inset-x-0 top-0 z-50 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 px-4 sm:px-6 py-3 backdrop-blur-xl shadow-sm"
             >
                 {/* Handle to pull down / indicate presence */}
-                <div
+                <button
+                    ref={toggle}
+                    type="button"
+                    aria-label="Toggle system status"
+                    aria-expanded={isHovered}
+                    onClick={() => setIsHovered(value => !value)}
                     className="absolute -bottom-4 left-1/2 flex h-4 w-16 -translate-x-1/2 items-center justify-center rounded-b-lg border border-t-0 border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 shadow-sm cursor-pointer hover:bg-zinc-50 dark:hover:bg-neutral-800 transition-colors"
                 >
                     <div className="h-1 w-6 rounded-full bg-zinc-300 dark:bg-neutral-600" />
-                </div>
+                </button>
 
                 {/* Left — back + logo */}
                 <div className="flex items-center gap-4">
@@ -95,7 +96,7 @@ export default function HardwareStatusBanner() {
                 </div>
 
                 {/* Right — status indicators */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     {/* Backend status */}
                     <div className="flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
@@ -157,6 +158,7 @@ export default function HardwareStatusBanner() {
                         href="/dashboard/settings"
                         className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-neutral-100 transition-colors"
                         title="Settings"
+                        aria-label="System settings"
                     >
                         <Settings className="h-3.5 w-3.5" />
                     </Link>
