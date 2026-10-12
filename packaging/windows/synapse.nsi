@@ -27,8 +27,8 @@ Function .onInit
     MessageBox MB_ICONSTOP "This beta requires 64-bit Windows."
     Abort
   ${EndIf}
-  GetFileAttributes "$INSTDIR" $0
-  IfErrors fresh
+  IfFileExists "$INSTDIR\." occupied fresh
+  occupied:
     MessageBox MB_ICONSTOP "The installation directory already exists. This beta supports a fresh install. Stop and uninstall the previous version first; your separate Synapse data is retained."
     Abort
   fresh:
