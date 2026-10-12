@@ -19,6 +19,10 @@ FRONTEND = ROOT / "frontend"
 def backend_child():
     # Closing the supervisor's stdin pipe also stops the backend after a launcher exit.
     sys.path.insert(0, str(BACKEND))
+    # Initialize native numerical DLLs before the stdin watcher and API workers.
+    # Lazy NumPy import stalled in the supervised Windows bundle's first request.
+    import numpy  # noqa: F401
+    import onnxruntime  # noqa: F401
     import uvicorn
     server = uvicorn.Server(uvicorn.Config("app.main:app", host="127.0.0.1", port=8000))
 
