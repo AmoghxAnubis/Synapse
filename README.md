@@ -126,7 +126,9 @@ Backups contain private document text, vectors, conversations, settings, and met
 
 For the next installation gate, use [Second Windows machine acceptance](docs/SECOND_MACHINE_ACCEPTANCE.md). It covers a fresh setup with data outside the checkout, the synthetic browser workflow, restart/offline use and backup/restore. Its results remain pending on a second computer.
 
-After installing dependencies and building the frontend, the [Windows launcher prototype](docs/WINDOWS_LAUNCHER.md) starts both services with `Start-Synapse.cmd`. It defaults to per-user data outside the checkout, checks runtime versions/occupied ports, and stops its own services with Ctrl+C. This is the initial D02 lifecycle prototype; installer bundling and updates remain pending.
+After installing dependencies and building the frontend, the [Windows launcher](docs/WINDOWS_LAUNCHER.md) starts both services with `Start-Synapse.cmd`. It defaults to per-user data outside the checkout, checks runtime versions/occupied ports, and stops its own services with Ctrl+C.
+
+Windows distribution now targets an [NSIS .exe installer](docs/WINDOWS_INSTALLER.md) with bundled Python/Node and a standalone frontend. `scripts/build_windows_package.py` stages the runtime and optionally compiles setup. Ollama/models are explicit setup steps; signing, updates and second-machine acceptance remain pending.
 
 ~~~powershell
 backend/venv/Scripts/python.exe -m pytest -c backend/pytest.ini backend/tests

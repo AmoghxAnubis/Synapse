@@ -1,6 +1,6 @@
 # Windows launcher prototype
 
-The first D02 prototype is a foreground supervisor for an already installed checkout. It starts the real backend and production frontend and stops its own processes when you press Ctrl+C. It requires Python 3.12, Node 22.13 or newer, locked backend dependencies and a built frontend. Use the [README setup](../README.md#setup-on-windows) first.
+The D02 launcher is a foreground supervisor for a checkout or installed bundle. It starts the real backend and production frontend and stops its own processes when you press Ctrl+C. Checkout mode requires Python 3.12, Node 22.13 or newer, locked backend dependencies and a built frontend; use the [README setup](../README.md#setup-on-windows). The [NSIS bundle](WINDOWS_INSTALLER.md) selects its bundled Python/Node and standalone frontend automatically.
 
 From the checkout root:
 
@@ -48,4 +48,4 @@ backend/venv/Scripts/python.exe scripts/verify_launcher.py --node 'C:\Program Fi
 
 This uses disposable data, starts and stops real processes twice, verifies metadata/token preservation and released ports, and confirms an occupied port is refused without stopping its listener. Both application ports must be free before running it.
 
-This prototype still depends on an installed checkout, virtual environment, Node and frontend build. Bundled runtimes, an installer, OS service/autostart, crash recovery, signing and updates/rollback remain unimplemented. Verify it on another Windows machine using [SECOND_MACHINE_ACCEPTANCE.md](SECOND_MACHINE_ACCEPTANCE.md) before completing D01/D02.
+Checkout mode depends on the installed virtual environment, Node and frontend build. The NSIS prototype bundles those runtimes. Ollama/models, complete setup onboarding, OS service/autostart, crash recovery, signing and updates/rollback remain separate work. Verify the installed package on another Windows machine using [SECOND_MACHINE_ACCEPTANCE.md](SECOND_MACHINE_ACCEPTANCE.md) before completing D01/D02.
