@@ -26,8 +26,6 @@ This is a focused assistant-run acceptance check of the production frontend, rea
 
 Strict frontend lint with zero warnings and the production build passed. The relevant browser cancellation, persistence, focus and mobile checks passed after the fixes. Local detailed output and screenshots are under ignored `.tmp/browser-check/`; they are disposable, not required application assets.
 
-## Remaining acceptance
-
 ## Wider dashboard continuation - 12 October 2026
 
 All nine routes (Chat, Knowledge, Agents, Create Agent, Meetings, Research, Actions, Settings and Connected Sources) returned HTTP 200 at desktop and mobile widths with no observed page errors, viewport overflow or internal main-content overflow. This was a rendering/controls check, not live acceptance of every feature or connector.

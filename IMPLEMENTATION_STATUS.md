@@ -1,5 +1,9 @@
 # Synapse implementation status
 
+## Wider dashboard continuation - 12 October 2026
+
+Nine dashboard/settings routes passed desktop/mobile rendering checks without observed page errors or overflow. Acknowledged import cancellation produced `cancelled`, no partial source, and a successful subsequent import. Create Agent accessibility, keyboard breadcrumbs/icon states, mobile header and capability copy were corrected; a real browser create/load/delete check and strict lint/build passed. See [BROWSER_ACCEPTANCE.md](evaluations/BROWSER_ACCEPTANCE.md). [Second-machine acceptance](docs/SECOND_MACHINE_ACCEPTANCE.md) is prepared with synthetic data; it has not run on another machine. The tracker now assesses local beta readiness at ~70% and estimates 40-85 remaining focused hours for one connector. Human/design/quality review and distribution/recovery remain open.
+
 ## Browser first-use continuation - 11 October 2026
 
 The production browser journey passed pairing, local model selection, synthetic Markdown ingestion, keyboard source selection, a supported cited answer, source inspection and saved history with real ONNX/Ollama. Stopping a second answer preserved only the completed exchange after reload. Two observed UI defects were fixed: cancelled bubbles retained their pending label, and keyboard focus entered hidden status-bar links. The status panel is now clickable and wraps on mobile; 15 checked dashboard focus stops were visible and named. Strict frontend lint/build passed. See [evaluations/BROWSER_ACCEPTANCE.md](evaluations/BROWSER_ACCEPTANCE.md) for the sample, results and remaining acceptance. V01/V03 stay open for human and wider dashboard review.

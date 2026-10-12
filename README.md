@@ -124,6 +124,8 @@ Backups contain private document text, vectors, conversations, settings, and met
 
 ## Verification
 
+For the next installation gate, use [Second Windows machine acceptance](docs/SECOND_MACHINE_ACCEPTANCE.md). It covers a fresh setup with data outside the checkout, the synthetic browser workflow, restart/offline use and backup/restore. Its results remain pending on a second computer.
+
 ~~~powershell
 backend/venv/Scripts/python.exe -m pytest -c backend/pytest.ini backend/tests
 backend/venv/Scripts/python.exe -m pip check

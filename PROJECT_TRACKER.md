@@ -1,6 +1,6 @@
 # Synapse product task tracker
 
-Last updated: 11 October 2026.
+Last updated: 12 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
@@ -14,9 +14,9 @@ Public hosting and local inference are separate concerns. Cloudflare hosting mus
 
 ## Progress and accounting
 
-- Checklist: **19 of 47 tasks complete = 40%**. A01 adds the agreed framework integration; visual acceptance tasks remain waiting. Readiness assessments are unchanged pending acceptance.
+- Checklist: **19 of 47 tasks complete = 40%**. The full checklist includes deferred expansion; recent browser work advances open acceptance tasks without completing their human/design criteria.
 - Baseline repairs: approximately **95%** complete; remaining acceptance is not a claim of unimplemented core repairs.
-- Small local beta readiness: approximately **65%**.
+- Small local beta readiness: approximately **70%**, raised from 65% after real browser import/answer/evidence/history, cancellation and desktop/mobile route checks. Packaging, independent acceptance and live connector gates remain.
 - Paid release readiness: approximately **30%**.
 - Cloudflare migration implementation: **0%**.
 
@@ -61,8 +61,8 @@ Completion above means the implemented repair passed its stated checks. Broader 
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| V01 | P1 | IN PROGRESS | 1-3 | Human usability review | Actual browser import, keyboard source selection, cited answer/source inspection, saved conversation and answer cancellation passed with real local inference. Hidden status-bar focus and stale pending bubbles fixed; 15 dashboard focus stops visible and named. Mobile panel/conversation have no viewport overflow. Wider route/design review and import cancellation remain; see evaluations/BROWSER_ACCEPTANCE.md |
-| V02 | P1 | TODO | 4-8 | L04, V01 | Align dashboard typography, colors, spacing and controls with original landing design; verify accessible keyboard interaction |
+| V01 | P1 | IN PROGRESS | 1-2 | Human usability review | Browser import, scoped cited answer, evidence/history and answer cancellation passed. Nine dashboard/settings routes render on desktop/mobile without observed errors/overflow. An acknowledged import cancelled without partial data and a subsequent import succeeded. Deeper feature/error paths and human usability review remain; see evaluations/BROWSER_ACCEPTANCE.md |
+| V02 | P1 | IN PROGRESS | 3-6 | L04, V01 | Mobile sidebar/chat header and accessible status panel corrected. Create Agent now has named fields/toggles, keyboard breadcrumbs, pressed icon states, focus rings, truthful capability copy and a wrapping header; browser create/load/delete passed. Finish dashboard typography/colors/spacing alignment and human design review |
 | V03 | P1 | IN PROGRESS | 1-3 | V01, V02 | Browser first-use path passed pairing, installed model selection, synthetic document import, scoped question, evidence inspection and saved history with real ONNX/Ollama. Cancellation preserved completed history. Human first-use acceptance and remaining dashboard alignment remain |
 
 ## Phase 3 - answer quality and performance, 12-24 hours
@@ -101,7 +101,7 @@ Never put credentials in this tracker. Use dedicated resources; acceptance tests
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| D01 | P1 | TODO | 2-4 | Second Windows machine | Fresh lockfile installation verified here on Python 3.12 and isolated Node 22.13.1; finish cross-machine setup/model/restart/offline acceptance |
+| D01 | P1 | WAITING | 2-4 | Second Windows machine | Fresh lockfile installation verified here; docs/SECOND_MACHINE_ACCEPTANCE.md and a synthetic fixture now define clean setup, model provision, restart, offline and backup/restore checks. Execute and record them on a second Windows machine; no cross-machine result yet |
 | D02 | P1 | TODO | 8-16 | D01, V03 | Choose packaging approach; prototype installer/service lifecycle, model onboarding and per-user data outside checkout |
 | D03 | P1 | TODO | 5-10 | D02 | Verify installed-app restart, backup/restore, data preservation and update/rollback path; identify signing/distribution requirements |
 
@@ -152,8 +152,8 @@ These are deliberately outside the initial beta estimate; their designs and targ
 
 - Fast local beta path: have a human review representative answers and the desktop/narrow-screen and keyboard experience, then validate a clean install, restart and backup on a second Windows machine. Continue Q02 measurements and one intended live connector in parallel. Broader provider acceptance, advanced desktop features, paid launch work and Cloudflare stay outside the first local beta unless user feedback changes the scope.
 - Active order: landing/dashboard acceptance; answer quality/performance; intended live connectors; installation/recovery; beta feedback/commercial groundwork. Browser-independent quality work can proceed while visual acceptance waits.
-- Cloudflare is excluded from the active estimate. Remaining non-hosting beta work is roughly **61-125 focused hours** based on the earlier phase estimates; this is provisional and should be revised after evaluation results and access to live accounts/another machine. Deferred Cloudflare work remains **6-12 hours**.
-- Allow roughly **3-5 calendar weeks** with account access, review, second-machine testing and beta feedback. External delays can extend this.
+- Remaining work for a local beta with one intended connector is roughly **40-85 focused engineering hours**, based on the remaining task ranges. This includes human/quality review support, dashboard alignment, one connector, installation/packaging/recovery and beta groundwork. Completing all five connector tracks raises that to roughly **55-110 hours**. These are provisional estimates; new defects or packaging choices can change them.
+- Calendar completion depends on access to a second Windows machine, the intended connector account, independent review and beta feedback. The earlier 3-5 week range covered broader scope; a reliable release date needs those dependencies scheduled. Deferred Cloudflare work remains **6-12 hours**.
 - Original-vision expansion and a complete paid launch are not included. Re-estimate after measured beta results.
 
 These are planning ranges, not a promise of uninterrupted background work or a release date. Work proceeds in active sessions. Resolve uncertain items early and revise estimates when evidence changes.
@@ -173,6 +173,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | Date | Update | Evidence / next action |
 | --- | --- | --- |
+| 2026-10-12 | Wider dashboard acceptance and next-machine preparation | Nine routes passed desktop/mobile rendering checks; acknowledged import cancellation left no partial source and retry succeeded. Fixed agent-page labels, keyboard states, mobile header and capability copy; real browser create/load/delete and strict lint/build passed. Second-machine procedure/fixture prepared but not executed. Beta assessment now ~70%; remaining one-connector beta estimate 40-85 focused hours, full five-connector scope 55-110. Human/design/quality and installation gates remain. |
 | 2026-10-11 | First-use browser journey and cancellation/keyboard fixes | Real production UI imported a synthetic document, selected its scope by keyboard, answered with correct facts/citation and opened the source. Cancellation did not save the stopped turn. Fixed stale pending bubbles and offscreen status-bar focus; 15 focus stops, mobile wrapping, strict lint/build passed. Human/wider dashboard acceptance and installation/recovery remain; see evaluations/BROWSER_ACCEPTANCE.md. |
 | 2026-10-07 | Foundation repairs recorded | 11 completed groups; 49 backend tests; lint/build/dependency checks; real local inference and backup restoration |
 | 2026-10-07 | User selected original landing page as product design reference | Preserve original design; replacement page remains an implementation reference |
