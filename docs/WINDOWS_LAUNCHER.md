@@ -11,6 +11,8 @@ From the checkout root:
 
 Keep that terminal open. Ctrl+C stops both services. The backend receives a shutdown request through its private stdin pipe so its lifespan can close jobs and stores. The frontend is stopped first. An unexpected service exit stops the other service. If shutdown exceeds 30 seconds, the launcher reports and terminates its own process. It never stops an existing service occupying a port.
 
+Windows may then ask `Terminate batch job (Y/N)?` for the `.cmd` wrapper; answer Y. To avoid that shell prompt, invoke `backend/venv/Scripts/python.exe scripts/launch_local.py` directly with the same options.
+
 ## Data and models
 
 The default data location is `%LOCALAPPDATA%\Synapse\data`; logs are in its `logs` directory. Existing checkout data is not automatically migrated. To preserve an existing workspace, explicitly pass its absolute data path, or follow the README backup/restore procedure before changing directories.

@@ -159,7 +159,10 @@ def main():
     parser.add_argument("--backend-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.backend_child:
-        backend_child()
+        try:
+            backend_child()
+        except KeyboardInterrupt:
+            pass
         return
     try:
         launch(args)
