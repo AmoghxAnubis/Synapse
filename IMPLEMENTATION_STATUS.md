@@ -1,5 +1,11 @@
 # Synapse implementation status
 
+## NSIS installer continuation - 12 October 2026
+
+Windows distribution now uses a per-user NSIS `.exe` installer with bundled Python 3.12.10, locked backend dependencies, Node 24.13.0 and a Next.js standalone frontend. Build tools exclude `.env`, credentials, original data and models, preserve runtime licenses and write a hashed package manifest. The corrected installer is approximately 108 MiB; see [WINDOWS_PACKAGE_ACCEPTANCE.md](evaluations/WINDOWS_PACKAGE_ACCEPTANCE.md) and [build instructions](docs/WINDOWS_INSTALLER.md).
+
+Standalone lint/build, relocated imports, real packaged ONNX/Chroma ingestion and installed frontend/backend smoke passed. The supervised backend initially hung during a lazy worker-thread NumPy import; native libraries now load on the main thread before the watcher/API workers. An installed browser journey passed pairing/import/cited answer/evidence with no page errors or missing assets, and a reproducible supervised API/import regression passed. D02/D03 remain open for clean second-machine and model onboarding acceptance, installed recovery, signing and update/rollback. No Docker distribution or hosted inference was added.
+
 ## Windows launcher continuation - 12 October 2026
 
 The first D02 distribution choice is a foreground supervisor for an installed checkout. `Start-Synapse.cmd` invokes `scripts/launch_local.py`, which checks Python 3.12, Node 22.13+, dependencies, production build and free ports; sets a stable per-user data/model directory; starts backend/frontend; and cleans up its owned processes on shutdown or service failure. A private stdin channel requests backend lifespan shutdown. Model/dependency downloads remain explicit.
