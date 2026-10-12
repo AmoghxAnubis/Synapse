@@ -60,7 +60,7 @@ def build(args):
     copy_tree(base / "DLLs", python / "DLLs")
     copy_tree(packages, python / "Lib" / "site-packages")
     # An isolated path file avoids user-site/PYTHONPATH and the builder's absolute prefix.
-    (python / "python312._pth").write_text(".\nLib\nLib/site-packages\n..\nimport site\n", encoding="utf-8")
+    (python / "python312._pth").write_text(".\nDLLs\nLib\nLib/site-packages\n..\nimport site\n", encoding="utf-8")
     print("Staging backend and standalone frontend...", flush=True)
     copy_tree(ROOT / "backend" / "app", output / "backend" / "app")
     shutil.copy2(lock, output / "backend" / "requirements.lock.txt")
