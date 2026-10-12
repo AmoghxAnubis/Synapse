@@ -34,7 +34,7 @@ def build(args):
     if tuple(map(int, node_version.lstrip("v").split(".")[:2])) < (22, 13):
         raise RuntimeError("Node 22.13 or newer is required.")
     lock = ROOT / "backend" / "requirements.lock.txt"
-    for line in lock.read_text().splitlines():
+    for line in lock.read_text(encoding="utf-8-sig").splitlines():
         if not line or line.startswith("#"):
             continue
         name, version = line.split("==", 1)
