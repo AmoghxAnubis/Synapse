@@ -1,5 +1,11 @@
 # Synapse implementation status
 
+## Windows launcher continuation - 12 October 2026
+
+The first D02 distribution choice is a foreground supervisor for an installed checkout. `Start-Synapse.cmd` invokes `scripts/launch_local.py`, which checks Python 3.12, Node 22.13+, dependencies, production build and free ports; sets a stable per-user data/model directory; starts backend/frontend; and cleans up its owned processes on shutdown or service failure. A private stdin channel requests backend lifespan shutdown. Model/dependency downloads remain explicit.
+
+Real-process `scripts/verify_launcher.py` passed two startup/shutdown cycles, metadata/token preservation, port release and refusal to stop an existing listener. The first test run held its own SQLite connection during temporary-directory cleanup; the corrected verifier closes it and exits 0. This machine's unrestricted-shell PATH selects Node 22.12, so verification used the explicit supported Node executable. See [WINDOWS_LAUNCHER.md](docs/WINDOWS_LAUNCHER.md). Installer/runtime bundling, cross-machine acceptance, crash recovery and updates remain open; D02 is IN PROGRESS.
+
 ## Wider dashboard continuation - 12 October 2026
 
 Nine dashboard/settings routes passed desktop/mobile rendering checks without observed page errors or overflow. Acknowledged import cancellation produced `cancelled`, no partial source, and a successful subsequent import. Create Agent accessibility, keyboard breadcrumbs/icon states, mobile header and capability copy were corrected; a real browser create/load/delete check and strict lint/build passed. See [BROWSER_ACCEPTANCE.md](evaluations/BROWSER_ACCEPTANCE.md). [Second-machine acceptance](docs/SECOND_MACHINE_ACCEPTANCE.md) is prepared with synthetic data; it has not run on another machine. The tracker now assesses local beta readiness at ~70% and estimates 40-85 remaining focused hours for one connector. Human/design/quality review and distribution/recovery remain open.
