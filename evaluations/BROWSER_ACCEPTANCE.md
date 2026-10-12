@@ -28,4 +28,14 @@ Strict frontend lint with zero warnings and the production build passed. The rel
 
 ## Remaining acceptance
 
-Human first-use review, wider dashboard route/design review, import cancellation, full animation/canvas review, representative answer quality, and second-machine installation/recovery remain open. This single synthetic browser answer is workflow evidence, not a new Q01 quality holdout or a performance benchmark.
+## Wider dashboard continuation - 12 October 2026
+
+All nine routes (Chat, Knowledge, Agents, Create Agent, Meetings, Research, Actions, Settings and Connected Sources) returned HTTP 200 at desktop and mobile widths with no observed page errors, viewport overflow or internal main-content overflow. This was a rendering/controls check, not live acceptance of every feature or connector.
+
+The Create Agent page had unnamed inputs/toggles and an icon-only back button. Fields now have associated labels, toggles have names and keyboard focus rings, icon selection reports its pressed state, and breadcrumbs are keyboard links. The header wraps on mobile. Capability copy now describes request-specific search consent and fixed diagnostics/approved app launching. A mobile browser run passed field lookup, keyboard toggle, icon state, actual agent creation and loading its saved instructions/permission, then deleted the synthetic agent. No page errors or viewport overflow were observed. Strict lint and the production build passed.
+
+Cancelling an acknowledged, running synthetic import through the browser produced backend job status `cancelled`, left no partial source, and allowed a subsequent small import to complete. This check does not cover cancellation before the upload/job acknowledgement or during final replacement.
+
+## Remaining acceptance after this continuation
+
+Human first-use review, dashboard design alignment and deeper feature/error-path review, cancellation timing edge cases, full animation/canvas review, representative answer quality, and second-machine installation/recovery remain open. The synthetic browser answer is workflow evidence, not a new Q01 quality holdout or a performance benchmark. The next-machine procedure is in [SECOND_MACHINE_ACCEPTANCE.md](../docs/SECOND_MACHINE_ACCEPTANCE.md).
