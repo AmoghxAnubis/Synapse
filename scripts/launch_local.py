@@ -46,7 +46,7 @@ def require_free_ports():
                 raise RuntimeError(f"Port {port} is already in use. Stop the existing service first; the launcher will not stop it.")
 
 
-def preflight():
+def preflight(node_command=None):
     python = BACKEND / "venv" / "Scripts" / "python.exe"
     if not python.is_file():
         raise RuntimeError("Create backend/venv with Python 3.12 and install requirements.lock.txt; see README.")
@@ -57,7 +57,7 @@ def preflight():
         subprocess.run([str(python), "-c", "import uvicorn, fastapi, onnxruntime, chromadb, langchain_ollama, langgraph"], check=True, capture_output=True)
     except subprocess.CalledProcessError as exc:
         raise RuntimeError("Backend runtime or dependencies are unavailable. Recreate the Python 3.12 environment from the lockfile.") from exc
-    node = shutil.which("node")
+    node = shutil.which(node_command or "node")
     if not node:
         raise RuntimeError("Install Node 22.13 or newer; see README.")
     version = subprocess.check_output([node, "--version"], text=True).strip().lstrip("v")
@@ -105,7 +105,7 @@ def stop_services(backend, frontend):
 
 
 def launch(args):
-    python, node, next_cli = preflight()
+    python, node, next_cli = preflight(args.node)
     data = data_directory(args.data_dir)
     embedding = Path(args.embedding_dir).expanduser().resolve() if args.embedding_dir else data / "models" / "minilm"
     print(f"Data: {data}")
@@ -152,6 +152,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", help="Default: %%LOCALAPPDATA%%/Synapse/data; never auto-migrates old data.")
     parser.add_argument("--embedding-dir", help="Use an already provisioned embedding directory.")
+    parser.add_argument("--node", help="Explicit Node executable when PATH selects another installation.")
     parser.add_argument("--check", action="store_true", help="Check prerequisites without launching.")
     parser.add_argument("--smoke", action="store_true", help="Start, verify HTTP readiness, and stop both services.")
     parser.add_argument("--open-browser", action="store_true", help="Open the local page after readiness.")
