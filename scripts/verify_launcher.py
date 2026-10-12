@@ -1,5 +1,6 @@
 """Isolated real-process launcher startup, restart and port-conflict acceptance."""
 import argparse
+from contextlib import closing
 import hashlib
 from pathlib import Path
 import socket
@@ -25,9 +26,10 @@ def verify(node=None):
                 raise RuntimeError(result.stderr or result.stdout)
             assert "Ready:" in result.stdout and "Local services stopped" in result.stdout
             token_hash = hashlib.sha256((data / "api-token").read_bytes()).hexdigest()
-            with sqlite3.connect(data / "metadata.sqlite3") as db:
+            with closing(sqlite3.connect(data / "metadata.sqlite3")) as db:
                 if run == 1:
                     db.execute("INSERT INTO kv(key,value) VALUES (?,?)", ("launcher_acceptance", '"preserved"'))
+                    db.commit()
                     original_token_hash = token_hash
                 else:
                     assert db.execute("SELECT value FROM kv WHERE key='launcher_acceptance'").fetchone()[0] == '"preserved"'
