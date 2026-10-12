@@ -47,7 +47,8 @@ def require_free_ports():
 
 
 def preflight(node_command=None):
-    python = BACKEND / "venv" / "Scripts" / "python.exe"
+    bundled_python = BACKEND / "runtime" / "python.exe"
+    python = bundled_python if bundled_python.is_file() else BACKEND / "venv" / "Scripts" / "python.exe"
     if not python.is_file():
         raise RuntimeError("Create backend/venv with Python 3.12 and install requirements.lock.txt; see README.")
     try:
@@ -57,13 +58,16 @@ def preflight(node_command=None):
         subprocess.run([str(python), "-c", "import uvicorn, fastapi, onnxruntime, chromadb, langchain_ollama, langgraph"], check=True, capture_output=True)
     except subprocess.CalledProcessError as exc:
         raise RuntimeError("Backend runtime or dependencies are unavailable. Recreate the Python 3.12 environment from the lockfile.") from exc
-    node = shutil.which(node_command or "node")
+    bundled_node = ROOT / "runtime" / "node" / "node.exe"
+    node = shutil.which(node_command or (str(bundled_node) if bundled_node.is_file() else "node"))
     if not node:
         raise RuntimeError("Install Node 22.13 or newer; see README.")
     version = subprocess.check_output([node, "--version"], text=True).strip().lstrip("v")
     if tuple(int(part) for part in version.split(".")[:2]) < (22, 13):
         raise RuntimeError(f"Node {version} is too old; use Node 22.13 or newer.")
-    next_cli = FRONTEND / "node_modules" / "next" / "dist" / "bin" / "next"
+    next_cli = FRONTEND / "server.js"
+    if not next_cli.is_file():
+        next_cli = FRONTEND / "node_modules" / "next" / "dist" / "bin" / "next"
     if not next_cli.is_file() or not (FRONTEND / ".next" / "BUILD_ID").is_file():
         raise RuntimeError("Run npm.cmd ci and npm.cmd run build in frontend first.")
     require_free_ports()
@@ -118,12 +122,13 @@ def launch(args):
         return
     logs = data / "logs"
     logs.mkdir(parents=True, exist_ok=True)
-    env = dict(os.environ, SYNAPSE_DATA_DIR=str(data), SYNAPSE_EMBEDDING_DIR=str(embedding), SYNAPSE_BACKEND_URL="http://127.0.0.1:8000", PYTHONUNBUFFERED="1")
+    env = dict(os.environ, SYNAPSE_DATA_DIR=str(data), SYNAPSE_EMBEDDING_DIR=str(embedding), SYNAPSE_BACKEND_URL="http://127.0.0.1:8000", PYTHONUNBUFFERED="1", HOSTNAME="127.0.0.1", PORT="3000", NEXT_TELEMETRY_DISABLED="1")
+    frontend_command = [node, str(next_cli)] if next_cli.name == "server.js" else [node, str(next_cli), "start", "--hostname", "127.0.0.1", "--port", "3000"]
     backend = frontend = None
     with (logs / "backend.log").open("a", encoding="utf-8") as backend_log, (logs / "frontend.log").open("a", encoding="utf-8") as frontend_log:
         try:
             backend = subprocess.Popen([str(python), "-u", str(Path(__file__).resolve()), "--backend-child"], cwd=BACKEND, env=env, stdin=subprocess.PIPE, stdout=backend_log, stderr=subprocess.STDOUT, text=True)
-            frontend = subprocess.Popen([node, str(next_cli), "start", "--hostname", "127.0.0.1", "--port", "3000"], cwd=FRONTEND, env=env, stdout=frontend_log, stderr=subprocess.STDOUT)
+            frontend = subprocess.Popen(frontend_command, cwd=FRONTEND, env=env, stdout=frontend_log, stderr=subprocess.STDOUT)
             deadline = time.monotonic() + 60
             while True:
                 if backend.poll() is not None or frontend.poll() is not None:
