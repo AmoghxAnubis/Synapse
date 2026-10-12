@@ -115,7 +115,8 @@ def launch(args):
     print(f"Data: {data}")
     print(f"Embeddings: {embedding}")
     model_ready = (embedding / "model.onnx").is_file() or (embedding / "onnx" / "model.onnx").is_file()
-    print("Embedding model present." if model_ready else "Embedding model missing: follow the explicit provisioning steps in docs/WINDOWS_LAUNCHER.md.")
+    setup_doc = "WINDOWS_INSTALLER.md" if (BACKEND / "runtime" / "python.exe").is_file() else "WINDOWS_LAUNCHER.md"
+    print("Embedding model present." if model_ready else f"Embedding model missing: follow the explicit provisioning steps in docs/{setup_doc}.")
     print("Ollama is reachable." if http_status("http://127.0.0.1:11434/api/tags") == 200 else "Ollama is unavailable. Pairing/settings will work; start Ollama for answers.")
     if args.check:
         print("Prerequisite check passed. No services started.")
