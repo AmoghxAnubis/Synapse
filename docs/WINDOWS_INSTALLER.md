@@ -18,6 +18,8 @@ Output directories must be new; the builder refuses to overwrite a package. With
 
 Test the staged bundle from its own directory with `backend/runtime/python.exe scripts/launch_local.py --smoke --data-dir ABSOLUTE_TEST_DATA_PATH`. The launcher selects bundled Python/Node and standalone server automatically. Test browser pairing, source ingestion/answer, restart and uninstall with synthetic data before release.
 
+Run the native first-load/import regression with `backend/venv/Scripts/python.exe scripts/verify_windows_bundle.py --bundle dist/synapse-win-x64 --embedding-dir PATH_TO_PROVISIONED_MINILM`. It uses disposable data and reproduces the supervised log/stdin configuration. See [installer acceptance results](../evaluations/WINDOWS_PACKAGE_ACCEPTANCE.md) for the corrected build tested here.
+
 ## Install and use
 
 Run the generated setup executable. A Start-menu shortcut launches Synapse. The initial beta refuses installation into an existing directory; automatic upgrades/rollback remain pending. Stop the launcher before uninstalling. Uninstall removes application files and shortcuts and retains the separate data/models.
