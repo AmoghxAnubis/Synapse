@@ -99,7 +99,7 @@ def build(args):
         installer = output.parent / (output.name + "-setup.exe")
         if installer.exists():
             raise RuntimeError("Installer output already exists; choose a new bundle output name.")
-        subprocess.run([args.nsis, f"/DPAYLOAD={output}", f"/DOUTPUT={installer}", str(ROOT / "packaging" / "windows" / "synapse.nsi")], check=True)
+        subprocess.run([str(Path(args.nsis).resolve()), "/V2", f"/DPAYLOAD={output}", f"/DOUTPUT={installer}", str(ROOT / "packaging" / "windows" / "synapse.nsi")], check=True)
         print(f"Installer: {installer}")
 
 
