@@ -20,6 +20,7 @@ Prepared 12 October 2026. This procedure is ready to run; a second-machine resul
 | Check | Expected result | Result / evidence |
 | --- | --- | --- |
 | Clean setup | Locked installation and production build succeed; no runtime data is created in the checkout | Pending |
+| Launcher | Run Start-Synapse.cmd with --data-dir pointing to this acceptance data directory; startup, Ctrl+C stop and restart preserve data. Do not mix manually started services with the launcher | Pending |
 | Pairing | An unpaired dashboard redirects to pairing; correct token opens chat | Pending |
 | Import | Import [harbor.md](acceptance/harbor.md); source view preserves the facts | Pending |
 | Answer and evidence | Ask when Harbor launches and who owns it; answer states 18 November 2026 and Mira Patel with a supporting reference | Pending |
