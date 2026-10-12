@@ -5,7 +5,6 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
-import re
 import shutil
 import struct
 import subprocess
@@ -85,7 +84,9 @@ def build(args):
         if file.is_file():
             if file.name.startswith(".env") or file.name in ("api-token", "agents.json", "meetings_data.json"):
                 raise RuntimeError(f"Private file detected in payload: {file.relative_to(output)}")
-            files.append({"path": file.relative_to(output).as_posix(), "bytes": file.stat().st_size, "sha256": hashlib.file_digest(file.open("rb"), "sha256").hexdigest()})
+            with file.open("rb") as stream:
+                digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            files.append({"path": file.relative_to(output).as_posix(), "bytes": file.stat().st_size, "sha256": digest})
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     except (OSError, subprocess.CalledProcessError):
