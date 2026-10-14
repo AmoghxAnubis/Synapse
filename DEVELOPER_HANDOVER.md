@@ -1,5 +1,13 @@
 # Synapse developer handover
 
+## Beta verification continuation - 14 October 2026
+
+On `ayush_lang`, verified the running local product and clean frontend lock installation. Backend: 107 tests passed with real offline ONNX; dependency consistency passed for 137 packages. Real HTTP smoke passed pairing/origin/body-limit checks, routes, import/cited answer, persisted follow-up and deduplication. Real SSE preserved a scoped supporting reference and saved turn; an unspecified date correctly abstained. The selected model was llama3.2:latest; small smoke samples do not overturn its earlier failed quality gate. Saved model/network preferences were preserved.
+
+The installed frontend initially differed from the committed dependencies. npm ci restored the lock versions; strict lint then found Date.now during Actions render. An effect-driven clock now updates expiry, disables expired controls and shows the saved deadline. Incorrect landing claims about automatic notification silencing/workspace rearrangement were corrected. Clean Next.js 16.4.0 lint/type/build passed. Full npm audit reports five high development-chain entries rooted in the braces advisory; production-only audit reports zero. Latest braces query returned affected 3.0.3; no forced downgrade was applied. Compatible remediation/disposition remains open.
+
+A real process restart recovered a Calculator preview with unchanged expiry; approval completed once, replay was rejected and a new Calculator window appeared in Windows inventory. Cancellation, removed permission and unsupported-app checks passed; the temporary agent and synthetic sources/conversations were removed. Test approval history remains. User paired the dashboard and its accessibility text was readable, but interactive UI checks remain incomplete due repeated input-conflict/geometry errors and incorrect foreground screenshots. See [evaluations/BETA_VERIFICATION.md](evaluations/BETA_VERIFICATION.md) and its saved summary. Public beta is not approved by this run: model quality, UI controls, refreshed installer, second-machine recovery and independent/intended-connector acceptance remain. Synapse is left running; commit completed fixes/reports only on ayush_lang, no push or publishing authorized.
+
 ## Durable action continuation - 14 October 2026
 
 Following the user's request, fetched the current remotes, fast-forwarded `ayush_lang` through `origin/ayush_lang` at `d5be0fc` and then `origin/main` at `4f6ef83`. Both updates preserved the previous holdout/performance commits and integrated teammate changes without conflicts. Development and completed-work commits in this conversation remain on `ayush_lang`, never main; no push authorized.
