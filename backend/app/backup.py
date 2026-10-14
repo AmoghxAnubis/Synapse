@@ -66,6 +66,10 @@ def restore_backup(archive_path, target):
             raise ValueError("Metadata database failed its integrity check.")
         # Restored connections require revalidation and secrets are never backed up.
         db.execute("DELETE FROM kv WHERE key LIKE 'integration:%' OR key LIKE 'job:%'")
+        # A stale backup may predate consumption of an approval. Never revive
+        # executable approvals when copying/rolling back the workspace.
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='action_runs'").fetchone():
+            db.execute("UPDATE action_runs SET status='cancelled' WHERE status IN ('preparing','pending','resuming','executing','interrupted')")
         db.commit()
     finally:
         db.close()

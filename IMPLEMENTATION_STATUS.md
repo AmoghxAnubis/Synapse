@@ -1,5 +1,13 @@
 # Synapse implementation status
 
+## Durable action continuation - 14 October 2026
+
+Following the user's request, fetched the current remotes, fast-forwarded `ayush_lang` through `origin/ayush_lang` at `d5be0fc` and then `origin/main` at `4f6ef83`. Both updates preserved the previous holdout/performance commits and integrated teammate changes without conflicts. Development and completed-work commits in this conversation remain on `ayush_lang`, never main; no push authorized.
+
+A02 adds a durable LangGraph approval interrupt for the existing Windows local app allowlist. Pending previews survive service/API restart, keep their original five-minute expiry and can be reviewed again in Actions. An atomic SQLite ledger claim and an execution reservation consume approval before launch; permissions and expiry are rechecked. Cancelled, failed or consumed approvals cannot replay. Interrupted launch outcomes require inspection and a fresh preview, not automatic retry. Graph checkpoints and ledger share the metadata SQLite file; portable restore cancels unfinished approvals to prevent replay from old snapshots. Connected action approvals retain their existing in-memory behavior and ordinary chat remains separate.
+
+Verification: 107 backend tests passed with real offline ONNX, including twelve new real-SQLite/LangGraph workflow regressions; app launching is mocked. Frontend strict lint, TypeScript and production build passed (build rerun after sandbox worker EPERM); dependency consistency passed for 137 packages. Added langgraph-checkpoint-sqlite 3.1.2 and its dependencies; checkpoint runtime upgraded from 4.2.0 to 4.3.0 because the adapter imports an API absent from 4.2.0. Current saved user data/preferences were not exercised by tests. See [docs/DURABLE_ACTIONS.md](docs/DURABLE_ACTIONS.md) for API, recovery and verification limits. Pending-preview browser acceptance, refreshed installer acceptance, existing Q01-Q03 and second-machine gates remain open. Kafka is still deferred.
+
 ## NSIS installer continuation - 12 October 2026
 
 Windows distribution now uses a per-user NSIS `.exe` installer with bundled Python 3.12.10, locked backend dependencies, Node 24.13.0 and a Next.js standalone frontend. Build tools exclude `.env`, credentials, original data and models, preserve runtime licenses and write a hashed package manifest. The corrected installer is approximately 108 MiB; see [WINDOWS_PACKAGE_ACCEPTANCE.md](evaluations/WINDOWS_PACKAGE_ACCEPTANCE.md) and [build instructions](docs/WINDOWS_INSTALLER.md).

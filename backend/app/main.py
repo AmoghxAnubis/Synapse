@@ -337,6 +337,17 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
             s.network()
         return s.actions.preview(body.action, body.params, s.agent(body.agent_id))
 
+    @router.get("/actions/pending")
+    def pending_actions(s: Services = Depends(services)):
+        return s.actions.list_pending()
+
+    @router.get("/actions/{identifier}")
+    def action_status(identifier: str, s: Services = Depends(services)):
+        record = s.actions.status(identifier)
+        if record is None:
+            raise HTTPException(404, "Action not found")
+        return record
+
     @router.post("/actions/{identifier}/approve")
     def approve(identifier: str, s: Services = Depends(services)):
         return s.actions.approve(identifier, s.agents, s.settings.network_enabled)

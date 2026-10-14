@@ -1,5 +1,13 @@
 # Synapse developer handover
 
+## Durable action continuation - 14 October 2026
+
+Following the user's request, fetched the current remotes, fast-forwarded `ayush_lang` through `origin/ayush_lang` at `d5be0fc` and then `origin/main` at `4f6ef83`. Both updates preserved the previous holdout/performance commits and integrated teammate changes without conflicts. Development and completed-work commits in this conversation remain on `ayush_lang`, never main; no push authorized.
+
+A02 adds a durable LangGraph approval interrupt for the existing Windows local app allowlist. Pending previews survive service/API restart, keep their original five-minute expiry and can be reviewed again in Actions. An atomic SQLite ledger claim and an execution reservation consume approval before launch; permissions and expiry are rechecked. Cancelled, failed or consumed approvals cannot replay. Interrupted launch outcomes require inspection and a fresh preview, not automatic retry. Graph checkpoints and ledger share the metadata SQLite file; portable restore cancels unfinished approvals to prevent replay from old snapshots. Connected action approvals retain their existing in-memory behavior and ordinary chat remains separate.
+
+Verification: 107 backend tests passed with real offline ONNX, including twelve new real-SQLite/LangGraph workflow regressions; app launching is mocked. Frontend strict lint, TypeScript and production build passed (build rerun after sandbox worker EPERM); dependency consistency passed for 137 packages. Added langgraph-checkpoint-sqlite 3.1.2 and its dependencies; checkpoint runtime upgraded from 4.2.0 to 4.3.0 because the adapter imports an API absent from 4.2.0. Current saved user data/preferences were not exercised by tests. See [docs/DURABLE_ACTIONS.md](docs/DURABLE_ACTIONS.md) for API, recovery and verification limits. Pending-preview browser acceptance, refreshed installer acceptance, existing Q01-Q03 and second-machine gates remain open. Kafka is still deferred.
+
 ## Compound citation continuation - 11 October 2026
 
 The focused Q01/Q03 citation gap is guarded: clause-balanced retrieval identifies the lead passage for each part of a two-clause question; generation buffers these answers, retries once if either citation is missing, and withholds a still-uncited answer. Ordinary answers retain token streaming. Three repeated Cedar answers cited both sources, the preserved 11-case PDF/DOCX/Markdown regression passed its fixed checks, and a fresh eight-case synthetic transfer sample passed its predeclared diagnostics and assistant claim review. The full backend suite passed with real local embeddings. See [evaluations/THIRD_HOLDOUT.md](evaluations/THIRD_HOLDOUT.md) for evidence and limits.
