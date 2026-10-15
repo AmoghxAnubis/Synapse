@@ -1,8 +1,10 @@
 # Synapse product task tracker
 
-Last updated: 14 October 2026.
+Last updated: 15 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
+
+Current consolidated assessment: [15 October product readiness report](docs/PRODUCT_READINESS_2026-10-15.md), based on merged PR #35 at `cc89592`. Main is synchronized; fresh backend/lint/type/dependency checks pass. Readiness and task statuses remain unchanged because release acceptance gates remain open.
 
 ## Product direction
 
@@ -174,6 +176,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | Date | Update | Evidence / next action |
 | --- | --- | --- |
+| 2026-10-15 | Post-PR #35 main synchronization and readiness assessment | Clean main fast-forwarded from 4f6ef83 to cc89592, matching freshly fetched origin/main. Backend environment synchronized to merged lock; 107 tests passed with no skips, pip check, strict frontend lint and TypeScript passed. PR-head CI passed; current full npm audit retains five high development-chain entries and production-only audit is zero. Consolidated report distinguishes 20/48 closed tasks, ~70% local beta and ~30% paid readiness, with 40-85 focused hours for a one-connector beta. No feature changes, installer rebuild, independent/live-provider acceptance or release; task/readiness counts unchanged. See docs/PRODUCT_READINESS_2026-10-15.md. |
 | 2026-10-12 | NSIS packaging and bundled-runtime prototype | Chosen Windows .exe distribution; Python 3.12.10/Node 24.13.0 and standalone frontend staged, private/runtime assets excluded. ~108 MiB unsigned installer compiled. Fixed observed supervised NumPy first-load hang by initializing native libraries before watcher/API workers; installed browser journey and packaged API/ONNX regression passed. Corrected installer fresh install, launcher smoke and uninstall/data preservation passed; second-machine/model onboarding/signing/updates remain acceptance gates. |
 | 2026-10-12 | Initial Windows launcher lifecycle prototype | Start-Synapse.cmd/scripts/launch_local.py start real backend/frontend with per-user data, readiness checks and cleanup. Real-process verification passed two starts/stops, metadata/token preservation, released ports and occupied-port refusal. First verification's SQLite cleanup handle was fixed; corrected run exits 0. An explicit Node path handles this machine's older unrestricted-shell PATH. D02 remains open for installer/runtime bundling and second-machine acceptance; beta assessment stays ~70%. |
 | 2026-10-12 | Wider dashboard acceptance and next-machine preparation | Nine routes passed desktop/mobile rendering checks; acknowledged import cancellation left no partial source and retry succeeded. Fixed agent-page labels, keyboard states, mobile header and capability copy; real browser create/load/delete and strict lint/build passed. Second-machine procedure/fixture prepared but not executed. Beta assessment now ~70%; remaining one-connector beta estimate 40-85 focused hours, full five-connector scope 55-110. Human/design/quality and installation gates remain. |

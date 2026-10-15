@@ -1,5 +1,11 @@
 # Synapse implementation status
 
+## Post-PR #35 assessment - 15 October 2026
+
+Local `main` fast-forwarded from `4f6ef83` to `cc89592`, matching freshly fetched `origin/main` and the merge of PR #35. The local backend environment needed the merged checkpoint dependencies; installing the existing lockfile resolved the import blocker. Fresh verification: **107 backend tests passed, no skips**, `pip check`, strict frontend lint and TypeScript passed. PR-head CI completed successfully. Full npm audit still reports five high-severity development-chain entries; production-only audit reports zero. No feature code, saved model selection or user data was changed by this assessment, and no release was performed.
+
+The [consolidated product readiness report](docs/PRODUCT_READINESS_2026-10-15.md) records implemented capabilities, evidence limits, release gates and sequencing. Assessment remains approximately 70% for a small local beta and 30% for paid release; the broad checklist is 20/48 closed. One-connector local beta work remains estimated at 40-85 focused hours, excluding external waits and paid-launch/original-vision expansion. Independent representative-document/first-use review, intended live connector acceptance and a refreshed package tested on a clean second Windows machine remain material gates.
+
 ## Beta verification continuation - 14 October 2026
 
 On `ayush_lang`, verified the running local product and clean frontend lock installation. Backend: 107 tests passed with real offline ONNX; dependency consistency passed for 137 packages. Real HTTP smoke passed pairing/origin/body-limit checks, routes, import/cited answer, persisted follow-up and deduplication. Real SSE preserved a scoped supporting reference and saved turn; an unspecified date correctly abstained. The selected model was llama3.2:latest; small smoke samples do not overturn its earlier failed quality gate. Saved model/network preferences were preserved.
