@@ -4,7 +4,7 @@ Prepared 15 October 2026 from the [readiness assessment](PRODUCT_READINESS_2026-
 
 ## Target and confirmed constraints
 
-The next deliverable is a private Windows x64, single-user beta that reliably imports supported documents, answers with supporting evidence using an evaluated local model, retains conversations, performs explicitly approved supported actions, syncs selected GitHub sources, and preserves/recoveries user data through the supported lifecycle.
+The next deliverable is a private Windows x64, single-user beta that reliably imports supported documents, answers with supporting evidence using an evaluated local model, retains conversations, performs explicitly approved supported actions, syncs selected GitHub sources, and preserves and recovers user data through the supported lifecycle.
 
 User decisions on 15 October:
 
