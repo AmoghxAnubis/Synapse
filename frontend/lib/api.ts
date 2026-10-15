@@ -20,8 +20,19 @@ export function errorMessage(error: unknown): string {
 export interface HealthResponse {
   status: string; memory_engine: string; generation_engine: string; orchestrator: string;
   agents_active: string[]; network_enabled: boolean;
-  llm: { ready: boolean; model: string; models: string[]; error: string | null };
+  llm: LLMStatus;
 }
+export interface LLMStatus {
+  ready: boolean; model: string; models: string[]; error: string | null;
+  state?: "ready" | "unavailable" | "missing_model" | "invalid_response";
+  resolved_model?: string | null; model_digest?: string | null;
+  base_url?: string;
+}
+export interface EmbeddingStatus {
+  ready: boolean; state: "ready" | "not_loaded" | "missing" | "error";
+  files_present: boolean; hardware: string | null; directory: string; error: string | null;
+}
+export interface ReadinessResponse { ready: boolean; llm: LLMStatus; embeddings: EmbeddingStatus }
 export interface UploadResponse { status: string; filename: string; chunks_processed: number; hardware: string; unchanged?: boolean }
 export interface Citation { id: string; source: string; page: number; chunk: number; url: string; text: string; distance: number }
 export interface AskResponse { answer: string; sources: string[]; citations: Citation[]; hardware_flow: string; capabilities_used?: string[] }
@@ -37,7 +48,7 @@ export interface SyncResponse { status: string; platform: string; documents_inge
 export interface Job<T> { id: string; status: "queued" | "running" | "completed" | "failed" | "cancelled"; result?: T; error?: string }
 export interface Conversation { id: string; title: string; updated: number }
 export interface SavedMessage { id: string; role: "user" | "ai"; content: string; citations: Citation[]; created: number }
-export interface LocalSettings { ollama_url: string; model: string; network_enabled: boolean; retrieval_max_distance: number; llm?: HealthResponse["llm"] }
+export interface LocalSettings { ollama_url: string; model: string; network_enabled: boolean; retrieval_max_distance: number; llm?: LLMStatus; embeddings?: EmbeddingStatus }
 export interface MeetingsData { notes: string; tasks: { id: number; text: string; completed: boolean }[] }
 export interface ActionPreview { id: string; action: string; description: string; expires: number }
 
@@ -117,7 +128,15 @@ export async function ingestURL(url: string): Promise<{ chunks_processed: number
 export async function fetchMeetings(): Promise<MeetingsData> { return (await api.get("/meetings")).data; }
 export async function saveMeetings(data: MeetingsData) { return (await api.post("/meetings", data)).data; }
 export async function getSettings(): Promise<LocalSettings> { return (await api.get("/settings")).data; }
-export async function saveSettings(settings: LocalSettings) { const { llm: _llm, ...data } = settings; void _llm; return (await api.put("/settings", data)).data; }
+export async function checkReadiness(): Promise<ReadinessResponse> {
+  const { data } = await api.get("/health/ready", { validateStatus: status => status === 200 || status === 503 });
+  if (!data.llm || !data.embeddings) throw new Error(data.detail || "Could not check local setup.");
+  return data;
+}
+export async function saveSettings(settings: LocalSettings) {
+  const { ollama_url, model, network_enabled, retrieval_max_distance } = settings;
+  return (await api.put("/settings", { ollama_url, model, network_enabled, retrieval_max_distance })).data;
+}
 export async function fetchConversations(): Promise<Conversation[]> { return (await api.get("/conversations")).data; }
 export async function newConversation(): Promise<Conversation> { return (await api.post("/conversations")).data; }
 export async function fetchConversation(id: string): Promise<SavedMessage[]> { return (await api.get("/conversations/" + id)).data; }

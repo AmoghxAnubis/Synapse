@@ -1,0 +1,67 @@
+{
+    "date":  "2026-10-15",
+    "branch":  "beta/model-onboarding",
+    "base_revision":  "c2289e5",
+    "candidate_worktree":  true,
+    "source_sha256":  {
+                          "backend/app/core/model_setup.py":  "e3f763ae7596163ae8e9ca82c54b3f3133a151826484637c41fd43fdad9160ae",
+                          "backend/app/core/amd_bridge.py":  "b839f2f654eb0ef7f965dc2c06e63ac067e91b39afe35c055aa8200a81238308",
+                          "backend/app/core/memory.py":  "620e737a4f362c9f98607bff622fa48e3f8395228f7d75109c40cd442c34e359",
+                          "backend/app/core/llm.py":  "4e40c71446596276d30246f0a2feb6218b2060f855305e2c3a1c72b2fb318dbe",
+                          "backend/app/main.py":  "6733d3bd649c570fad606b9a018200ba04a55fdbf5fe13ffbc43fd9c177056df",
+                          "backend/app/provision.py":  "7ddbb6e9fd119c4ef6823925a81a97fb4abcc71d62df192b264db444e6f229e8",
+                          "backend/tests/test_model_setup.py":  "f98f95ceeeb0f79622ead1b785034355f9c9c8744af072df9553467f69af5097",
+                          "frontend/app/dashboard/settings/page.tsx":  "d43b101b1482cc300197685cd8ba205dceba5350b05dad149deb6b3a3ff7f767",
+                          "frontend/components/HardwareStatusBanner.tsx":  "6b986a262b9217c06d78f713da63eadda4c46e4daa2af3c3003f4a4d548f5f85",
+                          "frontend/lib/api.ts":  "a5fac9303183530ff470c63fdc76573eb3f125eae3e066de6f5f71cf50c481f2",
+                          "scripts/verify_local.py":  "eae487e86bef09eb03b75896667024101198196501ce063a46447604246f2715"
+                      },
+    "backend_tests":  {
+                          "seconds":  23.24,
+                          "skipped":  0,
+                          "passed":  116
+                      },
+    "new_setup_cases":  9,
+    "initial_setup_regressions":  {
+                                      "before_product_fixes":  true,
+                                      "failed":  7
+                                  },
+    "backend_dependency_check":  "passed",
+    "frontend":  {
+                     "typescript":  "passed",
+                     "strict_lint":  "passed",
+                     "node":  "24.13.0",
+                     "next":  "16.4.0",
+                     "production_build":  "passed"
+                 },
+    "generation":  {
+                       "ollama":  "0.40.0",
+                       "num_predict":  2048,
+                       "temperature":  0.1,
+                       "model":  "llama3:latest",
+                       "num_ctx":  8192,
+                       "digest":  "365c0bd3c000a25d28ddbf732fe1c6add414de7275464c4e4d1c3b5fcb5d8ad1"
+                   },
+    "production_http":  {
+                            "pairing_origin_body_limits_logout":  "passed",
+                            "independent_model_readiness":  "passed",
+                            "performance_distribution":  false,
+                            "preferences_unchanged":  "passed",
+                            "real_import_answer_followup_dedup":  "passed",
+                            "synthetic_records_removed":  true,
+                            "answer_seconds":  [
+                                                   15.82,
+                                                   5.15
+                                               ],
+                            "generated_citation_markers_in_both_answers":  "passed",
+                            "routes_landing_anchors":  "passed"
+                        },
+    "browser":  {
+                    "reason":  "Native browser safety check could not reliably determine current Chrome URL; input stopped. No available browser-provider surface.",
+                    "accepted":  false
+                },
+    "downloads_performed":  false,
+    "external_connector_writes":  false,
+    "independent_human_review":  "pending",
+    "second_machine":  "unavailable"
+}

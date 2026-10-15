@@ -7,12 +7,12 @@ os.environ.setdefault("USE_TORCH", "0")
 os.environ.setdefault("USE_TF", "0")
 os.environ.setdefault("USE_FLAX", "0")
 from transformers import AutoTokenizer
-from .config import DATA_DIR
+from .model_setup import embedding_directory
 
 
 class AMDBridge:
     def __init__(self, model_dir=None):
-        directory = Path(model_dir or os.getenv("SYNAPSE_EMBEDDING_DIR", str(DATA_DIR / "models" / "minilm")))
+        directory = Path(model_dir) if model_dir is not None else embedding_directory()
         model_path = directory / "model.onnx"
         if not model_path.exists():
             model_path = directory / "onnx" / "model.onnx"

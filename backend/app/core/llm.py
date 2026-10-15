@@ -15,14 +15,32 @@ class LocalLLM:
         self.session.trust_env = False
 
     def status(self):
+        status = {"ready": False, "models": [], "model": self.model, "base_url": self.base_url,
+                  "resolved_model": None, "model_digest": None, "state": "unavailable",
+                  "error": "Start Ollama on this computer, then check setup again."}
         try:
-            response = self.session.get(self.base_url + "/api/tags", timeout=3)
+            response = self.session.get(self.base_url + "/api/tags", timeout=3, allow_redirects=False)
             response.raise_for_status()
-            models = [m["name"] for m in response.json().get("models", [])]
-            ready = self.model in models or self.model + ":latest" in models
-            return {"ready": ready, "models": models, "model": self.model, "error": None if ready else "Pull the selected model in Ollama first."}
+            if response.status_code != 200:
+                return status
+            payload = response.json()
+            models = payload.get("models") if isinstance(payload, dict) else None
+            if not isinstance(models, list) or any(not isinstance(m, dict) or not isinstance(m.get("name"), str) for m in models):
+                raise ValueError("Invalid model inventory")
+            selected = next((m for m in models if m["name"] == self.model), None)
+            if selected is None:
+                selected = next((m for m in models if m["name"] == self.model + ":latest"), None)
+            digest = selected.get("digest") if selected else None
+            status.update(ready=selected is not None, models=[m["name"] for m in models],
+                          resolved_model=selected["name"] if selected else None,
+                          model_digest=digest if isinstance(digest, str) else None,
+                          state="ready" if selected else "missing_model",
+                          error=None if selected else "Install the selected model in Ollama, or choose an installed model and save Settings.")
+        except (ValueError, TypeError):
+            status.update(state="invalid_response", error="Ollama returned an invalid model list. Check the local address and Ollama, then try again.")
         except requests.RequestException:
-            return {"ready": False, "models": [], "model": self.model, "error": "Start Ollama to enable local answers."}
+            pass
+        return status
 
     def chat_model(self):
         return ChatOllama(model=self.model, base_url=self.base_url, temperature=0.1,

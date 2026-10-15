@@ -5,6 +5,7 @@ Default checks are read-only except creating/removing a browser session.
 No live external connector writes are performed.
 """
 import argparse
+import re
 import sys
 import time
 import uuid
@@ -103,10 +104,13 @@ def verify_inference(token):
         answer = call("POST", "/ask", json={"text": "What is the Borealis release budget?", "selected_sources": [source], "conversation_id": conversation})
         elapsed = round(time.perf_counter() - started, 2)
         assert answer["citations"] and all(c["source"] == source for c in answer["citations"])
+        assert re.search(r"\[\d+\]", answer["answer"]), "Answer omitted its generated citation."
         assert "12500" in answer["answer"] or "12,500" in answer["answer"]
         assert len(call("GET", "/conversations/" + conversation)) == 2
         follow = call("POST", "/ask", json={"text": "Who owns it?", "selected_sources": [source], "conversation_id": conversation})
         assert "Mira" in follow["answer"]
+        assert follow["citations"] and all(c["source"] == source for c in follow["citations"])
+        assert re.search(r"\[\d+\]", follow["answer"]), "Follow-up omitted its generated citation."
         duplicate = call("POST", "/upload", files={"file": (source, content, "text/plain")})
         assert duplicate["unchanged"]
         print(f"PASS: real embeddings/Ollama, citation source, persisted follow-up, deduplication; sample answer latency {elapsed}s")
@@ -128,11 +132,37 @@ def verify_inference(token):
         print("Synthetic acceptance source and conversation removed")
 
 
+def verify_setup(token):
+    """Explicitly check both local models, preserving saved preferences."""
+    with requests.Session() as session:
+        session.trust_env = False
+        session.headers["Authorization"] = "Bearer " + token
+        settings_response = session.get(BACKEND + "/settings", timeout=10)
+        settings_response.raise_for_status()
+        before = settings_response.json()
+        response = session.get(BACKEND + "/health/ready", timeout=180)
+        assert response.status_code in (200, 503), response.status_code
+        result = response.json()
+        assert isinstance(result["llm"]["ready"], bool)
+        assert isinstance(result["embeddings"]["ready"], bool)
+        assert result["ready"] == (result["llm"]["ready"] and result["embeddings"]["ready"])
+        assert (response.status_code == 200) == result["ready"]
+        after_response = session.get(BACKEND + "/settings", timeout=10)
+        after_response.raise_for_status()
+        after = after_response.json()
+        for key in ("model", "ollama_url", "network_enabled", "retrieval_max_distance"):
+            assert before[key] == after[key], "Setup check changed saved preferences: " + key
+        print(f"PASS: independent model diagnostics; generation={result['llm']['ready']}, embeddings={result['embeddings']['state']}; preferences unchanged")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--with-inference", action="store_true")
+    parser.add_argument("--check-setup", action="store_true", help="Explicitly load/check the local document model and inspect generation readiness; never downloads assets.")
     args = parser.parse_args()
     token = (DATA_DIR / "api-token").read_text(encoding="utf-8").strip()
     verify_frontend(token)
+    if args.check_setup:
+        verify_setup(token)
     if args.with_inference:
         verify_inference(token)

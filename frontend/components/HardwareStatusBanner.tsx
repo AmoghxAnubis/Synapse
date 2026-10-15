@@ -51,7 +51,7 @@ export default function HardwareStatusBanner() {
         return () => clearInterval(interval);
     }, []);
 
-    const hw = health?.memory_engine ?? "CPU";
+    const hw = health?.memory_engine ?? "Not loaded";
     const config = hardwareConfig[hw] ?? hardwareConfig.CPU;
 
     return (
@@ -130,13 +130,13 @@ export default function HardwareStatusBanner() {
 
                     {/* LLM Status */}
                     <div className="flex items-center gap-1.5">
-                        {online ? (
+                        {health?.llm.ready ? (
                             <Wifi className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                         ) : (
                             <WifiOff className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
                         )}
                         <span className="text-xs text-zinc-600 dark:text-neutral-400">
-                            {health?.generation_engine ?? "LLM Disconnected"}
+                            {online ? (health?.llm.ready ? health.generation_engine : "Ollama needs setup") : "LLM Disconnected"}
                         </span>
                     </div>
 
