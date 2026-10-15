@@ -1,5 +1,13 @@
 # Synapse implementation status
 
+## Model setup implementation - 15 October 2026
+
+On `beta/model-onboarding`, Settings now distinguishes saved Ollama/model availability from actual document-model initialization and offers an explicit no-download setup check, retry, model identity and provisioning steps for the running model folder. Model checks preserve unsaved form edits and stored preferences. Source listing, reading and deletion no longer initialize embeddings; document imports/retrieval still load and validate the local model when needed. Ollama inventory checks reject redirects, handle invalid payloads and report the selected model digest. Explicit provisioning now honors the same SYNAPSE_EMBEDDING_DIR override as runtime.
+
+Verification: **116 backend tests passed with no skips**, including nine new setup cases; strict frontend lint, production build/TypeScript and pip check passed. Real production HTTP checks on isolated data passed pairing/origin/body limits, independent model readiness with unchanged preferences, import, generated answer/follow-up citation presence, persisted history and deduplication. Samples were 15.82 seconds initially and 5.15 seconds on the final run; these are smoke timings, not a performance distribution. Browser automation stopped because Chrome's current URL could not be verified, so the new controls and pending-action keyboard/expiry interactions still require interactive acceptance. See [model setup acceptance](evaluations/MODEL_SETUP_ACCEPTANCE.md).
+
+Per the user's priority, F01 window arrangement/restoration is now the next advanced development target after the finite local setup, quality/performance and approval/recovery checkpoint in [the execution plan](docs/LOCAL_BETA_PLAN.md). Unavailable independent reviewers and a second PC remain release dependencies; other connectors, Cloudflare and paid-launch work do not delay isolated F01 design. No advanced OS action is implemented by this change. No release/readiness/task-completion claim was advanced.
+
 ## Post-PR #35 assessment - 15 October 2026
 
 Local `main` fast-forwarded from `4f6ef83` to `cc89592`, matching freshly fetched `origin/main` and the merge of PR #35. The local backend environment needed the merged checkpoint dependencies; installing the existing lockfile resolved the import blocker. Fresh verification: **107 backend tests passed, no skips**, `pip check`, strict frontend lint and TypeScript passed. PR-head CI completed successfully. Full npm audit still reports five high-severity development-chain entries; production-only audit reports zero. No feature code, saved model selection or user data was changed by this assessment, and no release was performed.

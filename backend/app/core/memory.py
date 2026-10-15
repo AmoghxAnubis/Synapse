@@ -3,21 +3,46 @@ import hashlib
 import threading
 from .config import DATA_DIR
 from .ingester import FileIngester
+from .model_setup import embedding_file_status
 
 
 class MemoryBank:
     def __init__(self, brain=None, client=None):
-        if brain is None:
-            from .amd_bridge import AMDBridge
-            brain = AMDBridge()
         if client is None:
             import chromadb
             from chromadb.config import Settings
             client = chromadb.PersistentClient(path=str(DATA_DIR / "vectors"), settings=Settings(anonymized_telemetry=False))
-        self.brain = brain
+        self._brain = brain
+        self._brain_error = None
         self.client = client
         self.collection = client.get_or_create_collection(name="synapse_v1", metadata={"hnsw:space": "cosine"})
         self.lock = threading.RLock()
+
+    def _load_brain(self):
+        from .amd_bridge import AMDBridge
+        return AMDBridge()
+
+    @property
+    def brain(self):
+        # Listing, reading and deleting already imported sources do not need a
+        # model. Load only for an import, retrieval or explicit readiness check.
+        with self.lock:
+            if self._brain is None:
+                try:
+                    self._brain = self._load_brain()
+                    self._brain_error = None
+                except Exception as exc:
+                    self._brain_error = str(exc)[:500]
+                    raise
+            return self._brain
+
+    def embedding_status(self):
+        status = embedding_file_status()
+        if self._brain is not None:
+            status.update(ready=True, state="ready", hardware=self._brain.hardware_mode, error=None)
+        elif self._brain_error and status["files_present"]:
+            status.update(state="error", error=self._brain_error)
+        return status
 
     def ingest_document(self, source, pages, url="", platform="local", cancel=None):
         document_id = hashlib.sha256(source.encode()).hexdigest()

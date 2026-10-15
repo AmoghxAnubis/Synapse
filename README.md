@@ -55,7 +55,9 @@ npm.cmd run start
 
 Both services bind to loopback through the supplied scripts. Open http://localhost:3000, copy the local pairing token from `backend/.synapse/api-token`, and pair your browser. The token is a secret; do not share it or paste it into public logs. A paired browser receives an HttpOnly, SameSite=Strict cookie with a one-day lifetime.
 
-When no model setting has been saved, Synapse selects an available installed Ollama model if the default is absent. In Settings, confirm or change that selection. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Knowledge requires the embedding model.
+When no model setting has been saved, Synapse selects an available installed Ollama model if the default is absent. In Settings, confirm or change that selection. Import a document in Knowledge, ask a question in Chat, and inspect its evidence. Settings and source administration remain available when models are unavailable. Importing and searching document content require the embedding model.
+
+Settings shows generation and document-model status separately. **Check setup** loads/checks the local document model and inspects the saved Ollama configuration without downloading models or changing preferences. Finding model files alone does not establish runtime readiness. Expand **Model setup instructions** for explicit provisioning commands targeting the running backend's model folder; `SYNAPSE_EMBEDDING_DIR` is now honored by both provisioning and runtime. Existing source viewing/deletion and saved conversations remain available without embeddings; importing and searching document content require them.
 
 For development in PowerShell, use `npm.cmd run dev`. The `.cmd` form also works when PowerShell blocks `npm.ps1` through its execution policy. Environment examples contain only non-secret placeholders.
 
@@ -141,6 +143,8 @@ npm.cmd audit --audit-level=high
 ~~~
 
 Tests never send real messages or create GitHub issues. The real embedding test runs only when its local model is already provisioned; CI skips it without downloading assets. Existing import-time live mutation scripts were retired.
+
+For running loopback services, `backend/venv/Scripts/python.exe scripts/verify_local.py --check-setup --with-inference` verifies independent model readiness, unchanged saved preferences and the synthetic import/answer/follow-up path. It requires generated citation markers in both answers and cleans up only its synthetic source/conversation. Use the same SYNAPSE_DATA_DIR as the running backend. See [model setup verification evidence](evaluations/MODEL_SETUP_ACCEPTANCE.md) for the current implementation and remaining browser acceptance.
 
 See [BASELINE_REVIEW.md](BASELINE_REVIEW.md) for the original audit and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for completed changes, validation evidence, and remaining release work.
 

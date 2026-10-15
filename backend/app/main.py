@@ -13,6 +13,7 @@ from .core.storage import Storage
 from .core.agent_store import AgentStore
 from .core.ingester import FileIngester
 from .core.llm import LocalLLM
+from .core.model_setup import embedding_file_status
 from .workflows.chat import ChatTokens, stream_chat
 from .core.integrations import IntegrationService
 from .core.actions import ActionService
@@ -66,6 +67,9 @@ class Services:
     @property
     def settings(self):
         return Settings.model_validate(self.storage.get("settings", {}))
+
+    def embedding_status(self):
+        return self._memory.embedding_status() if self._memory is not None else embedding_file_status()
 
     @property
     def llm(self):
@@ -131,22 +135,34 @@ def create_app(storage=None, memory_factory=None, llm_factory=LocalLLM):
     @router.get("/")
     def health(s: Services = Depends(services)):
         local = s.llm.status()
-        return {"status": "Online", "memory_engine": s._memory.brain.hardware_mode if s._memory else "Not loaded",
+        embeddings = s.embedding_status()
+        return {"status": "Online", "memory_engine": embeddings["hardware"] or "Not loaded",
                 "generation_engine": "Ollama (local)", "orchestrator": s.storage.get("mode", "FOCUS"),
                 "agents_active": [a["name"] for a in s.agents.get_all_agents()[:3]],
                 "llm": local, "network_enabled": s.settings.network_enabled,
-                "embeddings_loaded": s._memory is not None}
+                "embeddings_loaded": embeddings["ready"], "embeddings": embeddings}
 
     @router.get("/health/ready")
     def ready(s: Services = Depends(services)):
-        memory = s.memory
         llm = s.llm.status()
-        return JSONResponse(status_code=200 if llm["ready"] else 503,
-                            content={"ready": llm["ready"], "memory_engine": memory.brain.hardware_mode, "llm": llm})
+        try:
+            s.memory.brain
+            embeddings = s.embedding_status()
+        except Exception as exc:
+            logger.warning("Embedding readiness check failed: %s", type(exc).__name__)
+            embeddings = s.embedding_status()
+            # Preserve the missing-files diagnosis; otherwise report the
+            # runtime failure without making Settings or source admin fail.
+            if embeddings["state"] != "missing":
+                embeddings.update(ready=False, state="error", error=str(exc)[:500])
+        ready = llm["ready"] and embeddings["ready"]
+        return JSONResponse(status_code=200 if ready else 503,
+                            content={"ready": ready, "memory_engine": embeddings["hardware"] or "Not loaded",
+                                     "llm": llm, "embeddings": embeddings})
 
     @router.get("/settings")
     def get_settings(s: Services = Depends(services)):
-        return {**s.settings.model_dump(), "llm": s.llm.status()}
+        return {**s.settings.model_dump(), "llm": s.llm.status(), "embeddings": s.embedding_status()}
 
     @router.put("/settings")
     def save_settings(body: Settings, s: Services = Depends(services)):

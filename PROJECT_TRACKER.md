@@ -8,6 +8,8 @@ Current consolidated assessment: [15 October product readiness report](docs/PROD
 
 Execution plan: [Local beta plan](docs/LOCAL_BETA_PLAN.md). User selected **GitHub** as the first connector on 15 October. No second Windows PC or independent tester is currently available: D01 and independent acceptance remain open dependencies. Next implementation work package is model setup and the core browser journey, including restored-action keyboard/expiry behavior. Planning does not raise readiness or close existing tasks.
 
+Implementation started on `beta/model-onboarding` on 15 October. Active scope: independent generation/embedding setup diagnostics, model-independent source administration, and current workflow verification (V01/V03, Q01/Q02 support). Advanced OS development follows the local technical prerequisite checkpoint in the plan; unavailable independent release acceptance is tracked separately.
+
 ## Product direction
 
 Preserve the user's original landing-page design as the main public product page. The replacement page is an implementation reference, not the approved brand direction. Preserve the original hero, section structure, illustrations, animations, light/dark presentation and footer where compatible. Make limited changes to accurate feature copy, accessibility, performance and onboarding. Align the dashboard with that design.
@@ -50,7 +52,7 @@ A task becomes DONE only when its completion criterion is verified. Estimates ar
 | B14 | DONE | Bound frontend request reads without Content-Length | Pairing 1 KB and proxy 21 MB limits; production chunked-body rejection passed |
 | B15 | DONE | Clean lockfile installation verification | Fresh Python environment: 56 tests/pip check; explicit Node 22.13.1 npm ci/lint/build/full audit |
 
-Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The fresh-install baseline contained 56 passing tests; the current suite contains 107 passing tests; GPU/NPU and live provider behavior are not verified.
+Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The fresh-install baseline contained 56 passing tests; the current suite contains 116 passing tests; GPU/NPU embedding providers and live connector behavior are not verified.
 
 ## Phase 1 - original landing page, 8-16 hours
 
@@ -135,17 +137,17 @@ Current official references: [Cloudflare Next.js overview](https://developers.cl
 
 Resume this phase after local usability, quality/performance, intended live connectors, installation/recovery and beta feedback gates pass. Existing Vercel hosting remains in place. Advanced post-beta features do not automatically block the eventual marketing-site migration.
 
-## Post-beta original vision - estimates pending design
+## Advanced OS development - estimates pending design
 
 | ID | Priority | Status | Estimate | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| F01 | P2 | DEFERRED | TBD after design | Beta feedback | Explicitly approved window arrangement with restoration and permission tests |
+| F01 | P1 | TODO | TBD after bounded design | Local technical checkpoint in docs/LOCAL_BETA_PLAN.md | User prioritized advanced OS work on 15 October. Next target is explicit window arrangement/restoration through typed preview/approval; start isolated design/prototype after local setup, quality/performance and approval/recovery prerequisites. Independent review/second-machine acceptance remain release gates, not a reason to wait indefinitely on design |
 | F02 | P2 | DEFERRED | TBD after design | Beta feedback | Evaluate supported notification controls; implement truthful modes with recovery |
 | F03 | P2 | DEFERRED | TBD after design | Beta feedback | Design local audio capture/transcription, consent, retention and supported hardware; evaluate quality |
 | F04 | P2 | DEFERRED | TBD after design | Actual interoperability need | Implement and test a real MCP transport with scoped tools; retire remaining obsolete wrappers where justified |
 | F05 | P2 | DEFERRED | TBD after design | Q02, target hardware | Benchmark supported GPU/NPU providers; add acceleration only when compatibility and results justify it |
 
-These are deliberately outside the initial beta estimate; their designs and target-platform constraints are not sufficiently known for credible dates.
+These are outside the initial beta estimate; their designs and target-platform constraints are not sufficiently known for credible dates. F01 is now the next advanced target after a bounded local technical checkpoint; F02-F05 remain deferred. Moving F01 into TODO does not change the 20/48 completed count or certify release acceptance.
 
 ## Developer handover
 
@@ -178,6 +180,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | Date | Update | Evidence / next action |
 | --- | --- | --- |
+| 2026-10-15 | Model setup implementation and route to advanced OS work | On beta/model-onboarding: separate generation/document-model diagnostics; source read/delete no longer loads embeddings; malformed Ollama responses and redirects handled; model digest exposed; provisioning honors runtime model-directory override. 116 backend tests, strict frontend lint, production build/TypeScript, pip check and real HTTP model-setup/import/cited answer/follow-up/dedup passed. Browser input stopped because Chrome URL could not be verified; UI acceptance remains open. F01 moved to TODO after the defined local technical checkpoint, per user priority. No release or readiness/count increase; see evaluations/MODEL_SETUP_ACCEPTANCE.md. |
 | 2026-10-15 | Local beta execution plan and user constraints | User selected GitHub for the first connector and confirmed neither a second Windows PC nor an independent tester is available. docs/LOCAL_BETA_PLAN.md maps existing tasks to ordered work packages, defines acceptance evidence and the first model-setup/browser/actions work package. Prepare a locally verified candidate while D01/human acceptance remain pending; no task-count/readiness increase or implementation/release in this planning session. |
 | 2026-10-15 | Post-PR #35 main synchronization and readiness assessment | Clean main fast-forwarded from 4f6ef83 to cc89592, matching freshly fetched origin/main. Backend environment synchronized to merged lock; 107 tests passed with no skips, pip check, strict frontend lint and TypeScript passed. PR-head CI passed; current full npm audit retains five high development-chain entries and production-only audit is zero. Consolidated report distinguishes 20/48 closed tasks, ~70% local beta and ~30% paid readiness, with 40-85 focused hours for a one-connector beta. No feature changes, installer rebuild, independent/live-provider acceptance or release; task/readiness counts unchanged. See docs/PRODUCT_READINESS_2026-10-15.md. |
 | 2026-10-12 | NSIS packaging and bundled-runtime prototype | Chosen Windows .exe distribution; Python 3.12.10/Node 24.13.0 and standalone frontend staged, private/runtime assets excluded. ~108 MiB unsigned installer compiled. Fixed observed supervised NumPy first-load hang by initializing native libraries before watcher/API workers; installed browser journey and packaged API/ONNX regression passed. Corrected installer fresh install, launcher smoke and uninstall/data preservation passed; second-machine/model onboarding/signing/updates remain acceptance gates. |

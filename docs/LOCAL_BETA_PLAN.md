@@ -13,7 +13,7 @@ User decisions on 15 October:
 
 Use `llama3:latest` as the initial evaluation candidate because it met the recorded sample quality gates. Record its installed digest, hardware and generation configuration before running acceptance; the mutable tag alone is insufficient. Do not silently replace the user's saved model. A different model needs its own evidence against the same gates.
 
-Cloudflare migration, other live connector tracks, window arrangement, notification control, audio transcription, new MCP transport and hardware acceleration remain deferred from this milestone. Preserve the original landing design and existing local inference architecture.
+Cloudflare migration, other live connector tracks, notification control, audio transcription, new MCP transport and hardware acceleration remain outside this beta milestone. On 15 October the user prioritized reaching advanced OS features soon after their prerequisites. Window arrangement/restoration (F01) is therefore the next advanced development target after the local technical checkpoint below; it is not automatically included in the accepted beta scope. Preserve the original landing design and existing local inference architecture.
 
 ## Ordered work packages
 
@@ -44,7 +44,20 @@ Start with **model setup and the core browser journey**, using disposable data a
 
 Likely code surfaces, only if findings require changes: `frontend/app/dashboard/settings/page.tsx`, `frontend/app/dashboard/actions/page.tsx`, `frontend/app/dashboard/chat/page.tsx`, `frontend/components/MessageBubble.tsx`, `backend/app/core/llm.py`, `backend/app/workflows/chat.py` and `backend/tests/test_action_workflow.py`. Extend existing evaluators/browser procedures rather than introducing a new framework.
 
-No application implementation is included in this planning session. Start the implementation on a dedicated branch from current `main`; preserve unexpected concurrent changes and the user's data. The earlier main instruction applied to synchronization; commit/push/release decisions are separate from this plan.
+Implementation began on `beta/model-onboarding` from `c2289e5`: independent setup diagnostics, lazy embedding initialization for source administration, robust Ollama inventory/digest reporting, and provisioning-directory consistency. See [implementation evidence](../evaluations/MODEL_SETUP_ACCEPTANCE.md). Current browser interaction remains unaccepted because computer-use stopped when Chrome's current URL could not be verified. Preserve unexpected concurrent changes and the user's data; commit/push/release decisions are separate from this plan.
+
+## Transition to advanced OS development
+
+Development of F01 should follow a finite local technical checkpoint:
+
+1. Setup and source administration recover from missing/broken models; the current production import/answer/history path passes on disposable data.
+2. The representative quality/performance pass records current multi-source/follow-up behavior and the buffered-answer path; remaining defects that affect the proposed OS workflow are resolved or excluded explicitly from its scope.
+3. The existing approval boundary passes permission removal, cancellation, expiry, restart and replay checks. Backup/restore preserves user data and invalidates unfinished approvals. Finish browser interaction checks when available; do not mark them passed from API coverage alone.
+4. Define the F01 supported windows, permission model, reversible layout preview, restoration behavior and handling of stale/closed windows before adding execution.
+
+Then build an isolated window-arrangement/restoration prototype through the typed Actions workflow. Start with deliberately selected test windows, a clear preview, single-use approval and restoration of the captured original layout; ordinary chat must not move windows. Test partial failure, changed display geometry, stale windows, removed permissions and restart without automatic replay before expanding access.
+
+GitHub validation and beta packaging remain required for their beta scope, but other providers, Cloudflare, paid-launch work and waiting for an unavailable reviewer/second computer do not block isolated F01 design/prototyping. Independent quality/first-use review and D01 remain release gates for the relevant candidate. Adding F01 to a shipped build requires its own acceptance and a new package verification; this plan does not waive those gates or include F01 effort in the existing 40-85-hour beta estimate. Estimate it after the bounded design.
 
 ## Acceptance rules
 
