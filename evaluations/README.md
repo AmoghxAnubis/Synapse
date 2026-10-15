@@ -1,5 +1,7 @@
 # Quality evaluation
 
+See [BETA_VERIFICATION.md](BETA_VERIFICATION.md) for the 14 October clean-install/live-runtime checks, corrected frontend defects, audit findings and remaining beta gates.
+
 See [THIRD_HOLDOUT.md](THIRD_HOLDOUT.md) for the 11 October compound-citation guard, three-repeat local screen, preserved 11-case parser regression, newly frozen eight-case synthetic transfer run, assistant claim review and buffering latency cost. Human representative acceptance remains open.
 
 See [PERFORMANCE_BASELINE.md](PERFORMANCE_BASELINE.md) for the two-order local HTTP/SSE model comparison, preserved outputs, corrected process-tree RAM sampler and claim review. llama3 met the sample quality gates; the faster llama3.2 did not. Representative documents, longer sessions and browser/target-machine acceptance remain open.

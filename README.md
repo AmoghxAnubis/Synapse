@@ -10,6 +10,7 @@ Synapse uses Next.js, FastAPI, local ONNX embeddings, Chroma vectors, transactio
 - Local, streamed, evidence-grounded chat with persisted conversations and source restrictions.
 - Optional selected GitHub repositories, Notion pages, Jira Cloud projects, Slack channels, and Discord channels. API credentials stay in the OS credential store.
 - Explicit approval for local app launching, GitHub issue creation, and Slack/Discord messages. Chat cannot execute actions.
+- Local app previews survive backend restarts until their original five-minute expiry and are restored in Actions. See [persistent approval behavior and recovery limits](docs/DURABLE_ACTIONS.md).
 - Local meeting notes and tasks. Live audio capture/transcription, window tiling, notification suppression, and interoperable MCP transport are not implemented.
 
 This is a single-user local application, not a multi-user hosted service. Model quality and hardware performance require evaluation before commercial release.

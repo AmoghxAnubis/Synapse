@@ -1,6 +1,6 @@
 # Synapse product task tracker
 
-Last updated: 12 October 2026.
+Last updated: 14 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
@@ -14,7 +14,7 @@ Public hosting and local inference are separate concerns. Cloudflare hosting mus
 
 ## Progress and accounting
 
-- Checklist: **19 of 47 tasks complete = 40%**. The full checklist includes deferred expansion; recent browser work advances open acceptance tasks without completing their human/design criteria.
+- Checklist: **20 of 48 tasks complete = 42%**. A02 adds the agreed initial durable local-action workflow; broader acceptance remains open. The full checklist includes deferred expansion; recent browser work advances open acceptance tasks without completing their human/design criteria.
 - Baseline repairs: approximately **95%** complete; remaining acceptance is not a claim of unimplemented core repairs.
 - Small local beta readiness: approximately **70%**, raised from 65% after real browser import/answer/evidence/history, cancellation and desktop/mobile route checks. Packaging, independent acceptance and live connector gates remain.
 - Paid release readiness: approximately **30%**.
@@ -46,7 +46,7 @@ A task becomes DONE only when its completion criterion is verified. Estimates ar
 | B14 | DONE | Bound frontend request reads without Content-Length | Pairing 1 KB and proxy 21 MB limits; production chunked-body rejection passed |
 | B15 | DONE | Clean lockfile installation verification | Fresh Python environment: 56 tests/pip check; explicit Node 22.13.1 npm ci/lint/build/full audit |
 
-Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The fresh-install baseline contained 56 passing tests; the current suite contains 70 passing tests; GPU/NPU and live provider behavior are not verified.
+Completion above means the implemented repair passed its stated checks. Broader product acceptance is tracked below. The fresh-install baseline contained 56 passing tests; the current suite contains 107 passing tests; GPU/NPU and live provider behavior are not verified.
 
 ## Phase 1 - original landing page, 8-16 hours
 
@@ -82,6 +82,7 @@ Q01/Q03 continuation on `ayush_lang`, 10 October 2026: the user approved 100% sc
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
 | A01 | P1 | DONE | 0 remaining for initial integration | Existing RAG API | LangChain ChatOllama adapter and deterministic LangGraph scoped RAG are active behind both chat endpoints. API, SSE, source restrictions, history, abstention, cancellation, failure cleanup and tracing suppression verified: 71 tests passed, 1 real-embedding test skipped; dependency consistency passed. Real llama3.2:latest produced/persisted a cited answer and factual follow-up, but omitted the follow-up citation. That Q01 quality diagnostic remains unresolved; full ONNX/model acceptance requires provisioned assets. |
+| A02 | P1 | DONE | 0 remaining for initial local-app workflow | A01, existing one-use approval | SQLite-checkpointed LangGraph interrupt/resume for the existing Windows local app allowlist; pending previews restored in Actions. Atomic approval/execution claims, expiry/current permissions, cancellation, restart, concurrent approval and uncertain-outcome replay protection verified. Portable restore cancels unfinished approvals. 107 backend tests (12 new workflow cases), frontend lint/type/build and dependency consistency passed. Launches mocked; browser and refreshed installer acceptance remain under existing gates. See docs/DURABLE_ACTIONS.md |
 
 Kafka and durable action/checkpoint workflows are outside A01. Do not treat framework adoption as completing Q01-Q03 or beta acceptance.
 
@@ -204,3 +205,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 | 2026-10-10 | Second fixed PDF/DOCX/Markdown holdout | Eleven cases used actual parser output from public synthetic format fixtures and real API/ONNX/Ollama. Manual review found 10/11 complete supported answers; the unnamed two-source question omitted the PDF retry fact and falsely called it absent. Predeclared two-source gate failed 1/2. Inputs and first run preserved; see evaluations/SECOND_HOLDOUT.md. |
 | 2026-10-10 | Focused repair and faster beta progression | At most one nearby candidate is added for an empty compound clause; the preserved 11-case rerun and ten-case development set passed fixed checks, with 87 backend tests. Six local performance samples measured first-token/total time and backend RAM; repeated compound answers revealed 2/3 missing second citations. Isolated running-app HTTP pairing/import/answer/follow-up journey passed after pointing test data at the installed embedding model; browser visual access was unavailable. Q01 citation support remains the focused blocker while Q02 and V01/V03 proceed in parallel. |
 | 2026-10-10 | External-document holdout and quality gates | On ayush_lang after updating from main at 4a199f4, user approved 100% scope/reference validity and at least 90% supported/cited completeness and correct abstention. Frozen 13-case external technical-summary first run met sample gates (13/13, 13/13, 9/10, 3/3); one imprecise rollback claim excluded conservatively. 86 tests passed including real offline ONNX; isolated assets provisioned. No product tuning; Q01/Q03 remain open for representative files and human review. See evaluations/EXTERNAL_HOLDOUT.md. |
+
+| 2026-10-14 | Main synced and A02 durable local-action workflow | On ayush_lang, both remote-branch and main updates fast-forwarded to 4f6ef83 with earlier commits preserved. Persistent approval graph and SQLite ledger restore pending local app previews without extending expiry; approval is consumed before launch and never automatically replayed. Portable restore invalidates unfinished approvals. 107 backend tests, strict frontend lint/type/build and dependency checks passed; app launches mocked, no external writes. Reports updated; commit only on ayush_lang, no push authorized. Browser and refreshed installer acceptance remain. |
+
+| 2026-10-14 | Beta verification and frontend environment repair | 107 backend tests and real HTTP/SSE scoped answer, abstention, history and dedup passed. Clean npm ci restored committed versions; fixed Actions render purity/expiry clock and inaccurate automatic-action landing copy. Locked Next.js 16.4.0 lint/type/build passed. Real restart/Calculator approval and replay rejection passed; synthetic fixtures removed. Full audit has five high dev-chain findings, runtime-only zero. Browser interaction is unverified due helper failures; selected llama3.2 quality, current installer/second machine and independent acceptance remain open. See evaluations/BETA_VERIFICATION.md; no readiness/count change or public release. |

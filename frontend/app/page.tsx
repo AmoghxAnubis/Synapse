@@ -294,7 +294,7 @@ export default function LandingPage() {
                 title: "The Hands",
                 subtitle: "OS Orchestrator",
                 description:
-                  "Switch between Focus, Meeting, and Research modes. Synapse rearranges your workspace — silencing notifications or opening tools automatically.",
+                  "Save Focus, Meeting, and Research preferences. Preview and approve supported app launches, messages, and issues before Synapse runs them.",
                 badge: "Preview → Approve → Act",
                 glowColor: "from-blue-500/20 to-indigo-400/20",
                 iconColor: "text-blue-600",

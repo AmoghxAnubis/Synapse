@@ -123,6 +123,7 @@ export async function newConversation(): Promise<Conversation> { return (await a
 export async function fetchConversation(id: string): Promise<SavedMessage[]> { return (await api.get("/conversations/" + id)).data; }
 export async function deleteConversation(id: string) { await api.delete("/conversations/" + id); }
 export async function previewAction(action: string, params: Record<string, string>, agentId: number): Promise<ActionPreview> { return (await api.post("/actions/preview", { action, params, agent_id: agentId })).data; }
+export async function fetchPendingActions(): Promise<ActionPreview[]> { return (await api.get("/actions/pending")).data; }
 export async function approveAction(id: string): Promise<{ message: string; url?: string }> { return (await api.post("/actions/" + id + "/approve")).data; }
 export async function cancelAction(id: string) { await api.delete("/actions/" + id); }
 export async function runTerminal(command: string, agentId: number) { return (await api.post("/tools/terminal", { command, agent_id: agentId })).data; }

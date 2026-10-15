@@ -25,6 +25,10 @@ class Storage:
                 CREATE TABLE IF NOT EXISTS audit (
                     id INTEGER PRIMARY KEY, action TEXT NOT NULL, outcome TEXT NOT NULL, created REAL NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS action_runs (
+                    id TEXT PRIMARY KEY, record TEXT NOT NULL, status TEXT NOT NULL,
+                    result TEXT, updated REAL NOT NULL
+                );
             """)
             db.execute("PRAGMA user_version = 1")
 

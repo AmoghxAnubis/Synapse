@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchAgents, previewAction, approveAction, cancelAction, runTerminal, fetchAudit, errorMessage, type Agent, type ActionPreview } from "@/lib/api";
+import { fetchAgents, previewAction, approveAction, cancelAction, runTerminal, fetchAudit, fetchPendingActions, errorMessage, type Agent, type ActionPreview } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function ActionsPage() {
@@ -8,16 +8,31 @@ export default function ActionsPage() {
   const [action, setAction] = useState("open_app");
   const [destination, setDestination] = useState("notepad"); const [title, setTitle] = useState(""); const [body, setBody] = useState("");
   const [preview, setPreview] = useState<ActionPreview | null>(null); const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<ActionPreview[]>([]);
+  const [now, setNow] = useState<number | null>(null);
   const [error, setError] = useState(""); const [output, setOutput] = useState("");
   const [audit, setAudit] = useState<{ id: number; action: string; outcome: string; created: number }[]>([]);
   useEffect(() => {
     fetchAgents().then(data => { setAgents(data); setAgentId(data.find(a => a.capabilities.terminal)?.id || data[0]?.id || 0); }).catch(e => setError(errorMessage(e)));
     fetchAudit().then(setAudit).catch(() => {});
+    fetchPendingActions().then(setPending).catch(e => setError(errorMessage(e)));
+  }, []);
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now() / 1000), 1000);
+    return () => clearInterval(timer);
   }, []);
   const field = "block w-full mt-2 rounded-lg border bg-transparent p-3 text-sm";
   return <section className="max-w-3xl mx-auto space-y-6">
     <header><h1 className="text-2xl font-semibold">Actions</h1><p className="mt-2 text-sm text-neutral-500">Choose an action, review its destination and content, then approve it. Chat never runs actions automatically.</p></header>
     {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
+    {pending.length > 0 && <section aria-label="Pending local actions" className="rounded-xl border p-6 space-y-3">
+      <h2 className="font-semibold">Pending local actions</h2>
+      <p className="text-sm text-neutral-500">Local app previews survive a restart until their original approval expires.</p>
+      <ul className="space-y-3">{pending.map(item => <li key={item.id} className="text-sm">
+        <p>{item.description}</p><p className="text-xs text-neutral-500">Expires {new Date(item.expires * 1000).toLocaleTimeString()}</p>
+        <button type="button" disabled={busy || !!preview || now === null || item.expires <= now} className="mt-2 rounded-lg border px-3 py-2" onClick={() => { setPreview(item); setError(""); }}>Review</button>
+      </li>)}</ul>
+    </section>}
     <form className="rounded-xl border p-6 space-y-5" onSubmit={async e => {
       e.preventDefault(); setBusy(true); setError("");
       const params: Record<string, string> = action === "open_app" ? { app: destination } : action === "github.create_issue" ? { repository: destination, title, body } : { channel: destination, text: body };
@@ -36,13 +51,14 @@ export default function ActionsPage() {
     </form>
     {preview && <section aria-label="Action approval" className="rounded-xl border border-amber-400 p-6 space-y-4">
       <h2 className="font-semibold">Review before approving</h2><p className="text-sm whitespace-pre-wrap break-words">{preview.description}</p>
-      <p className="text-xs text-neutral-500">Approval expires in five minutes and can be used once. Verify the destination and content.</p>
-      <div className="flex gap-4"><button disabled={busy} className="rounded-lg bg-indigo-600 text-white px-4 py-2" onClick={async () => {
+      <p className="text-xs text-neutral-500">Approval expires at {new Date(preview.expires * 1000).toLocaleTimeString()} and can be used once. Verify the destination and content.</p>
+      {now !== null && preview.expires <= now && <p role="status" className="text-sm text-amber-600">This preview expired. Cancel it and create a fresh preview.</p>}
+      <div className="flex gap-4"><button disabled={busy || now === null || preview.expires <= now} className="rounded-lg bg-indigo-600 text-white px-4 py-2" onClick={async () => {
         setBusy(true); setError("");
         try { const result = await approveAction(preview.id); toast.success(result.message); setOutput(result.message + (result.url ? "\n" + result.url : "")); }
-        catch (e) { setError(errorMessage(e)); } finally { setPreview(null); setBusy(false); setAudit(await fetchAudit()); }
+        catch (e) { setError(errorMessage(e)); } finally { setPreview(null); setBusy(false); fetchAudit().then(setAudit).catch(() => {}); fetchPendingActions().then(setPending).catch(e => setError(errorMessage(e))); }
       }}>Approve and run</button>
-        <button disabled={busy} onClick={async () => { try { await cancelAction(preview.id); setPreview(null); setAudit(await fetchAudit()); } catch (e) { setError(errorMessage(e)); } }}>Cancel</button></div>
+        <button disabled={busy} onClick={async () => { setBusy(true); try { await cancelAction(preview.id); setPreview(null); setAudit(await fetchAudit()); setPending(await fetchPendingActions()); } catch (e) { setError(errorMessage(e)); } finally { setBusy(false); } }}>Cancel</button></div>
     </section>}
     <section className="rounded-xl border p-6 space-y-3"><h2 className="font-semibold">Local diagnostics</h2><p className="text-sm text-neutral-500">Only these fixed commands are available. The selected agent must allow diagnostics.</p>
       <div className="flex gap-3 flex-wrap">{["python-version", "git-version", "git-status"].map(command => <button key={command} disabled={busy} className="rounded-lg border px-3 py-2 text-xs" onClick={async () => {

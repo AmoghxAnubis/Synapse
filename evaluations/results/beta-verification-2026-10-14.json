@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-14",
+  "base_revision": "be33329a658419042dd4c8bdb8919ab619121316",
+  "uncommitted_product_fixes": [
+    "frontend/app/page.tsx",
+    "frontend/app/dashboard/actions/page.tsx"
+  ],
+  "backend_tests": {
+    "passed": 107,
+    "skipped": 0
+  },
+  "frontend_checks": {
+    "strict_lint": "passed",
+    "typescript": "passed",
+    "production_build": "passed",
+    "clean_lock_install": "passed"
+  },
+  "backend_dependency_consistency": {
+    "installed_packages": 137,
+    "passed": true
+  },
+  "frontend_package_sha256": "17ea5e39271370115221ce89d3ce5b13d1f1ee4a032dcdac47d0eb148b2b947c",
+  "frontend_lock_sha256": "b6610976f288ad6f370ebaf36d6ca265f8035eb21b9d3dba692cbe3b51b26534",
+  "backend_lock_sha256": "e688c364e3f33a5743ff42c100531a54b187e4631c4db2671fa311eab30dccc1",
+  "local_smoke": {
+    "before_clean_install": "passed",
+    "after_clean_build": "passed",
+    "answer_seconds": [
+      7.33,
+      3.19
+    ],
+    "not_a_performance_distribution": true
+  },
+  "streaming": {
+    "source_scope": "one generated synthetic document only",
+    "checks": {
+      "sse_completion": true,
+      "supported_answer_with_reference": true,
+      "selected_source_scope": true,
+      "persisted_sse_turn": true,
+      "unsupported_question_abstention": true
+    },
+    "supported_answer": "The Rowan beta test budget is 7600 USD. [1]",
+    "unsupported_answer": "The requested information is not stated in the selected evidence.",
+    "model": "llama3.2:latest",
+    "network_enabled": false,
+    "synthetic_data_removed": true
+  },
+  "actions": {
+    "agent_id": 100,
+    "preview": {
+      "id": "2c457994-b43c-4539-9512-958b179570c3",
+      "action": "open_app",
+      "params": {
+        "app": "calculator"
+      },
+      "agent_id": 100,
+      "description": "Open calculator on this computer.",
+      "expires": 1791979171.6354396
+    },
+    "checks": {
+      "cancellation": true,
+      "removed_permission": true,
+      "unsupported_app_rejected": true,
+      "real_process_restart_pending_preview": true,
+      "original_expiry_preserved": true,
+      "approval_completed": true,
+      "replay_rejected": true
+    },
+    "replay_http_status": 400,
+    "test_agent_removed": true
+  },
+  "calculator_window_inventory": {
+    "before": 0,
+    "after": 1,
+    "screenshot_verification": "incomplete: wrong foreground window capture"
+  },
+  "previous_isolated_expiry": {
+    "product_revision": "be33329",
+    "date": "2026-10-14",
+    "isolated_test_data": true,
+    "checks": [
+      {
+        "name": "real_http_cancellation_blocks_approval",
+        "passed": true,
+        "approval_http_status": 400
+      },
+      {
+        "name": "real_http_permission_removal_blocks_approval",
+        "passed": true,
+        "approval_http_status": 403
+      },
+      {
+        "name": "real_five_minute_expiry_preserved_across_process_restart",
+        "passed": true,
+        "approval_http_status": 400,
+        "elapsed_seconds": 408.7
+      }
+    ],
+    "expiry_preview": {
+      "id": "1e4f9a5e-1dd0-4318-aaab-4044410c0d54",
+      "action": "open_app",
+      "params": {
+        "app": "calculator"
+      },
+      "agent_id": 2,
+      "description": "Open calculator on this computer.",
+      "expires": 1791977081.774957
+    }
+  },
+  "browser": {
+    "user_reported_paired": true,
+    "authenticated_dashboard_accessibility_observed": true,
+    "interactive_controls": "not verified: input conflicts and geometry unavailable"
+  },
+  "npm_audits": {
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 5,
+        "critical": 0,
+        "total": 5
+      },
+      "findings": {
+        "@next/eslint-plugin-next": {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "braces": {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240992,
+              "name": "braces",
+              "dependency": "braces",
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "cwe": [
+                "CWE-674"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "micromatch"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/braces"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "eslint-config-next": {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@next/eslint-plugin-next"
+          ],
+          "effects": [],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "fast-glob": {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "micromatch"
+          ],
+          "effects": [
+            "@next/eslint-plugin-next"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/fast-glob"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "micromatch": {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "fast-glob"
+          ],
+          "range": ">=0.2.0",
+          "nodes": [
+            "node_modules/micromatch"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        }
+      }
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "findings": {}
+    }
+  },
+  "braces_latest_query": "3.0.3",
+  "production_state": {
+    "existing_documents_agents_settings_preserved": true,
+    "test_agent_removed": true,
+    "test_sources_conversations_removed": true,
+    "test_approval_history_retained": true
+  },
+  "public_beta_approved": false,
+  "push_or_publish_performed": false,
+  "open_gates": [
+    "selected-model representative quality",
+    "interactive UI acceptance",
+    "development audit remediation/disposition",
+    "current installer acceptance",
+    "second-machine recovery/offline",
+    "independent usability and intended connector/license acceptance"
+  ]
+}

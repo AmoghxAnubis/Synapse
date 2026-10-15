@@ -22,5 +22,7 @@ ddgs>=9,<10
 langchain-core>=1,<2
 langchain-ollama>=1,<2
 langgraph>=1,<2
+langgraph-checkpoint>=4.3,<5
+langgraph-checkpoint-sqlite>=3.1.2,<4
 ollama>=0.6,<1
 langsmith>=0.4,<1
