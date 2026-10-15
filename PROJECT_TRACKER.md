@@ -6,6 +6,8 @@ Current focus: local product acceptance, answer quality/performance, live connec
 
 Current consolidated assessment: [15 October product readiness report](docs/PRODUCT_READINESS_2026-10-15.md), based on merged PR #35 at `cc89592`. Main is synchronized; fresh backend/lint/type/dependency checks pass. Readiness and task statuses remain unchanged because release acceptance gates remain open.
 
+Execution plan: [Local beta plan](docs/LOCAL_BETA_PLAN.md). User selected **GitHub** as the first connector on 15 October. No second Windows PC or independent tester is currently available: D01 and independent acceptance remain open dependencies. Next implementation work package is model setup and the core browser journey, including restored-action keyboard/expiry behavior. Planning does not raise readiness or close existing tasks.
+
 ## Product direction
 
 Preserve the user's original landing-page design as the main public product page. The replacement page is an implementation reference, not the approved brand direction. Preserve the original hero, section structure, illustrations, animations, light/dark presentation and footer where compatible. Make limited changes to accurate feature copy, accessibility, performance and onboarding. Align the dashboard with that design.
@@ -92,7 +94,7 @@ Kafka and durable action/checkpoint workflows are outside A01. Do not treat fram
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| I01 | P1 | TODO | 3-6 | Test GitHub repo/credentials | Verify reads, pagination, dedup, removals, permission failures, disconnect and explicitly authorized issue writes |
+| I01 | P1 | TODO | 3-6 | Test GitHub repo/credentials | Selected by the user for first-beta acceptance on 15 October. Verify reads, pagination, dedup, removals, permission failures, disconnect and explicitly authorized issue writes; preserve the existing application keyring credential |
 | I02 | P1 | TODO | 3-6 | Test Notion pages/credentials | Verify nested content, source links, permission failures, dedup/removals and disconnect |
 | I03 | P1 | TODO | 3-6 | Test Jira Cloud project/credentials | Verify configured scope, content/comments, pagination, failures and disconnect |
 | I04 | P1 | TODO | 3-6 | Test Slack channel/credentials | Verify history, rate limits, failures, disconnect and explicitly authorized message writes |
@@ -104,7 +106,7 @@ Never put credentials in this tracker. Use dedicated resources; acceptance tests
 
 | ID | Priority | Status | Hours | Depends on | Task / completion criterion |
 | --- | --- | --- | --- | --- | --- |
-| D01 | P1 | WAITING | 2-4 | Second Windows machine | Fresh lockfile installation verified here; docs/SECOND_MACHINE_ACCEPTANCE.md and a synthetic fixture now define clean setup, model provision, restart, offline and backup/restore checks. Execute and record them on a second Windows machine; no cross-machine result yet |
+| D01 | P1 | WAITING | 2-4 | Second Windows machine; unavailable per user on 15 October | Fresh lockfile installation verified here; docs/SECOND_MACHINE_ACCEPTANCE.md and a synthetic fixture define clean setup, model provision, restart, offline and backup/restore checks. Execute and record them on a second Windows machine; local isolated checks do not close this gate |
 | D02 | P1 | IN PROGRESS | 3-6 remaining | D01, V03 | NSIS per-user Windows x64 installer now bundles Python, locked backend dependencies, Node and standalone frontend. Corrected main-thread native-library loading resolves a supervised NumPy import hang. Installed browser pairing/import/cited answer/evidence and bundled API regression passed. Complete clean second-machine/model onboarding acceptance; see evaluations/WINDOWS_PACKAGE_ACCEPTANCE.md |
 | D03 | P1 | IN PROGRESS | 5-10 | D02 | Corrected installer passed fresh install, bundled API/import, frontend/backend smoke and uninstall with separate synthetic data/token retained. Finish installed restart/backup/restore, update/rollback strategy, signing and distribution acceptance. Installer is unsigned and refuses an existing installation directory |
 
@@ -176,6 +178,7 @@ These are planning ranges, not a promise of uninterrupted background work or a r
 
 | Date | Update | Evidence / next action |
 | --- | --- | --- |
+| 2026-10-15 | Local beta execution plan and user constraints | User selected GitHub for the first connector and confirmed neither a second Windows PC nor an independent tester is available. docs/LOCAL_BETA_PLAN.md maps existing tasks to ordered work packages, defines acceptance evidence and the first model-setup/browser/actions work package. Prepare a locally verified candidate while D01/human acceptance remain pending; no task-count/readiness increase or implementation/release in this planning session. |
 | 2026-10-15 | Post-PR #35 main synchronization and readiness assessment | Clean main fast-forwarded from 4f6ef83 to cc89592, matching freshly fetched origin/main. Backend environment synchronized to merged lock; 107 tests passed with no skips, pip check, strict frontend lint and TypeScript passed. PR-head CI passed; current full npm audit retains five high development-chain entries and production-only audit is zero. Consolidated report distinguishes 20/48 closed tasks, ~70% local beta and ~30% paid readiness, with 40-85 focused hours for a one-connector beta. No feature changes, installer rebuild, independent/live-provider acceptance or release; task/readiness counts unchanged. See docs/PRODUCT_READINESS_2026-10-15.md. |
 | 2026-10-12 | NSIS packaging and bundled-runtime prototype | Chosen Windows .exe distribution; Python 3.12.10/Node 24.13.0 and standalone frontend staged, private/runtime assets excluded. ~108 MiB unsigned installer compiled. Fixed observed supervised NumPy first-load hang by initializing native libraries before watcher/API workers; installed browser journey and packaged API/ONNX regression passed. Corrected installer fresh install, launcher smoke and uninstall/data preservation passed; second-machine/model onboarding/signing/updates remain acceptance gates. |
 | 2026-10-12 | Initial Windows launcher lifecycle prototype | Start-Synapse.cmd/scripts/launch_local.py start real backend/frontend with per-user data, readiness checks and cleanup. Real-process verification passed two starts/stops, metadata/token preservation, released ports and occupied-port refusal. First verification's SQLite cleanup handle was fixed; corrected run exits 0. An explicit Node path handles this machine's older unrestricted-shell PATH. D02 remains open for installer/runtime bundling and second-machine acceptance; beta assessment stays ~70%. |
