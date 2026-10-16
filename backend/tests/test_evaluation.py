@@ -7,7 +7,7 @@ ROOT = BACKEND_DIR.parent
 evaluate = runpy.run_path(str(ROOT / "scripts/evaluate_retrieval.py"))["evaluate"]
 
 
-@pytest.mark.parametrize("filename", ["corpus.json", "harder-corpus.json", "long-documents-corpus.json"])
+@pytest.mark.parametrize("filename", ["corpus.json", "harder-corpus.json", "long-documents-corpus.json", "transfer-documents-corpus.json"])
 def test_corpus_labels_point_to_actual_evidence(filename):
     corpus = json.loads((ROOT / "evaluations" / filename).read_text())
     documents = {document["source"]: document for document in corpus["documents"]}
@@ -43,13 +43,26 @@ def test_retrieval_metrics_do_not_count_skipped_generation_cases():
     assert sum(case.get("status") == "requires_generation_evaluation" for case in result["cases"]) == 2
 
 
-def test_long_document_fixture_hashes_and_parser_output_stay_frozen():
+@pytest.mark.parametrize("prefix", ["long-documents", "transfer-documents"])
+def test_long_document_fixture_hashes_and_parser_output_stay_frozen(prefix):
     import hashlib
     from app.core.ingester import FileIngester
     directory = ROOT / "evaluations"
-    manifest = json.loads((directory / "long-documents-manifest.json").read_text(encoding="utf-8"))
+    manifest = json.loads((directory / (prefix + "-manifest.json")).read_text(encoding="utf-8"))
     for filename, expected in manifest["files_sha256"].items():
         assert hashlib.sha256((directory / filename).read_bytes()).hexdigest() == expected
-    corpus = json.loads((directory / "long-documents-corpus.json").read_text(encoding="utf-8"))
+    corpus = json.loads((directory / (prefix + "-corpus.json")).read_text(encoding="utf-8"))
     for document in corpus["documents"]:
-        assert FileIngester.parse_bytes(document["source"], (directory / document["file"]).read_bytes()) == document["pages"]
+        filename = document.get("file", prefix + "/" + document["source"])
+        assert FileIngester.parse_bytes(document["source"], (directory / filename).read_bytes()) == document["pages"]
+
+
+def test_answer_evaluation_refuses_to_overwrite_existing_evidence(tmp_path):
+    import subprocess
+    import sys
+    output = tmp_path / "existing.json"
+    output.write_text("preserved first result")
+    result = subprocess.run([sys.executable, str(ROOT / "scripts/evaluate_answers.py"), "--output", str(output)], capture_output=True, text=True, timeout=20)
+    assert result.returncode == 2
+    assert "previous evaluations" in result.stderr
+    assert output.read_text() == "preserved first result"

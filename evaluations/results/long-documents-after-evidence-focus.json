@@ -880,6 +880,337 @@
           "expected_facts_present": true,
           "expected_evidence_cited": true,
           "scope_respected": true
+        },
+        {
+          "answer": "Before document imports reopen after recovery, restore the most recent verified backup and validate a sample source. [1]",
+          "citations": [
+            {
+              "id": "532a64194c9466dee108ce10dd3e428d030c95010a7d38ab696f8364ac1a2507:33",
+              "source": "Larkspur Operations.pdf",
+              "page": 12,
+              "chunk": 34,
+              "url": "",
+              "distance": 0.5364,
+              "text": "Larkspur Operations Handbook - chapter 12\nBefore reopening document imports after recovery, restore the most recent verified backup\nand validate a sample source.\nRecordkeeping item 12.1: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 12.2: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 12.3: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover"
+            }
+          ],
+          "first_token_seconds": 1.2688410999980988,
+          "sources_seconds": 0.1776594999973895,
+          "total_seconds": 2.9157482000009622,
+          "token_events": 22,
+          "memory": {
+            "backend_rss_bytes": 100237312,
+            "ollama_rss_bytes": 1280569344,
+            "combined_rss_bytes": 1380806656,
+            "samples": 19,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 3,
+          "id": "pdf-tail-recovery",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "Under Larkspur Approval Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval. This is stated in [2] Larkspur Approval v2.docx (page 1) and [1] Larkspur Approval v2.docx (page 1).",
+          "citations": [
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:17",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 18,
+              "url": "",
+              "distance": 0.3427,
+              "text": "reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 50\nRegister 50 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 51\nUnder Larkspur Approval Policy Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval.\nRegister 51 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 52\nRegister 52 identifies a reviewer,"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:0",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 1,
+              "url": "",
+              "distance": 0.2956,
+              "text": "Larkspur Approval Policy Version 2\nEffective 1 December 2026. Version 2 supersedes Version 1 for new approvals.\nReview register 1\nRegister 1 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 2\nRegister 2 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 3\nRegister 3 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 4\nRegister 4 identifies a"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:13",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 14,
+              "url": "",
+              "distance": 0.528,
+              "text": "not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 38\nRegister 38 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 39\nRegister 39 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 40\nRegister 40 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 41\nRegister 41 identifies a reviewer, the requested destination and the supporting"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:6",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 7,
+              "url": "",
+              "distance": 0.5305,
+              "text": "not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 18\nRegister 18 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 19\nRegister 19 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 20\nRegister 20 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 21\nRegister 21 identifies a reviewer, the requested destination and the supporting"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:12",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 13,
+              "url": "",
+              "distance": 0.5479,
+              "text": "entries remain available for the next review cycle.\nReview register 35\nRegister 35 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 36\nRegister 36 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 37\nRegister 37 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 38\nRegister 38 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in"
+            }
+          ],
+          "first_token_seconds": 3.436128200002713,
+          "sources_seconds": 0.2031398000108311,
+          "total_seconds": 9.198915200002375,
+          "token_events": 70,
+          "memory": {
+            "backend_rss_bytes": 100782080,
+            "ollama_rss_bytes": 1636065280,
+            "combined_rss_bytes": 1736704000,
+            "samples": 42,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 4,
+          "id": "docx-middle-validity",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "The maximum size for an approved data export is 32 MB. This is stated in the \"Version 2 export limits\" section of the retrieved evidence, which is cited as [1].",
+          "citations": [
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:35",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 36,
+              "url": "",
+              "distance": 0.5234,
+              "text": "register 100\nRegister 100 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nVersion 2 export limits\nOperation | Maximum size\nApproved data export | 32 MB"
+            }
+          ],
+          "first_token_seconds": 5.37712149998697,
+          "sources_seconds": 0.4403744999872288,
+          "total_seconds": 7.9635081999877,
+          "token_events": 38,
+          "memory": {
+            "backend_rss_bytes": 101441536,
+            "ollama_rss_bytes": 1442316288,
+            "combined_rss_bytes": 1543741440,
+            "samples": 26,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 5,
+          "id": "docx-tail-table",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "Larkspur support records are retained for 18 days in APAC and 42 days in EMEA. This information is stated in the selected evidence, specifically in [1] Larkspur Records.md (page 1), which mentions \"Larkspur support records are retained for 18 days in APAC and 42 days in EMEA. The record's region determines the applicable period.\"",
+          "citations": [
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:31",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 32,
+              "url": "",
+              "distance": 0.328,
+              "text": "region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Regional retention rules\n\nLarkspur support records are retained for 18 days in APAC and 42 days in EMEA. The record's region determines the applicable period.\n\n## Records practice 83\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 84\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:57",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 58,
+              "url": "",
+              "distance": 0.4524,
+              "text": "Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 150\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Final archive audit\n\nLarkspur archive purges require a 36-hour audit review window before deletion."
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:0",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 1,
+              "url": "",
+              "distance": 0.5257,
+              "text": "# Larkspur Regional Records Manual\n\n## Records practice 1\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 2\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 3\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 4\n\nClerks label each records bundle"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:52",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 53,
+              "url": "",
+              "distance": 0.6262,
+              "text": "not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 137\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 138\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 139\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:6",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 7,
+              "url": "",
+              "distance": 0.6289,
+              "text": ". This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 17\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 18\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 19\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before"
+            }
+          ],
+          "first_token_seconds": 5.65900739999779,
+          "sources_seconds": 0.5636493999918457,
+          "total_seconds": 12.036590899995645,
+          "token_events": 83,
+          "memory": {
+            "backend_rss_bytes": 101625856,
+            "ollama_rss_bytes": 1498877952,
+            "combined_rss_bytes": 1600503808,
+            "samples": 31,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 6,
+          "id": "md-middle-regions",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "A 36-hour audit review window is required before an archive purge, as stated in the \"Final archive audit\" section of the evidence [1].",
+          "citations": [
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:57",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 58,
+              "url": "",
+              "distance": 0.4189,
+              "text": "Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 150\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Final archive audit\n\nLarkspur archive purges require a 36-hour audit review window before deletion."
+            }
+          ],
+          "first_token_seconds": 6.388052800000878,
+          "sources_seconds": 0.32506000000284985,
+          "total_seconds": 8.56625790000544,
+          "token_events": 30,
+          "memory": {
+            "backend_rss_bytes": 101875712,
+            "ollama_rss_bytes": 1501519872,
+            "combined_rss_bytes": 1603391488,
+            "samples": 23,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 7,
+          "id": "md-tail-audit",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "The failed-delivery retry limit is at most five times, as stated in [1] Larkspur Operations.pdf (page 7). Version 2 approval is valid for nine minutes, as stated in [2] Larkspur Approval v2.docx (page 1).",
+          "citations": [
+            {
+              "id": "532a64194c9466dee108ce10dd3e428d030c95010a7d38ab696f8364ac1a2507:18",
+              "source": "Larkspur Operations.pdf",
+              "page": 7,
+              "chunk": 19,
+              "url": "",
+              "distance": 0.573,
+              "text": "Larkspur Operations Handbook - chapter 7\nThe Larkspur dispatcher retries a failed delivery at most five times.\nRecordkeeping item 7.1: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 7.2: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 7.3: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:17",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 18,
+              "url": "",
+              "distance": 0.5201,
+              "text": "reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 50\nRegister 50 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 51\nUnder Larkspur Approval Policy Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval.\nRegister 51 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 52\nRegister 52 identifies a reviewer,"
+            }
+          ],
+          "first_token_seconds": 11.665342200009036,
+          "sources_seconds": 0.8935163999994984,
+          "total_seconds": 11.66543670000101,
+          "token_events": 1,
+          "memory": {
+            "backend_rss_bytes": 101994496,
+            "ollama_rss_bytes": 1399595008,
+            "combined_rss_bytes": 1501585408,
+            "samples": 36,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 8,
+          "id": "compound-retry-validity",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true,
+          "required_citation_sources_cited": true
+        },
+        {
+          "answer": "The incident coordinator is Tessa Rao, according to [1]. The maximum approved export size is 32 MB, as stated in [2].",
+          "citations": [
+            {
+              "id": "532a64194c9466dee108ce10dd3e428d030c95010a7d38ab696f8364ac1a2507:9",
+              "source": "Larkspur Operations.pdf",
+              "page": 4,
+              "chunk": 10,
+              "url": "",
+              "distance": 0.6401,
+              "text": "Larkspur Operations Handbook - chapter 4\nTessa Rao is the incident coordinator for the Larkspur dispatcher.\nRecordkeeping item 4.1: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 4.2: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 4.3: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:35",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 36,
+              "url": "",
+              "distance": 0.5604,
+              "text": "register 100\nRegister 100 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nVersion 2 export limits\nOperation | Maximum size\nApproved data export | 32 MB"
+            }
+          ],
+          "first_token_seconds": 6.889752999995835,
+          "sources_seconds": 0.6156692000076873,
+          "total_seconds": 6.900458300005994,
+          "token_events": 1,
+          "memory": {
+            "backend_rss_bytes": 102313984,
+            "ollama_rss_bytes": 1393676288,
+            "combined_rss_bytes": 1495990272,
+            "samples": 22,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "turn": 9,
+          "id": "compound-owner-export",
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true,
+          "forbidden_claims_absent": true,
+          "required_citation_sources_cited": true
         }
       ],
       "ingestion": []

@@ -19,3 +19,6 @@ evaluations/transfer-documents/*.md text eol=lf
 evaluations/transfer-documents-corpus.json text eol=lf
 evaluations/transfer-documents-checks.json text eol=lf
 evaluations/transfer-documents-manifest.json text eol=lf
+evaluations/results/long-documents-*.json -text whitespace=cr-at-eol
+evaluations/results/transfer-documents-first-run.json -text whitespace=cr-at-eol
+evaluations/results/action-recovery-2026-10-16.json -text whitespace=cr-at-eol
