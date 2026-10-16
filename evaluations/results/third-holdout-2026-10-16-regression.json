@@ -1,0 +1,286 @@
+{
+  "created_utc": "2026-10-16T12:35:42.726810+00:00",
+  "model": "llama3:latest",
+  "model_digest": "365c0bd3c000a25d28ddbf732fe1c6add414de7275464c4e4d1c3b5fcb5d8ad1",
+  "generation_config": {
+    "temperature": 0.1,
+    "num_ctx": 8192,
+    "num_predict": 2048
+  },
+  "evaluator_sha256": "589c0492a6cd4e1c08c7564ee18b5fedcf810124d7b98d720d1630176385765b",
+  "product_revision": "b65c3e9eabda5cc8ca1147b0dbdc5b8ae703dcdd",
+  "product_files_sha256": {
+    "backend/app/workflows/chat.py": "dd3f86a06cc964f4240054b9e1fb2b57a674b6c44d5a8c1c5793039f287ca5a3",
+    "backend/app/ai/retriever.py": "08e295abee0901fc95cda28b1da7c090c52a6d9c7e6440ab36f827d309e09a48",
+    "backend/app/ai/prompts.py": "20ed8acf46d147d664a8097bec289e332fb884785775d77252882d313f1d0b60",
+    "backend/app/core/llm.py": "4e40c71446596276d30246f0a2feb6218b2060f855305e2c3a1c72b2fb318dbe"
+  },
+  "provider": "CPU",
+  "corpus_sha256": "61c514e32cc6ad0e30e0244985749988c5b3472e2edc652554e563d8908e37f9",
+  "checks_sha256": "d53e5323fb6a472966960b89bbfa8575c4403217e36b561520fc69c7f9846757",
+  "threshold": 0.65,
+  "corpus_file": "third-holdout-corpus.json",
+  "checks_file": "third-holdout-checks.json",
+  "timing": "Total in-process API latency; first-token/network transport not measured.",
+  "cases": [
+    {
+      "id": "queue-retry",
+      "kind": "supported",
+      "question": "How many times is a failed delivery retried?",
+      "answer": "A failed delivery is retried at most four times. [1]",
+      "citations": [
+        {
+          "id": "e3fb9ec6f6d6618f6f34d4dbf9c2e7ef8eac39f532688a5cee560155b36df851:0",
+          "source": "Harbor Queue Handbook.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3642,
+          "text": "Harbor failed-delivery queue handbook. A failed delivery is retried at most four times. After the fourth failure, it moves to the sealed review queue. Nia Bose owns the failed-delivery queue."
+        }
+      ],
+      "latency_seconds": 5.31,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "access-validity",
+      "kind": "supported",
+      "question": "How long does an access approval remain valid, and can it be reused?",
+      "answer": "An access approval remains valid for twelve minutes and can be consumed once. A new approval is required for another action. This is stated in [1] Harbor Access Terms.md (page 1).",
+      "citations": [
+        {
+          "id": "03804a79c3b1b90ad71fb9e2c6a7971cebce3f55d21b4329765cd00b4c4974ff:0",
+          "source": "Harbor Access Terms.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.4017,
+          "text": "A Harbor access approval remains valid for twelve minutes and can be consumed once. A new approval is required for another action. An approved export may be at most 18 MB."
+        },
+        {
+          "id": "03804a79c3b1b90ad71fb9e2c6a7971cebce3f55d21b4329765cd00b4c4974ff:1",
+          "source": "Harbor Access Terms.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.6178,
+          "text": "Approvals are limited to the named destination. This policy does not state a monthly service price."
+        }
+      ],
+      "latency_seconds": 5.69,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unnamed-compound",
+      "kind": "supported",
+      "question": "What is the failed delivery retry limit, and how long does access approval remain valid?",
+      "answer": "A Harbor failed delivery is retried at most four times, as stated in [1]. Additionally, a Harbor access approval remains valid for twelve minutes and can be consumed once, as stated in [2].",
+      "citations": [
+        {
+          "id": "e3fb9ec6f6d6618f6f34d4dbf9c2e7ef8eac39f532688a5cee560155b36df851:0",
+          "source": "Harbor Queue Handbook.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3877,
+          "text": "Harbor failed-delivery queue handbook. A failed delivery is retried at most four times. After the fourth failure, it moves to the sealed review queue. Nia Bose owns the failed-delivery queue."
+        },
+        {
+          "id": "03804a79c3b1b90ad71fb9e2c6a7971cebce3f55d21b4329765cd00b4c4974ff:0",
+          "source": "Harbor Access Terms.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3704,
+          "text": "A Harbor access approval remains valid for twelve minutes and can be consumed once. A new approval is required for another action. An approved export may be at most 18 MB."
+        }
+      ],
+      "latency_seconds": 5.52,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "owner-and-export",
+      "kind": "supported",
+      "question": "Who owns the failed-delivery queue, and what is the maximum approved export size?",
+      "answer": "Nia Bose owns the failed-delivery queue [1]. The maximum approved export size is 18 MB [2].",
+      "citations": [
+        {
+          "id": "e3fb9ec6f6d6618f6f34d4dbf9c2e7ef8eac39f532688a5cee560155b36df851:0",
+          "source": "Harbor Queue Handbook.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.294,
+          "text": "Harbor failed-delivery queue handbook. A failed delivery is retried at most four times. After the fourth failure, it moves to the sealed review queue. Nia Bose owns the failed-delivery queue."
+        },
+        {
+          "id": "03804a79c3b1b90ad71fb9e2c6a7971cebce3f55d21b4329765cd00b4c4974ff:0",
+          "source": "Harbor Access Terms.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.4419,
+          "text": "A Harbor access approval remains valid for twelve minutes and can be consumed once. A new approval is required for another action. An approved export may be at most 18 MB."
+        }
+      ],
+      "latency_seconds": 3.83,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "required_citation_sources_cited": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "regional-periods",
+      "kind": "supported",
+      "question": "How long are Harbor support records kept in APAC and EMEA?",
+      "answer": "Harbor support records are kept for 21 days in APAC and 45 days in EMEA. The region of the record determines which period applies. [1]",
+      "citations": [
+        {
+          "id": "53bae98544934f909bb1f4ab3fe26033e9b88db14b85ee43bb829b2da12ddb00:0",
+          "source": "Harbor Regional Records.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.0624,
+          "text": "Harbor support records are kept for 21 days in APAC and 45 days in EMEA. The region of the record determines which period applies."
+        }
+      ],
+      "latency_seconds": 5.42,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "queue-followup",
+      "kind": "follow-up",
+      "question": "Where does it go after its final failure?",
+      "seed_answer": "A failed delivery is retried at most four times. [1]",
+      "answer": "After its final failure, a failed delivery moves to the sealed review queue. [1]",
+      "citations": [
+        {
+          "id": "e3fb9ec6f6d6618f6f34d4dbf9c2e7ef8eac39f532688a5cee560155b36df851:0",
+          "source": "Harbor Queue Handbook.md",
+          "page": 1,
+          "chunk": 1,
+          "url": "",
+          "distance": 0.3375,
+          "text": "Harbor failed-delivery queue handbook. A failed delivery is retried at most four times. After the fourth failure, it moves to the sealed review queue. Nia Bose owns the failed-delivery queue."
+        }
+      ],
+      "latency_seconds": 3.11,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "expected_facts_present": true,
+      "expected_evidence_cited": true,
+      "scope_respected": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "unknown-price",
+      "kind": "unsupported",
+      "question": "What is the monthly service price?",
+      "answer": "The monthly service price is not stated in the selected evidence. [1]",
+      "citations": [
+        {
+          "id": "03804a79c3b1b90ad71fb9e2c6a7971cebce3f55d21b4329765cd00b4c4974ff:1",
+          "source": "Harbor Access Terms.md",
+          "page": 2,
+          "chunk": 2,
+          "url": "",
+          "distance": 0.4232,
+          "text": "Approvals are limited to the named destination. This policy does not state a monthly service price."
+        }
+      ],
+      "latency_seconds": 2.73,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    },
+    {
+      "id": "scope-exclusion",
+      "kind": "unsupported",
+      "question": "How many times is a failed delivery retried?",
+      "answer": "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source.",
+      "citations": [],
+      "latency_seconds": 0.11,
+      "citation_numbers_valid": true,
+      "manual_semantic_review_required": true,
+      "abstention_language_present": true,
+      "scope_respected": true,
+      "forbidden_claims_absent": true,
+      "conversation_persisted": true
+    }
+  ],
+  "semantic_accuracy_measured": false,
+  "metrics": {
+    "expected_facts_present": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "expected_evidence_cited": {
+      "passed": 6,
+      "total": 6,
+      "percent": 100.0
+    },
+    "citation_numbers_valid": {
+      "passed": 8,
+      "total": 8,
+      "percent": 100.0
+    },
+    "scope_respected": {
+      "passed": 8,
+      "total": 8,
+      "percent": 100.0
+    },
+    "abstention_language_present": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "conversation_persisted": {
+      "passed": 8,
+      "total": 8,
+      "percent": 100.0
+    },
+    "forbidden_claims_absent": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "required_citation_sources_cited": {
+      "passed": 2,
+      "total": 2,
+      "percent": 100.0
+    },
+    "execution": {
+      "completed": 8,
+      "total": 8
+    }
+  }
+}

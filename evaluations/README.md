@@ -1,5 +1,7 @@
 # Quality evaluation
 
+See [LONG_DOCUMENT_CHECKPOINT.md](LONG_DOCUMENT_CHECKPOINT.md) for the 16 October larger PDF/DOCX/Markdown runs, fresh transfer failures, latency, process recovery and assistant claim review. Saved lexical checks passed the final development set, but strict abstention and transfer reliability still fail acceptance.
+
 See [BETA_VERIFICATION.md](BETA_VERIFICATION.md) for the 14 October clean-install/live-runtime checks, corrected frontend defects, audit findings and remaining beta gates.
 
 See [THIRD_HOLDOUT.md](THIRD_HOLDOUT.md) for the 11 October compound-citation guard, three-repeat local screen, preserved 11-case parser regression, newly frozen eight-case synthetic transfer run, assistant claim review and buffering latency cost. Human representative acceptance remains open.

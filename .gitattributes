@@ -22,3 +22,5 @@ evaluations/transfer-documents-manifest.json text eol=lf
 evaluations/results/long-documents-*.json -text whitespace=cr-at-eol
 evaluations/results/transfer-documents-first-run.json -text whitespace=cr-at-eol
 evaluations/results/action-recovery-2026-10-16.json -text whitespace=cr-at-eol
+evaluations/results/third-holdout-2026-10-16-regression.json -text whitespace=cr-at-eol
+evaluations/results/long-document-review-2026-10-16.json -text whitespace=cr-at-eol
