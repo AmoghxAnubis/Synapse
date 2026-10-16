@@ -464,6 +464,52 @@
           "expected_evidence_cited": true,
           "scope_respected": true,
           "required_citation_sources_cited": true
+        },
+        {
+          "answer": "The incident coordinator is Tessa Rao, and the maximum approved export size is 32 MB. [1], [2]",
+          "citations": [
+            {
+              "id": "532a64194c9466dee108ce10dd3e428d030c95010a7d38ab696f8364ac1a2507:9",
+              "source": "Larkspur Operations.pdf",
+              "page": 4,
+              "chunk": 10,
+              "url": "",
+              "distance": 0.6401,
+              "text": "Larkspur Operations Handbook - chapter 4\nTessa Rao is the incident coordinator for the Larkspur dispatcher.\nRecordkeeping item 4.1: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 4.2: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 4.3: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:35",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 36,
+              "url": "",
+              "distance": 0.5604,
+              "text": "register 100\nRegister 100 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nVersion 2 export limits\nOperation | Maximum size\nApproved data export | 32 MB"
+            }
+          ],
+          "first_token_seconds": 3.682119100005366,
+          "sources_seconds": 0.15707290000864305,
+          "total_seconds": 3.6958372000081,
+          "token_events": 1,
+          "memory": {
+            "backend_rss_bytes": 138940416,
+            "ollama_rss_bytes": 1679523840,
+            "combined_rss_bytes": 1797988352,
+            "samples": 20,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "compound-owner-export",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true,
+          "forbidden_claims_absent": true,
+          "required_citation_sources_cited": true
         }
       ],
       "long_session": [],
