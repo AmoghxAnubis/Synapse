@@ -1,6 +1,6 @@
 # Synapse product task tracker
 
-Last updated: 15 October 2026.
+Last updated: 16 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
@@ -9,6 +9,8 @@ Current consolidated assessment: [15 October product readiness report](docs/PROD
 Execution plan: [Local beta plan](docs/LOCAL_BETA_PLAN.md). User selected **GitHub** as the first connector on 15 October. No second Windows PC or independent tester is currently available: D01 and independent acceptance remain open dependencies. Next implementation work package is model setup and the core browser journey, including restored-action keyboard/expiry behavior. Planning does not raise readiness or close existing tasks.
 
 Implementation started on `beta/model-onboarding` on 15 October. Active scope: independent generation/embedding setup diagnostics, model-independent source administration, and current workflow verification (V01/V03, Q01/Q02 support). Advanced OS development follows the local technical prerequisite checkpoint in the plan; unavailable independent release acceptance is tracked separately.
+
+16 October continuation on `beta/representative-quality` from merged PR #36 (`1ac3b7e`): Q01-Q03 are active for the frozen long-format parser sample, real HTTP/SSE timing, varied source-changing sessions and mixed-format upload measurements. Approval/recovery verification follows sequentially. No human/second-machine acceptance or advanced OS execution is claimed by starting this work.
 
 ## Product direction
 

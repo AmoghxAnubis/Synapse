@@ -1,0 +1,34 @@
+{
+  "frozen_before_first_model_run": true,
+  "independent_human_review": false,
+  "files_sha256": {
+    "long-documents/Larkspur Operations.pdf": "0d9226ad39313408f85281abaa64cddbfa55e67ff59e5cdea793466327af8776",
+    "long-documents/Larkspur Approval v2.docx": "d203d497d207a24057272bb634344bf9f17fcfea3c8fa643c6d367190c8072d6",
+    "long-documents/Larkspur Approval v1.md": "42065939ae0cf4db775f4ce677709da21e6515f65c94d47332ac0c879d3ef228",
+    "long-documents/Larkspur Records.md": "0c2a664928a13ee2ddf77e269d9b8613990416a32aa6f4cd14a6a20ed5822782",
+    "long-documents-corpus.json": "1b34567c7ee01648ef9552c2d539ecd82f3b453a9df87bafa42042e8124e268f",
+    "long-documents-checks.json": "aada534bf8290aba0221efca32370dcbdcdc2ef52cb79be323d3b371568cb209"
+  },
+  "document_shapes": [
+    {
+      "source": "Larkspur Operations.pdf",
+      "parsed_pages": 12,
+      "words": 4418
+    },
+    {
+      "source": "Larkspur Approval v2.docx",
+      "parsed_pages": 1,
+      "words": 5056
+    },
+    {
+      "source": "Larkspur Approval v1.md",
+      "parsed_pages": 1,
+      "words": 35
+    },
+    {
+      "source": "Larkspur Records.md",
+      "parsed_pages": 1,
+      "words": 7996
+    }
+  ]
+}

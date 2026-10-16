@@ -1,0 +1,67 @@
+{
+  "two-source-limits": {
+    "answer_patterns": [
+      "(?:six|6)\\s+(?:retry\\s+)?(?:attempts|times|retries)",
+      "(?:thirteen|13)\\s+minutes"
+    ],
+    "required_citation_sources": [
+      "Willow Dispatch.md",
+      "Willow Access v2.md"
+    ]
+  },
+  "owner-and-export": {
+    "answer_patterns": [
+      "Farah Chen",
+      "22\\s*MB"
+    ],
+    "required_citation_sources": [
+      "Willow Dispatch.md",
+      "Willow Access v2.md"
+    ]
+  },
+  "tail-destination": {
+    "answer_patterns": [
+      "dead-letter review box"
+    ]
+  },
+  "approval-validity": {
+    "answer_patterns": [
+      "(?:thirteen|13)\\s+minutes"
+    ]
+  },
+  "changed-source-reuse": {
+    "answer_patterns": [
+      "once|single.use|cannot be reused|can.t be reused|new approval"
+    ],
+    "seed_sources": [
+      "Willow Access v1.md"
+    ],
+    "forbidden_patterns": [
+      "can be reused before",
+      "can be reused until"
+    ]
+  },
+  "version-periods": {
+    "answer_patterns": [
+      "(?:twenty.four|24)\\s+minutes",
+      "(?:thirteen|13)\\s+minutes"
+    ],
+    "required_citation_sources": [
+      "Willow Access v1.md",
+      "Willow Access v2.md"
+    ]
+  },
+  "unknown-price": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "\\$\\s*\\d",
+      "USD\\s*\\d"
+    ]
+  },
+  "excluded-dispatch": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "(?:six|6)\\s+(?:retry\\s+)?(?:attempts|times|retries)"
+    ]
+  }
+}

@@ -7,7 +7,7 @@ ROOT = BACKEND_DIR.parent
 evaluate = runpy.run_path(str(ROOT / "scripts/evaluate_retrieval.py"))["evaluate"]
 
 
-@pytest.mark.parametrize("filename", ["corpus.json", "harder-corpus.json"])
+@pytest.mark.parametrize("filename", ["corpus.json", "harder-corpus.json", "long-documents-corpus.json"])
 def test_corpus_labels_point_to_actual_evidence(filename):
     corpus = json.loads((ROOT / "evaluations" / filename).read_text())
     documents = {document["source"]: document for document in corpus["documents"]}
@@ -41,3 +41,15 @@ def test_retrieval_metrics_do_not_count_skipped_generation_cases():
     assert memory.calls == ["budget", "restricted"]
     assert not result["generation_evaluated"]
     assert sum(case.get("status") == "requires_generation_evaluation" for case in result["cases"]) == 2
+
+
+def test_long_document_fixture_hashes_and_parser_output_stay_frozen():
+    import hashlib
+    from app.core.ingester import FileIngester
+    directory = ROOT / "evaluations"
+    manifest = json.loads((directory / "long-documents-manifest.json").read_text(encoding="utf-8"))
+    for filename, expected in manifest["files_sha256"].items():
+        assert hashlib.sha256((directory / filename).read_bytes()).hexdigest() == expected
+    corpus = json.loads((directory / "long-documents-corpus.json").read_text(encoding="utf-8"))
+    for document in corpus["documents"]:
+        assert FileIngester.parse_bytes(document["source"], (directory / document["file"]).read_bytes()) == document["pages"]

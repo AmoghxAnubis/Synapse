@@ -80,6 +80,8 @@ if __name__ == "__main__":
         parser.error("--updated-checks requires --rescore")
     if args.output is None:
         args.output = ROOT / ("evaluations/results/answers-rescored.json" if args.rescore else "evaluations/results/answers-baseline.json")
+    if args.output.exists():
+        parser.error("Choose a new output file; previous evaluations must be preserved")
     if args.rescore:
         if args.output.resolve() == args.rescore.resolve():
             parser.error("Rescoring must preserve the original artifact; choose a different output")
@@ -132,7 +134,13 @@ if __name__ == "__main__":
     checks_raw = args.checks.read_bytes()
     corpus = json.loads(corpus_raw)
     checks = json.loads(checks_raw)
-    assert LocalLLM(args.model).status()["ready"], "Start Ollama and select an installed model."
+    observed_llm = LocalLLM(args.model)
+    observed_status = observed_llm.status()
+    assert observed_status["ready"], "Start Ollama and select an installed model."
+    observed_model = observed_llm.chat_model()
+    generation_config = {"temperature": observed_model.temperature, "num_ctx": observed_model.num_ctx, "num_predict": observed_model.num_predict}
+    observed_model._client._client.close()
+    observed_llm.session.close()
     brain = AMDBridge()
     memory = MemoryBank(brain=brain, client=chromadb.PersistentClient(path=str(args.data_dir/"vectors"), settings=ChromaSettings(anonymized_telemetry=False)))
     for document in corpus["documents"]:
@@ -142,6 +150,10 @@ if __name__ == "__main__":
     store.set("meetings", {"notes": "", "tasks": []})
     store.set("settings", Settings(model=args.model, network_enabled=False).model_dump())
     result = {"created_utc": datetime.now(timezone.utc).isoformat(), "model": args.model,
+              "model_digest": observed_status.get("model_digest"), "generation_config": generation_config,
+              "product_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+              "product_files_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in (
+                  "backend/app/workflows/chat.py", "backend/app/ai/retriever.py", "backend/app/ai/prompts.py", "backend/app/core/llm.py")},
               "provider": brain.hardware_mode, "corpus_sha256": hashlib.sha256(corpus_raw).hexdigest(),
               "checks_sha256": hashlib.sha256(checks_raw).hexdigest(), "threshold": 0.65,
               "corpus_file": args.corpus.name, "checks_file": args.checks.name,

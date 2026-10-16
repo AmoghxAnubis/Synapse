@@ -50,6 +50,7 @@ def test_source_metadata_does_not_count_as_first_token(monkeypatch):
     assert result["first_token_seconds"] == 2
     assert result["total_seconds"] == 4
     assert result["answer"] == "ab"
+    assert result["token_events"] == 2
 
 
 def test_sampler_includes_real_interpreter_under_windows_launcher(monkeypatch):
@@ -65,3 +66,62 @@ def test_sampler_includes_real_interpreter_under_windows_launcher(monkeypatch):
     sampler.sample()
     assert sampler.peaks["backend_rss_bytes"] == 110
     assert sampler.peaks["combined_rss_bytes"] == 110
+
+
+def test_corpus_imports_cannot_read_outside_the_fixture_directory(tmp_path):
+    corpus_dir = tmp_path / "corpus"
+    corpus_dir.mkdir()
+    outside = tmp_path / "private.md"
+    outside.write_text("must not be imported")
+    with pytest.raises(ValueError, match="outside"):
+        benchmark.import_fixtures(corpus_dir / "corpus.json", {"documents": [{"file": "../private.md"}]})
+    with pytest.raises(ValueError, match="relative"):
+        benchmark.import_fixtures(corpus_dir / "corpus.json", {"documents": [{"file": str(outside)}]})
+
+
+def test_mixed_imports_preserve_binary_bytes_and_identify_the_input(tmp_path):
+    import hashlib
+    content = b"%PDF-test\x00\xff\r\n"
+    (tmp_path / "fixture.pdf").write_bytes(content)
+    fixture = benchmark.import_fixtures(tmp_path / "corpus.json", {"documents": [{"file": "fixture.pdf"}]})[0]
+    assert fixture["content"] == content
+    assert fixture["sha256"] == hashlib.sha256(content).hexdigest()
+
+
+def test_sampler_includes_ollama_llama_server_children_without_double_counting(monkeypatch):
+    class Process:
+        def __init__(self, pid, name, rss, children=None):
+            self.pid, self.info, self.rss, self.descendants = pid, {"name": name}, rss, children or []
+        def memory_info(self): return SimpleNamespace(rss=self.rss)
+        def children(self, recursive): return self.descendants
+    runner = Process(4, "llama-server.exe", 200)
+    nested = Process(5, "ollama-worker.exe", 30)
+    root = Process(3, "ollama.exe", 20, [runner, nested])
+    backend = Process(1, "python.exe", 100)
+    unrelated = Process(9, "llama-server.exe", 900)
+    monkeypatch.setattr(benchmark.psutil, "Process", lambda pid: backend)
+    monkeypatch.setattr(benchmark.psutil, "process_iter", lambda *args: [root, runner, nested, unrelated])
+    sampler = benchmark.MemorySampler(1)
+    sampler.sample()
+    assert sampler.peaks["ollama_rss_bytes"] == 250
+    assert sampler.peaks["combined_rss_bytes"] == 350
+
+
+def test_stalled_sampling_is_bounded_and_explicitly_incomplete(monkeypatch):
+    import threading
+    entered, release = threading.Event(), threading.Event()
+    monkeypatch.setattr(benchmark.psutil, "Process", lambda pid: object())
+    monkeypatch.setattr(benchmark.MemorySampler, "JOIN_SECONDS", 0.02)
+    sampler = benchmark.MemorySampler(1)
+    def blocked_sample():
+        entered.set()
+        release.wait(2)
+    monkeypatch.setattr(sampler, "sample", blocked_sample)
+    try:
+        with sampler:
+            assert entered.wait(1)
+        assert sampler.result()["sampling_complete"] is False
+        assert sampler.result()["sampling_errors"] == 1
+    finally:
+        release.set()
+        sampler.thread.join(1)

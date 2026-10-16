@@ -97,6 +97,11 @@ def stream_chat(query, services):
             return {}
         agent = state["agent"]
         system_prompt = agent.get("system_instruction") if agent else None
+        allowed = ", ".join(f"[{index}]" for index in range(1, len(state["citations"]) + 1))
+        system_prompt = (system_prompt or "You are Synapse, a helpful local assistant.") + (
+            "\nFor this answer the only available evidence labels are: " + allowed + ". "
+            "Cite the label of the passage that actually states the fact, not a document heading, section number or a previous answer's reference. "
+            "Read all selected passages before concluding that a requested fact is unstated.")
         # Buffer only when separate top passages cover the two question
         # clauses. A single citation after two claims can misattribute one.
         refs = state.get("required_refs", [])
