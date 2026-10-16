@@ -207,6 +207,112 @@
           "expected_facts_present": true,
           "expected_evidence_cited": true,
           "scope_respected": true
+        },
+        {
+          "answer": "Under Larkspur Approval Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval. This is stated in [2] Larkspur Approval v2.docx (page 1) and [1] Larkspur Approval v2.docx (page 1).",
+          "citations": [
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:17",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 18,
+              "url": "",
+              "distance": 0.3427,
+              "text": "reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 50\nRegister 50 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 51\nUnder Larkspur Approval Policy Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval.\nRegister 51 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 52\nRegister 52 identifies a reviewer,"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:0",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 1,
+              "url": "",
+              "distance": 0.2956,
+              "text": "Larkspur Approval Policy Version 2\nEffective 1 December 2026. Version 2 supersedes Version 1 for new approvals.\nReview register 1\nRegister 1 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 2\nRegister 2 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 3\nRegister 3 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 4\nRegister 4 identifies a"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:13",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 14,
+              "url": "",
+              "distance": 0.528,
+              "text": "not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 38\nRegister 38 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 39\nRegister 39 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 40\nRegister 40 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 41\nRegister 41 identifies a reviewer, the requested destination and the supporting"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:6",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 7,
+              "url": "",
+              "distance": 0.5305,
+              "text": "not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 18\nRegister 18 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 19\nRegister 19 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 20\nRegister 20 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 21\nRegister 21 identifies a reviewer, the requested destination and the supporting"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:12",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 13,
+              "url": "",
+              "distance": 0.5479,
+              "text": "entries remain available for the next review cycle.\nReview register 35\nRegister 35 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 36\nRegister 36 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 37\nRegister 37 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 38\nRegister 38 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in"
+            }
+          ],
+          "first_token_seconds": 2.6656839000061154,
+          "sources_seconds": 0.1510790000029374,
+          "total_seconds": 8.381654900003923,
+          "token_events": 70,
+          "memory": {
+            "backend_rss_bytes": 178696192,
+            "ollama_rss_bytes": 2019598336,
+            "combined_rss_bytes": 2198294528,
+            "samples": 52,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "docx-middle-validity",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "The maximum size for an approved data export is 32 MB. This is stated in the \"Version 2 export limits\" section of the evidence, which is referenced as [1].",
+          "citations": [
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:35",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 36,
+              "url": "",
+              "distance": 0.5234,
+              "text": "register 100\nRegister 100 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nVersion 2 export limits\nOperation | Maximum size\nApproved data export | 32 MB"
+            }
+          ],
+          "first_token_seconds": 1.4994144000083907,
+          "sources_seconds": 0.08203530000173487,
+          "total_seconds": 4.238011900000856,
+          "token_events": 37,
+          "memory": {
+            "backend_rss_bytes": 179564544,
+            "ollama_rss_bytes": 2024792064,
+            "combined_rss_bytes": 2204352512,
+            "samples": 25,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "docx-tail-table",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
         }
       ],
       "long_session": [],
