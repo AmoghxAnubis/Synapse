@@ -80,7 +80,7 @@ if __name__ == "__main__":
         parser.error("--updated-checks requires --rescore")
     if args.output is None:
         args.output = ROOT / ("evaluations/results/answers-rescored.json" if args.rescore else "evaluations/results/answers-baseline.json")
-    if args.output.exists():
+    if args.output.exists() and not args.rescore:
         parser.error("Choose a new output file; previous evaluations must be preserved")
     if args.rescore:
         if args.output.resolve() == args.rescore.resolve():
@@ -91,6 +91,8 @@ if __name__ == "__main__":
         checks_raw = args.checks.read_bytes()
         assert result["corpus_sha256"] == hashlib.sha256(corpus_raw).hexdigest(), "Corpus changed; original run cannot be compared"
         assert result["checks_sha256"] == hashlib.sha256(checks_raw).hexdigest(), "Checks changed; original run cannot be compared"
+        if args.output.exists():
+            parser.error("Choose a new output file; previous evaluations must be preserved")
         cases = {case["id"]: case for case in json.loads(corpus_raw)["cases"]}
         if args.updated_checks:
             result["original_checks_sha256"] = result["checks_sha256"]
@@ -151,6 +153,7 @@ if __name__ == "__main__":
     store.set("settings", Settings(model=args.model, network_enabled=False).model_dump())
     result = {"created_utc": datetime.now(timezone.utc).isoformat(), "model": args.model,
               "model_digest": observed_status.get("model_digest"), "generation_config": generation_config,
+              "evaluator_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "product_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "product_files_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in (
                   "backend/app/workflows/chat.py", "backend/app/ai/retriever.py", "backend/app/ai/prompts.py", "backend/app/core/llm.py")},
