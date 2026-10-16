@@ -48,6 +48,8 @@ Implementation began on `beta/model-onboarding` from `c2289e5`: independent setu
 
 ## Transition to advanced OS development
 
+16 October checkpoint: [larger-document evidence](../evaluations/LONG_DOCUMENT_CHECKPOINT.md) records scoped retrieval/reference improvements, 133 passing backend tests and successful fresh-process mocked approval/backup recovery. Strict abstention review failed 1/4 cases and two fresh transfer requests returned 503, so quality/reliability acceptance remains open. [The bounded F01 design](WINDOW_ARRANGEMENT_DESIGN.md) is prepared; isolated pure planner work can proceed under its limits, while native execution and beta acceptance still require their stated checks.
+
 Development of F01 should follow a finite local technical checkpoint:
 
 1. Setup and source administration recover from missing/broken models; the current production import/answer/history path passes on disposable data.

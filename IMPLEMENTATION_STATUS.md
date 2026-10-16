@@ -1,5 +1,11 @@
 # Synapse implementation status
 
+## Representative quality and recovery — 16 October 2026
+
+Scoped retrieval now ranks admitted evidence, adds bounded source context for empty selected-source searches, and removes stale history citation labels. Numbered-document and compound answers validate current reference numbers before output, retry once and withhold invalid results. Larger synthetic PDF/DOCX/Markdown evaluation improved saved warm fact/evidence checks from 9/12 and 7/12 to 12/12 each; reference/scope checks were 16/16. Assistant review still found an unsupported negative in one abstention (strict 3/4), and the untouched fresh transfer sample completed only 6/8 because two requests returned 503. These are open defects, not an accepted quality gate. Buffered output was slow on the developer machine (warm maximum 42.47 seconds to first output).
+
+Fresh-process approval/backup recovery passed with mocked launching, and the backend suite passed 133 tests without skips. See [full checkpoint](evaluations/LONG_DOCUMENT_CHECKPOINT.md) for preserved failures, limits and reproduction. [F01 design](docs/WINDOW_ARRANGEMENT_DESIGN.md) is ready for a bounded planner implementation; native window movement is not implemented. UI, live GitHub connector, current installer, independent review and second-machine acceptance remain open; readiness remains approximately 70% local beta / 30% paid, with 20/48 tasks closed.
+
 ## Model setup implementation - 15 October 2026
 
 On `beta/model-onboarding`, Settings now distinguishes saved Ollama/model availability from actual document-model initialization and offers an explicit no-download setup check, retry, model identity and provisioning steps for the running model folder. Model checks preserve unsaved form edits and stored preferences. Source listing, reading and deletion no longer initialize embeddings; document imports/retrieval still load and validate the local model when needed. Ollama inventory checks reject redirects, handle invalid payloads and report the selected model digest. Explicit provisioning now honors the same SYNAPSE_EMBEDDING_DIR override as runtime.

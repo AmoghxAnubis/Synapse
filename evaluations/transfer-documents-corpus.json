@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "description": "New authored Markdown transfer sample frozen before first run; no independent human acceptance",
+  "documents": [
+    {
+      "source": "Willow Dispatch.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "# Willow Dispatch Guide\n\nReview entry 1: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 2: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 3: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 4: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 5: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 6: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 7: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 8: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 9: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 10: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 11: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 12: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 13: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 14: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 15: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 16: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 17: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 18: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 19: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 20: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 21: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 22: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 23: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 24: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 25: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 26: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 27: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 28: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 29: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 30: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 31: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 32: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 33: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 34: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 35: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nWillow permits at most six retry attempts for a failed dispatch. After retry exhaustion the dispatch enters the dead-letter review box. Farah Chen is the dispatch incident coordinator.\n"
+        }
+      ]
+    },
+    {
+      "source": "Willow Access v2.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "# Willow Access Policy Version 2\n\nThis policy replaces Version 1 for new approvals.\n\nReview entry 1: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 2: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 3: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 4: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 5: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 6: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 7: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 8: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 9: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 10: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 11: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 12: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 13: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 14: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 15: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 16: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 17: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 18: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 19: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 20: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 21: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 22: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 23: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 24: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 25: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 26: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 27: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 28: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 29: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 30: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 31: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 32: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 33: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 34: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nReview entry 35: reviewers label the current worksheet, check the handover signature, and record observations separately from assumptions. The worksheet records the current review cycle and the assigned reviewer. Missing entries are flagged for the next handover.\n\nA Willow access approval is valid for thirteen minutes and is consumed once. Every later action needs a new approval. An approved export may contain at most 22 MB.\n"
+        }
+      ]
+    },
+    {
+      "source": "Willow Access v1.md",
+      "pages": [
+        {
+          "page": 1,
+          "text": "# Willow Access Policy Version 1\n\nHistorical rule: an access approval remained valid for twenty-four minutes and could be reused before expiry. Version 2 replaces this rule for new approvals.\n"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "two-source-limits",
+      "kind": "supported",
+      "query": "What is the failed-dispatch retry limit, and how long is approval valid?",
+      "sources": [
+        "Willow Dispatch.md",
+        "Willow Access v2.md"
+      ],
+      "evidence": {
+        "source": "Willow Dispatch.md",
+        "page": 1,
+        "contains": "six retry attempts"
+      }
+    },
+    {
+      "id": "owner-and-export",
+      "kind": "supported",
+      "query": "Who is the dispatch incident coordinator, and what is the maximum approved export size?",
+      "sources": [
+        "Willow Dispatch.md",
+        "Willow Access v2.md"
+      ],
+      "evidence": {
+        "source": "Willow Dispatch.md",
+        "page": 1,
+        "contains": "Farah Chen"
+      }
+    },
+    {
+      "id": "tail-destination",
+      "kind": "supported",
+      "query": "Where does a dispatch go after retry exhaustion?",
+      "sources": [
+        "Willow Dispatch.md"
+      ],
+      "evidence": {
+        "source": "Willow Dispatch.md",
+        "page": 1,
+        "contains": "dead-letter review box"
+      }
+    },
+    {
+      "id": "approval-validity",
+      "kind": "supported",
+      "query": "How long is a current Willow access approval valid?",
+      "sources": [
+        "Willow Access v2.md"
+      ],
+      "evidence": {
+        "source": "Willow Access v2.md",
+        "page": 1,
+        "contains": "thirteen minutes"
+      }
+    },
+    {
+      "id": "changed-source-reuse",
+      "kind": "follow-up",
+      "query": "Can it be reused?",
+      "sources": [
+        "Willow Access v2.md"
+      ],
+      "history": [
+        {
+          "role": "user",
+          "content": "Under Willow Access Version 1, can an approval be reused?"
+        }
+      ],
+      "evidence": {
+        "source": "Willow Access v2.md",
+        "page": 1,
+        "contains": "consumed once"
+      }
+    },
+    {
+      "id": "version-periods",
+      "kind": "supported",
+      "query": "Compare the approval validity periods in Willow Access v1.md and Willow Access v2.md.",
+      "sources": [
+        "Willow Access v1.md",
+        "Willow Access v2.md"
+      ],
+      "evidence": {
+        "source": "Willow Access v1.md",
+        "page": 1,
+        "contains": "twenty-four minutes"
+      }
+    },
+    {
+      "id": "unknown-price",
+      "kind": "unsupported",
+      "query": "What is the monthly Willow service price?",
+      "sources": [
+        "Willow Access v2.md"
+      ]
+    },
+    {
+      "id": "excluded-dispatch",
+      "kind": "unsupported",
+      "query": "How many retries are allowed for a failed dispatch?",
+      "sources": [
+        "Willow Access v2.md"
+      ]
+    }
+  ]
+}

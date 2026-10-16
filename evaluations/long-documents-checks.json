@@ -1,0 +1,121 @@
+{
+  "pdf-middle-owner": {
+    "answer_patterns": [
+      "Tessa Rao"
+    ],
+    "forbidden_patterns": [
+      "Victor Faux"
+    ]
+  },
+  "pdf-retry": {
+    "answer_patterns": [
+      "(?:five|5)\\s+times"
+    ]
+  },
+  "pdf-tail-recovery": {
+    "answer_patterns": [
+      "most recent verified backup",
+      "sample source"
+    ]
+  },
+  "docx-middle-validity": {
+    "answer_patterns": [
+      "(?:nine|9)\\s+minutes",
+      "once|single.use|cannot be reused|can.t be reused"
+    ]
+  },
+  "docx-tail-table": {
+    "answer_patterns": [
+      "32\\s*MB"
+    ]
+  },
+  "md-middle-regions": {
+    "answer_patterns": [
+      "APAC.{0,50}18\\s+days|18\\s+days.{0,50}APAC",
+      "EMEA.{0,50}42\\s+days|42\\s+days.{0,50}EMEA"
+    ]
+  },
+  "md-tail-audit": {
+    "answer_patterns": [
+      "36.hour"
+    ]
+  },
+  "compound-retry-validity": {
+    "answer_patterns": [
+      "(?:five|5)\\s+times",
+      "(?:nine|9)\\s+minutes"
+    ],
+    "required_citation_sources": [
+      "Larkspur Operations.pdf",
+      "Larkspur Approval v2.docx"
+    ]
+  },
+  "compound-owner-export": {
+    "answer_patterns": [
+      "Tessa Rao",
+      "32\\s*MB"
+    ],
+    "required_citation_sources": [
+      "Larkspur Operations.pdf",
+      "Larkspur Approval v2.docx"
+    ],
+    "forbidden_patterns": [
+      "Victor Faux"
+    ]
+  },
+  "conflicting-versions": {
+    "answer_patterns": [
+      "(?:twenty|20)\\s+minutes",
+      "(?:nine|9)\\s+minutes"
+    ],
+    "required_citation_sources": [
+      "Larkspur Approval v1.md",
+      "Larkspur Approval v2.docx"
+    ]
+  },
+  "pdf-followup": {
+    "answer_patterns": [
+      "sealed exception vault"
+    ]
+  },
+  "changed-source-followup": {
+    "answer_patterns": [
+      "once|single.use|cannot be reused|can.t be reused"
+    ],
+    "seed_sources": [
+      "Larkspur Approval v1.md"
+    ],
+    "forbidden_patterns": [
+      "can be reused until|may be reused until"
+    ]
+  },
+  "unknown-price": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "\\$\\s*\\d",
+      "USD\\s*\\d"
+    ]
+  },
+  "unknown-launch": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "December\\s+\\d|November\\s+\\d"
+    ]
+  },
+  "scope-exclusion": {
+    "expect_abstention": true,
+    "forbidden_patterns": [
+      "(?:five|5)\\s+times"
+    ]
+  },
+  "history-scope-exclusion": {
+    "expect_abstention": true,
+    "seed_sources": [
+      "Larkspur Operations.pdf"
+    ],
+    "forbidden_patterns": [
+      "Tessa Rao",
+      "Victor Faux"
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 # Synapse
 
+Current development evidence: [larger-document quality, performance and recovery checkpoint](evaluations/LONG_DOCUMENT_CHECKPOINT.md), including preserved failures and open acceptance gates. The [bounded window arrangement design](docs/WINDOW_ARRANGEMENT_DESIGN.md) describes the next advanced OS implementation target; native window movement is not yet enabled.
+
 A local AI workspace for document memory, cited answers, persistent conversations, selected workspace sources, and explicitly approved actions.
 
 Synapse uses Next.js, FastAPI, local ONNX embeddings, Chroma vectors, transactional SQLite metadata, and Ollama. CPU execution is supported. GPU/NPU use requires an installed compatible provider and is reported from the actual runtime.

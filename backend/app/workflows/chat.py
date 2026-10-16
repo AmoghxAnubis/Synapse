@@ -14,6 +14,7 @@ from ..ai.retriever import citation, retrieve_documents
 
 ABSTENTION = "I couldn't find supporting information in the selected sources. Add a relevant document or choose a different source."
 UNCITED_COMPOUND = "I couldn't produce a fully cited answer from the selected sources. Try asking each part separately."
+INVALID_CITATION = "I couldn't produce an answer with valid evidence references. Try rephrasing the question."
 
 
 class ChatTokens:
@@ -97,20 +98,30 @@ def stream_chat(query, services):
             return {}
         agent = state["agent"]
         system_prompt = agent.get("system_instruction") if agent else None
-        # Buffer only when separate top passages cover the two question
-        # clauses. A single citation after two claims can misattribute one.
+        allowed = ", ".join(f"[{index}]" for index in range(1, len(state["citations"]) + 1))
+        system_prompt = (system_prompt or "You are Synapse, a helpful local assistant.") + (
+            "\nFor this answer the only available evidence labels are: " + allowed + ". "
+            "Cite the label of the passage that actually states the fact, not a document heading, section number or a previous answer's reference. "
+            "Read all selected passages before concluding that a requested fact is unstated.")
+        # Numbered headings can be mistaken for passage labels. Validate that
+        # path before exposing its text; ordinary short passages still stream.
         refs = state.get("required_refs", [])
         needs_both = len(refs) == 2 and refs[0] != refs[1]
-        if needs_both:
-            required = tuple(f"[{ref}]" for ref in refs)
+        numbered = any(re.search(r"(?im)^\s*(?:#{1,6}\s*)?(?:section|chapter|register|appendix|review\s+register)\s+\d+\b", citation["text"]) for citation in state["citations"])
+        if needs_both or numbered:
+            required = tuple(f"[{ref}]" for ref in refs) if needs_both else ()
             for attempt in range(2):
                 if cancelled.is_set():
                     break
                 question = query.text
-                if attempt:
+                if attempt and needs_both:
                     question += ("\nAnswer each requested part in its own sentence. "
                                  f"The first part needs {required[0]} and the second part needs {required[1]}. "
                                  "Place each citation next to the fact it supports; do not cite a passage for an unsupported fact.")
+                if attempt:
+                    question += ("\nUse only these current evidence labels: " + allowed + ". "
+                                 "Document section or register numbers are not citations. "
+                                 "Cite the passage that explicitly states the requested fact.")
                 tokens = services.llm.stream_answer(state["context"], question, system_prompt, state["history"])
                 try:
                     parts = []
@@ -123,11 +134,13 @@ def stream_chat(query, services):
                     tokens.close()
                 if cancelled.is_set():
                     break
-                if all(ref in answer for ref in required):
+                generated_refs = [int(number) for number in re.findall(r"\[(\d+)\]", answer)]
+                valid_refs = all(1 <= number <= len(state["citations"]) for number in generated_refs)
+                if valid_refs and all(ref in answer for ref in required):
                     get_stream_writer()({"type": "token", "text": answer})
                     break
             else:
-                get_stream_writer()({"type": "token", "text": UNCITED_COMPOUND})
+                get_stream_writer()({"type": "token", "text": UNCITED_COMPOUND if needs_both else INVALID_CITATION})
         else:
             tokens = services.llm.stream_answer(state["context"], query.text, system_prompt, state["history"])
             try:

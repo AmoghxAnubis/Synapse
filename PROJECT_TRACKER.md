@@ -1,6 +1,6 @@
 # Synapse product task tracker
 
-Last updated: 15 October 2026.
+Last updated: 16 October 2026.
 Owner: project developer with user review for product decisions.
 Current focus: local product acceptance, answer quality/performance, live connectors, and installation/recovery. Cloudflare work is deferred until the local beta gates pass, per the user on 8 October 2026.
 
@@ -9,6 +9,8 @@ Current consolidated assessment: [15 October product readiness report](docs/PROD
 Execution plan: [Local beta plan](docs/LOCAL_BETA_PLAN.md). User selected **GitHub** as the first connector on 15 October. No second Windows PC or independent tester is currently available: D01 and independent acceptance remain open dependencies. Next implementation work package is model setup and the core browser journey, including restored-action keyboard/expiry behavior. Planning does not raise readiness or close existing tasks.
 
 Implementation started on `beta/model-onboarding` on 15 October. Active scope: independent generation/embedding setup diagnostics, model-independent source administration, and current workflow verification (V01/V03, Q01/Q02 support). Advanced OS development follows the local technical prerequisite checkpoint in the plan; unavailable independent release acceptance is tracked separately.
+
+16 October continuation on `beta/representative-quality` from merged PR #36 (`1ac3b7e`): [larger-document checkpoint](evaluations/LONG_DOCUMENT_CHECKPOINT.md) records improved fact/evidence diagnostics (12/12), valid scope/references (16/16), 133 passing backend tests and fresh-process mocked approval/backup recovery. Strict abstention review remains below gate (3/4), and the untouched transfer sample completed 6/8 due two HTTP 503 errors. Q01-Q03 remain active. [F01 design](docs/WINDOW_ARRANGEMENT_DESIGN.md) is prepared for isolated planner work; native movement, UI, live GitHub, refreshed packaging, independent review and second-machine acceptance remain open. [Remote branch review](docs/BRANCH_REVIEW_2026-10-16.md) accounts for historical branches; current work is authorized for PR and merge into main. No readiness or completed-task count change.
 
 ## Product direction
 

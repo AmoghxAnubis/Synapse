@@ -9,3 +9,18 @@ evaluations/results/performance-first-run.json -text whitespace=cr-at-eol
 evaluations/results/performance-corrected-reverse-run.json -text whitespace=cr-at-eol
 evaluations/second-holdout/*.pdf binary
 evaluations/second-holdout/*.docx binary
+evaluations/long-documents/*.pdf binary
+evaluations/long-documents/*.docx binary
+evaluations/long-documents/*.md text eol=lf
+evaluations/long-documents-corpus.json text eol=lf
+evaluations/long-documents-checks.json text eol=lf
+evaluations/long-documents-manifest.json text eol=lf
+evaluations/transfer-documents/*.md text eol=lf
+evaluations/transfer-documents-corpus.json text eol=lf
+evaluations/transfer-documents-checks.json text eol=lf
+evaluations/transfer-documents-manifest.json text eol=lf
+evaluations/results/long-documents-*.json -text whitespace=cr-at-eol
+evaluations/results/transfer-documents-first-run.json -text whitespace=cr-at-eol
+evaluations/results/action-recovery-2026-10-16.json -text whitespace=cr-at-eol
+evaluations/results/third-holdout-2026-10-16-regression.json -text whitespace=cr-at-eol
+evaluations/results/long-document-review-2026-10-16.json -text whitespace=cr-at-eol

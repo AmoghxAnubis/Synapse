@@ -1,0 +1,10 @@
+{
+  "frozen_before_first_model_run": true,
+  "files_sha256": {
+    "transfer-documents/Willow Access v1.md": "17a90e62c7aab8d18aaf675df48408d766d0c981fc2d92a1259bd22ce1d1e48e",
+    "transfer-documents/Willow Access v2.md": "1825fb0ea6ef2a1c029948c33030277c4a06b713ba4d392dbde74e546b83bab8",
+    "transfer-documents/Willow Dispatch.md": "c13c8b241042f04cb90b32b21883e28e92d93703e49490da07e6321649bcb414",
+    "transfer-documents-corpus.json": "2d4353f4fb58c458136aa8ba40f1c92c153833c35a562755cf9265ca7fda0dfe",
+    "transfer-documents-checks.json": "c954a34ff63a3b31ef41aee058e31a33331ca96f8e29c85eb7ccb98def4d6558"
+  }
+}

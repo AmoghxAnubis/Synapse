@@ -74,3 +74,12 @@ def test_history_stays_bounded_and_keeps_message_roles():
     assert sum(len(message.content) for message in messages[1:-1]) == 12000
     payload = messages[-1].content.split("\n", 1)[1].split("\n\nCurrent user question:\n", 1)[0]
     assert len(json.loads(payload)) == 24000
+
+
+def test_history_keeps_conversation_text_without_stale_passage_numbers():
+    from app.ai.prompts import answer_messages
+    messages = answer_messages("[1] New selected passage.", "What happens next?", history=[
+        {"role": "user", "content": "Who owns it?"},
+        {"role": "ai", "content": "Mira owns it [8]."}])
+    assert messages[2].content == "Mira owns it ."
+    assert "[8]" not in messages[2].content

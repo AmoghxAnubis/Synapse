@@ -1,5 +1,6 @@
 """Bounded prompts: document content is data, never a chat role."""
 import json
+import re
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 
@@ -34,6 +35,10 @@ def answer_messages(context, question, system_prompt=None, history=None):
     recent = []
     for entry in reversed((history or [])[-12:]):
         content = entry["content"][:4000]
+        if entry["role"] == "ai":
+            # Prior passage numbers can refer to different documents/pages in
+            # this turn. Preserve conversational text without stale labels.
+            content = re.sub(r"\[\d+\]", "", content)
         if len(content) > budget:
             break
         budget -= len(content)

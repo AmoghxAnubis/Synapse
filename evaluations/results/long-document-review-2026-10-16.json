@@ -1,0 +1,371 @@
+{
+  "reviewer": "Codex assistant claim review; not independent human acceptance",
+  "method": "Read answers against supplied current passages and expected facts; checked inline references, extra claims and unsupported answers. Lexical metrics alone are insufficient.",
+  "artifacts": {
+    "long-documents-after-reference-guard.json": {
+      "sha256": "41a587aa664b83ce927eeede52c7ba11073435d045f684310035cc31cff1797e",
+      "rows": [
+        {
+          "group": "cold",
+          "index": 0,
+          "id": "pdf-middle-owner",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 0,
+          "id": "pdf-middle-owner",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 1,
+          "id": "pdf-retry",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 2,
+          "id": "pdf-tail-recovery",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 3,
+          "id": "docx-middle-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 4,
+          "id": "docx-tail-table",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 5,
+          "id": "md-middle-regions",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 6,
+          "id": "md-tail-audit",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 7,
+          "id": "compound-retry-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 8,
+          "id": "compound-owner-export",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 9,
+          "id": "conflicting-versions",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 10,
+          "id": "pdf-followup",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 11,
+          "id": "changed-source-followup",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 12,
+          "id": "unknown-price",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 13,
+          "id": "unknown-launch",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "warm",
+          "index": 14,
+          "id": "scope-exclusion",
+          "pass": false,
+          "finding": "Unsupported negative retry claim before abstention"
+        },
+        {
+          "group": "warm",
+          "index": 15,
+          "id": "history-scope-exclusion",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 0,
+          "id": "pdf-middle-owner",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 1,
+          "id": "pdf-retry",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 2,
+          "id": "pdf-tail-recovery",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 3,
+          "id": "docx-middle-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 4,
+          "id": "docx-tail-table",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 5,
+          "id": "md-middle-regions",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 6,
+          "id": "md-tail-audit",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 7,
+          "id": "compound-retry-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 8,
+          "id": "compound-owner-export",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 9,
+          "id": "conflicting-versions",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 10,
+          "id": "pdf-middle-owner",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 11,
+          "id": "pdf-retry",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 12,
+          "id": "pdf-tail-recovery",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 13,
+          "id": "docx-middle-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 14,
+          "id": "docx-tail-table",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "long_session",
+          "index": 15,
+          "id": "md-middle-regions",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        }
+      ]
+    },
+    "transfer-documents-first-run.json": {
+      "sha256": "c97d6d58e878793a579189123bd5380a97e9b915ca691492f7e94973f4d393d7",
+      "rows": [
+        {
+          "group": "cases",
+          "index": 0,
+          "id": "two-source-limits",
+          "pass": false,
+          "finding": "HTTP 503; underlying exception not captured"
+        },
+        {
+          "group": "cases",
+          "index": 1,
+          "id": "owner-and-export",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 2,
+          "id": "tail-destination",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 3,
+          "id": "approval-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 4,
+          "id": "changed-source-reuse",
+          "pass": false,
+          "finding": "HTTP 503; underlying exception not captured"
+        },
+        {
+          "group": "cases",
+          "index": 5,
+          "id": "version-periods",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 6,
+          "id": "unknown-price",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 7,
+          "id": "excluded-dispatch",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        }
+      ]
+    },
+    "third-holdout-2026-10-16-regression.json": {
+      "sha256": "974afc20563b24c462f2a7c1be9e10fdef2a15b9879ca4a24ad960ae1ea3c116",
+      "rows": [
+        {
+          "group": "cases",
+          "index": 0,
+          "id": "queue-retry",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 1,
+          "id": "access-validity",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 2,
+          "id": "unnamed-compound",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 3,
+          "id": "owner-and-export",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 4,
+          "id": "regional-periods",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 5,
+          "id": "queue-followup",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 6,
+          "id": "unknown-price",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        },
+        {
+          "group": "cases",
+          "index": 7,
+          "id": "scope-exclusion",
+          "pass": true,
+          "finding": "Requested facts supported by cited passages, or appropriate abstention; no material unsupported extra claim found"
+        }
+      ]
+    }
+  },
+  "acceptance": {
+    "quality_gate_passed": false,
+    "strict_long_document_abstentions": "3/4",
+    "transfer_execution": "6/8",
+    "independent_review": false,
+    "notes": "Some policy answers include redundant title references alongside the correct fact passage. No product tuning used the transfer run."
+  }
+}

@@ -56,12 +56,15 @@ def decode_events(lines):
 
 
 class MemorySampler:
+    JOIN_SECONDS = 2
+
     def __init__(self, backend_pid):
         self.backend = psutil.Process(backend_pid)
         self.stop = threading.Event()
         self.peaks = {"backend_rss_bytes": 0, "ollama_rss_bytes": 0, "combined_rss_bytes": 0}
         self.samples = 0
         self.errors = 0
+        self.complete = True
 
     def sample(self):
         try:
@@ -69,8 +72,14 @@ class MemorySampler:
             # actual interpreter/model. Include its complete process tree.
             processes = {p.pid: p for p in [self.backend, *self.backend.children(recursive=True)]}
             backend = sum(p.memory_info().rss for p in processes.values())
-            ollama = sum(process.memory_info().rss for process in psutil.process_iter(["name"])
-                         if "ollama" in (process.info["name"] or "").lower())
+            # Current Ollama versions launch llama-server.exe. Its name does
+            # not contain "ollama", so include descendants and deduplicate PIDs.
+            model_processes = {}
+            for process in psutil.process_iter(["name"]):
+                if "ollama" in (process.info["name"] or "").lower():
+                    for member in [process, *process.children(recursive=True)]:
+                        model_processes[member.pid] = member
+            ollama = sum(process.memory_info().rss for process in model_processes.values())
             self.samples += 1
             for key, value in (("backend_rss_bytes", backend), ("ollama_rss_bytes", ollama),
                                ("combined_rss_bytes", backend + ollama)):
@@ -79,22 +88,24 @@ class MemorySampler:
             self.errors += 1
 
     def __enter__(self):
-        self.sample()
         def watch():
-            while not self.stop.wait(0.1):
+            while not self.stop.is_set():
                 self.sample()
+                self.stop.wait(0.1)
         self.thread = threading.Thread(target=watch, daemon=True)
         self.thread.start()
         return self
 
     def __exit__(self, *args):
-        self.sample()
         self.stop.set()
-        self.thread.join()
+        self.thread.join(timeout=self.JOIN_SECONDS)
+        self.complete = not self.thread.is_alive()
+        if not self.complete:
+            self.errors += 1
 
     def result(self):
         return {**self.peaks, "samples": self.samples, "sampling_errors": self.errors,
-                "interval_seconds": 0.1}
+                "interval_seconds": 0.1, "sampling_complete": self.complete}
 
 
 def ask(session, url, body, pid):
@@ -102,6 +113,7 @@ def ask(session, url, body, pid):
     first_token = None
     first_sources = None
     parts, citations = [], []
+    token_events = 0
     with MemorySampler(pid) as sampler:
         with session.post(url + "/ask/stream", json=body, stream=True, timeout=(5, 180)) as response:
             response.raise_for_status()
@@ -111,6 +123,7 @@ def ask(session, url, body, pid):
                     first_sources = elapsed
                     citations = event["citations"]
                 elif event["type"] == "token" and event["text"]:
+                    token_events += 1
                     if first_token is None:
                         first_token = elapsed
                     parts.append(event["text"])
@@ -118,7 +131,23 @@ def ask(session, url, body, pid):
                     total = elapsed
     return {"answer": "".join(parts), "citations": citations,
             "first_token_seconds": first_token, "sources_seconds": first_sources,
-            "total_seconds": total, "memory": sampler.result()}
+            "total_seconds": total, "token_events": token_events, "memory": sampler.result()}
+
+
+def import_fixtures(corpus_path, corpus):
+    """Explicit opt-in reads stay inside the frozen corpus directory."""
+    parent = corpus_path.resolve().parent
+    fixtures = []
+    for document in corpus["documents"]:
+        relative = document.get("file")
+        if not isinstance(relative, str) or Path(relative).is_absolute():
+            raise ValueError("Mixed-format imports require relative corpus document file paths")
+        path = (parent / relative).resolve()
+        if not path.is_relative_to(parent) or not path.is_file():
+            raise ValueError("Corpus import file is missing or outside the corpus directory")
+        content = path.read_bytes()
+        fixtures.append({"name": path.name, "content": content, "sha256": hashlib.sha256(content).hexdigest()})
+    return fixtures
 
 
 def serve(args):
@@ -149,6 +178,7 @@ def benchmark(args):
     corpus_raw = args.corpus.read_bytes()
     checks_raw = args.checks.read_bytes()
     corpus, checks = json.loads(corpus_raw), json.loads(checks_raw)
+    fixtures = import_fixtures(args.corpus, corpus) if args.import_corpus_files else []
     ollama = requests.Session()
     ollama.trust_env = False
     base = "http://127.0.0.1:11434"
@@ -180,9 +210,14 @@ def benchmark(args):
               "method": {"transport": "real loopback FastAPI HTTP/SSE; frontend proxy/browser excluded",
                          "model_cold": "model explicitly unloaded and /api/ps checked; OS cache not flushed",
                          "warm_repeats": args.warm_repeats, "cold_repeats": args.cold_repeats,
-                         "memory": "100ms sampled backend process-tree RSS and all Ollama processes; shared pages may double count",
+                         "memory": "100ms sampled backend and Ollama process-tree RSS; PIDs deduplicated within each tree, shared pages may double count",
                          "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                         "execution": "models sequential; no other benchmark/test workloads launched"}, "models": []}
+                         "execution": "models sequential; no other benchmark/test workloads launched",
+                         "varied_session": args.varied_session, "mixed_format_imports": args.import_corpus_files}, "models": []}
+    result["product_revision"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    result["product_files_sha256"] = {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in (
+        "backend/app/workflows/chat.py", "backend/app/ai/retriever.py", "backend/app/ai/prompts.py",
+        "backend/app/core/llm.py", "backend/app/core/memory.py", "backend/app/core/ingester.py")}
     def save():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -254,12 +289,17 @@ def benchmark(args):
                             save()
                         print(model, "warm pass", repeat + 1, flush=True)
                     identifier = new_conversation()
+                    session_cases = [case for case in corpus["cases"] if case["kind"] == "supported"] if args.varied_session else [corpus["cases"][0]]
+                    if not session_cases:
+                        raise ValueError("Varied sessions require supported corpus cases")
                     for turn in range(args.session_turns):
-                        row = ask(api, url, {"text": corpus["cases"][0]["query"],
-                            "selected_sources": corpus["cases"][0]["sources"], "conversation_id": identifier}, process.pid)
-                        row.update(turn=turn + 1)
-                        row.update(check_answer(corpus["cases"][0], row, checks[corpus["cases"][0]["id"]]))
+                        case = session_cases[turn % len(session_cases)]
+                        row = ask(api, url, {"text": case["query"], "selected_sources": case["sources"], "conversation_id": identifier}, process.pid)
+                        row.update(turn=turn + 1, id=case["id"])
+                        row.update(check_answer(case, row, checks[case["id"]]))
                         entry["long_session"].append(row)
+                        save()
+                        print(model, "session turn", turn + 1, round(row["total_seconds"], 2), flush=True)
                     saved = api.get(url + "/conversations/" + identifier, timeout=5)
                     saved.raise_for_status()
                     entry["session_persistence_passed"] = len(saved.json()) == 2 * args.session_turns
@@ -271,6 +311,19 @@ def benchmark(args):
                         elapsed = time.perf_counter() - started
                         entry["ingestion"].append({"bytes": len(payload), "seconds": elapsed,
                             "bytes_per_second": len(payload)/elapsed, "result": response.json()})
+                        save()
+                        print(model, "markdown import", index + 1, round(elapsed, 2), flush=True)
+                    entry["mixed_ingestion"] = []
+                    for index, fixture in enumerate(fixtures):
+                        with MemorySampler(process.pid) as sampler:
+                            started = time.perf_counter()
+                            response = api.post(url + "/upload", files={"file": (f"mixed-{index}-{fixture['name']}", fixture["content"])}, timeout=180)
+                            response.raise_for_status()
+                            elapsed = time.perf_counter() - started
+                        entry["mixed_ingestion"].append({"file": fixture["name"], "sha256": fixture["sha256"],
+                            "bytes": len(fixture["content"]), "seconds": elapsed, "memory": sampler.result(), "result": response.json()})
+                        save()
+                        print(model, "mixed import", fixture["name"], round(elapsed, 2), flush=True)
                     entry["ollama_allocation_snapshot"] = loaded()
                     entry["quality_diagnostics"] = metrics(entry["warm"])
                     entry["session_quality_diagnostics"] = metrics(entry["long_session"])
@@ -300,6 +353,8 @@ if __name__ == "__main__":
     parser.add_argument("--cold-repeats", type=int, default=3)
     parser.add_argument("--warm-repeats", type=int, default=2)
     parser.add_argument("--session-turns", type=int, default=12)
+    parser.add_argument("--varied-session", action="store_true", help="Cycle supported corpus questions/source scopes instead of repeating one question")
+    parser.add_argument("--import-corpus-files", action="store_true", help="Measure actual PDF/DOCX/Markdown uploads from corpus document file paths")
     parser.add_argument("--serve", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--data-dir", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--port", type=int, help=argparse.SUPPRESS)

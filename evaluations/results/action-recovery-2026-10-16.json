@@ -1,0 +1,19 @@
+{
+  "source_revision": "1ac3b7efb6177ea0d19a7fd556b596becac8a076",
+  "script_sha256": "a83346912f4bc94e6ce86163afad1e58d51702bbc7f26ce07584da307ba8c5db",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "method": "Five fresh Python processes; real metadata/checkpoints/vectors/backup; process launches mocked; expiry uses a simulated clock",
+  "checks": {
+    "prepared_without_launch": true,
+    "restart_deadlines_preserved": true,
+    "cancel_permission_expiry_blocked": true,
+    "replay_blocked_after_second_restart": true,
+    "portable_restore_preserves_data": true,
+    "portable_restore_cancels_pending_approval": true,
+    "portable_restore_disconnects_integrations": true
+  },
+  "approved_launch_attempts_mocked": 1,
+  "real_app_launches": 0,
+  "independent_or_second_machine_acceptance": false
+}
