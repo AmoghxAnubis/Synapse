@@ -313,6 +313,112 @@
           "expected_facts_present": true,
           "expected_evidence_cited": true,
           "scope_respected": true
+        },
+        {
+          "answer": "Larkspur support records are retained for 18 days in APAC and 42 days in EMEA. This information is stated in the selected evidence, specifically in [1] Larkspur Records.md (page 1), which mentions \"Larkspur support records are retained for 18 days in APAC and 42 days in EMEA. The record's region determines the applicable period.\"",
+          "citations": [
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:31",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 32,
+              "url": "",
+              "distance": 0.328,
+              "text": "region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Regional retention rules\n\nLarkspur support records are retained for 18 days in APAC and 42 days in EMEA. The record's region determines the applicable period.\n\n## Records practice 83\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 84\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:57",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 58,
+              "url": "",
+              "distance": 0.4524,
+              "text": "Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 150\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Final archive audit\n\nLarkspur archive purges require a 36-hour audit review window before deletion."
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:0",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 1,
+              "url": "",
+              "distance": 0.5257,
+              "text": "# Larkspur Regional Records Manual\n\n## Records practice 1\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 2\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 3\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 4\n\nClerks label each records bundle"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:52",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 53,
+              "url": "",
+              "distance": 0.6262,
+              "text": "not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 137\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 138\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 139\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility"
+            },
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:6",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 7,
+              "url": "",
+              "distance": 0.6289,
+              "text": ". This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 17\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 18\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 19\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before"
+            }
+          ],
+          "first_token_seconds": 2.2722835000022314,
+          "sources_seconds": 0.23209619999397546,
+          "total_seconds": 9.295767000003252,
+          "token_events": 83,
+          "memory": {
+            "backend_rss_bytes": 137646080,
+            "ollama_rss_bytes": 1487577088,
+            "combined_rss_bytes": 1624989696,
+            "samples": 58,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "md-middle-regions",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
+        },
+        {
+          "answer": "A 36-hour audit review window is required before an archive purge, as stated in the \"Final archive audit\" section of the selected evidence [1].",
+          "citations": [
+            {
+              "id": "507b22f8c3e0cd736d299cb25c688e0041bcbf1332ad8220317d09da69fa9a13:57",
+              "source": "Larkspur Records.md",
+              "page": 1,
+              "chunk": 58,
+              "url": "",
+              "distance": 0.4189,
+              "text": "Observed differences are documented before the next shift takes responsibility.\n\n## Records practice 150\n\nClerks label each records bundle with its region and review cycle. They compare the inventory with the last handover sheet, record any missing bundle, and retain the reviewer signature. This inventory procedure does not set a new retention rule. Observed differences are documented before the next shift takes responsibility.\n\n## Final archive audit\n\nLarkspur archive purges require a 36-hour audit review window before deletion."
+            }
+          ],
+          "first_token_seconds": 1.3088416000100551,
+          "sources_seconds": 0.10820580000290647,
+          "total_seconds": 3.704357100010384,
+          "token_events": 31,
+          "memory": {
+            "backend_rss_bytes": 137940992,
+            "ollama_rss_bytes": 1456594944,
+            "combined_rss_bytes": 1594535936,
+            "samples": 23,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "md-tail-audit",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true
         }
       ],
       "long_session": [],
