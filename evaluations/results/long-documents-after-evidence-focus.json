@@ -419,6 +419,51 @@
           "expected_facts_present": true,
           "expected_evidence_cited": true,
           "scope_respected": true
+        },
+        {
+          "answer": "The failed-delivery retry limit is at most five times, as stated in [1] Larkspur Operations.pdf (page 7). Version 2 approval is valid for nine minutes, as stated in [2] Larkspur Approval v2.docx (page 1).",
+          "citations": [
+            {
+              "id": "532a64194c9466dee108ce10dd3e428d030c95010a7d38ab696f8364ac1a2507:18",
+              "source": "Larkspur Operations.pdf",
+              "page": 7,
+              "chunk": 19,
+              "url": "",
+              "distance": 0.573,
+              "text": "Larkspur Operations Handbook - chapter 7\nThe Larkspur dispatcher retries a failed delivery at most five times.\nRecordkeeping item 7.1: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 7.2: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not alter service policy.\nRecordkeeping item 7.3: operators record the current shift identifier, review the change\njournal, and confirm the checklist signature. The journal keeps observations separate from\ninterpretations. An incomplete checklist is flagged for review before the shift handover.\nThese routine records do not"
+            },
+            {
+              "id": "7728a5af515ee61e6a16189105c041335620fc78998bc71b1930e59ddc372f7f:17",
+              "source": "Larkspur Approval v2.docx",
+              "page": 1,
+              "chunk": 18,
+              "url": "",
+              "distance": 0.5201,
+              "text": "reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 50\nRegister 50 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 51\nUnder Larkspur Approval Policy Version 2, an access approval is valid for nine minutes and can be consumed once. Another action requires a fresh approval.\nRegister 51 identifies a reviewer, the requested destination and the supporting change record. Reviewers record their observations in full sentences and flag missing information. A register entry records a decision; it does not replace the access approval itself. Completed entries remain available for the next review cycle.\nReview register 52\nRegister 52 identifies a reviewer,"
+            }
+          ],
+          "first_token_seconds": 6.4042901000066195,
+          "sources_seconds": 0.2698094000079436,
+          "total_seconds": 6.415511900006095,
+          "token_events": 1,
+          "memory": {
+            "backend_rss_bytes": 138563584,
+            "ollama_rss_bytes": 1652203520,
+            "combined_rss_bytes": 1790763008,
+            "samples": 42,
+            "sampling_errors": 0,
+            "interval_seconds": 0.1,
+            "sampling_complete": true
+          },
+          "id": "compound-retry-validity",
+          "repeat": 0,
+          "conversation_persisted": true,
+          "citation_numbers_valid": true,
+          "manual_semantic_review_required": true,
+          "expected_facts_present": true,
+          "expected_evidence_cited": true,
+          "scope_respected": true,
+          "required_citation_sources_cited": true
         }
       ],
       "long_session": [],
